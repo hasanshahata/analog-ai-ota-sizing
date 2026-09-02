@@ -31,6 +31,17 @@ The 7-parameter variant adds `[L5, gmid5]` for a physical tail device
 (`tail_device="finite"`); the shipped trained models (V2–V12) are all 5-parameter
 and use an ideal tail.
 
+## Scope decision (2026-09-03): ideal-tail research abstraction
+
+Until finite-M5 support lands in solved mode, every dataset, trained model,
+and pass rate in this project describes the **five-parameter ideal-tail
+research abstraction**, not the physical 5T-OTA: the tail device contributes
+no output resistance, capacitance, area, headroom, saturation, or noise.
+This abstraction is a deliberate, documented scoping choice for the ML
+proof of concept — **not** a product claim. Scaling the dataset beyond
+pilot size, or describing any result as 5T-OTA sizing, requires finite-M5
+solved operation first (see CORRECTION_LOG.md still-open list).
+
 ## Hard constraints (acceptance)
 
 A design **passes** iff every residual ≤ 0 (residual convention in
