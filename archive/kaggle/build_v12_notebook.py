@@ -1,0 +1,193 @@
+import json
+import os
+
+notebook = {
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Goal-Conditioned Analog AI Sizing (V12) - Kaggle Version\n",
+    "V12 Features (Reward Scaling Fix):\n",
+    "- Scaled reward (-cost/100) instead of clipped — full gradient preserved\n",
+    "- No early termination (V11 fix preserved)\n",
+    "- Smooth normalized cost function (V10 fix preserved)\n",
+    "- Rich 15D Observation + Direct Parameter Output\n",
+    "- Training: 1,000,000 steps\n",
+    "\n",
+    "## Data Sources\n",
+    "1. **Code Dataset:** analog-ai-code-v12\n",
+    "2. **LUT Source:** ota-rl-model-v9/v10 kernel output"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!pip install stable-baselines3[extra] gymnasium numpy scipy tensorboard gdown"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import sys\n",
+    "\n",
+    "WORKING_DIR = '/kaggle/working/'\n",
+    "print(\"Finding LUTs from all Kaggle inputs...\")\n",
+    "nch_path = None\n",
+    "pch_path = None\n",
+    "\n",
+    "for root, dirs, files in os.walk('/kaggle/input/'):\n",
+    "    for file in files:\n",
+    "        fp = os.path.join(root, file)\n",
+    "        if file == 'TSMC_fast_65nm_nch.pkl' and os.path.getsize(fp) > 1000000:\n",
+    "            nch_path = fp\n",
+    "        if file == 'TSMC_fast_65nm_pch.pkl' and os.path.getsize(fp) > 1000000:\n",
+    "            pch_path = fp\n",
+    "\n",
+    "if nch_path and pch_path:\n",
+    "    print(f\"Found NCH: {nch_path}\")\n",
+    "    print(f\"Found PCH: {pch_path}\")\n",
+    "else:\n",
+    "    print(\"ERROR: Could not find valid LUTs in /kaggle/input/\")\n",
+    "    print(\"Listing all /kaggle/input/ contents:\")\n",
+    "    for root, dirs, files in os.walk('/kaggle/input/'):\n",
+    "        for f in files:\n",
+    "            print(f\"  {os.path.join(root, f)} ({os.path.getsize(os.path.join(root, f))} bytes)\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import sys\n",
+    "import gdown\n",
+    "import zipfile\n",
+    "\n",
+    "# 1. Find the project root from Kaggle dataset\n",
+    "dataset_path = '/kaggle/input'\n",
+    "project_root = None\n",
+    "\n",
+    "for root, dirs, files in os.walk(dataset_path):\n",
+    "    if 'core' in dirs and 'circuits' in dirs and 'v12' in root.lower():\n",
+    "        project_root = root\n",
+    "        break\n",
+    "\n",
+    "if project_root is None:\n",
+    "    for root, dirs, files in os.walk(dataset_path):\n",
+    "        if 'core' in dirs and 'circuits' in dirs:\n",
+    "            project_root = root\n",
+    "            break\n",
+    "\n",
+    "if project_root:\n",
+    "    print(f'Found project root at: {project_root}')\n",
+    "    sys.path.append(project_root)\n",
+    "else:\n",
+    "    print('Error: Could not find project root in dataset.')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from tech_luts.lut_utils import LUT\n",
+    "from core.device_model import DeviceModel\n",
+    "from circuits.ota5t import OTA5T\n",
+    "from optimizer.rl_environment import OTA5tGymEnv\n",
+    "\n",
+    "print(\"Loading LUTs into memory...\")\n",
+    "\n",
+    "nch = LUT(nch_path)\n",
+    "pch = LUT(pch_path)\n",
+    "\n",
+    "dm = DeviceModel(nch, pch)\n",
+    "ota = OTA5T(dm, vdd=1.2)\n",
+    "print(\"Physics Engine Ready!\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "bounds = [\n",
+    "    (60e-9, 1.5e-6),  # L1\n",
+    "    (5.0, 25.0),      # gmid1\n",
+    "    (60e-9, 1.5e-6),  # L3\n",
+    "    (5.0, 25.0),      # gmid3\n",
+    "    (10e-6, 500e-6)   # Itail\n",
+    "]\n",
+    "\n",
+    "env = OTA5tGymEnv(ota, bounds=bounds, max_steps=200)\n",
+    "\n",
+    "from stable_baselines3 import PPO\n",
+    "from stable_baselines3.common.callbacks import CheckpointCallback\n",
+    "\n",
+    "checkpoint_callback = CheckpointCallback(\n",
+    "    save_freq=100000, \n",
+    "    save_path=os.path.join(WORKING_DIR, 'checkpoints'),\n",
+    "    name_prefix='kaggle_ppo_model_v12'\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tb_log_dir = os.path.join(WORKING_DIR, 'ppo_ota_tensorboard')\n",
+    "\n",
+    "# V12: Larger network (256x256) for goal-conditioned policy.\n",
+    "# Scaled reward preserves full gradient for fine-grained target conditioning.\n",
+    "policy_kwargs = dict(net_arch=[256, 256])\n",
+    "model = PPO(\"MlpPolicy\", env, verbose=1, learning_rate=0.0001, batch_size=512, n_steps=2048, policy_kwargs=policy_kwargs, tensorboard_log=tb_log_dir)\n",
+    "\n",
+    "print(\"Starting 1,000,000 Steps Training on Kaggle (V12 - Reward Scaling Fix)...\")\n",
+    "model.learn(total_timesteps=1000000, callback=checkpoint_callback)\n",
+    "\n",
+    "model_save_path = 'universal_ppo_agent_65nm_v12'\n",
+    "model.save(model_save_path)\n",
+    "print(f'Model saved to {model_save_path}.zip')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
+
+with open(os.path.join("V12_Trainer", "Kaggle_Analog_RL_Trainer.ipynb"), 'w') as f:
+    json.dump(notebook, f, indent=1)
+
+print("V12 notebook built successfully!")

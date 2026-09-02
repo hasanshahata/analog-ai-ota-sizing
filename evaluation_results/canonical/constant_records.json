@@ -1,0 +1,912 @@
+{
+  "test1_low_power": {
+    "request": {
+      "Gain_min": 20.0,
+      "GBW_min": 20000000.0,
+      "CL_pF": 1.0,
+      "Power_max": 5e-05
+    },
+    "design": {
+      "L1": 7.8e-07,
+      "gmid1": 15.0,
+      "L3": 7.8e-07,
+      "gmid3": 15.0,
+      "Itail": 0.000255
+    },
+    "provenance": {
+      "oracle_version": "analog_ai-0.1.0-proxy",
+      "timestamp": "2026-09-01T23:10:17"
+    },
+    "metrics": {
+      "DC_Gain_dB": 31.483794584187518,
+      "GBW": 184725798.467336,
+      "PM": 73.23018953063075,
+      "Power": 0.000306,
+      "SR": 255000000.00000003,
+      "Swing": 1.0199436875028753,
+      "ICMR_min": 0.515936232590738,
+      "min_sat_margin": 0.4072668798679454,
+      "Area": 3.763383348411981e-10
+    },
+    "devices": {
+      "M1": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.515936232590738,
+        "VDS": 0.5944860702158352,
+        "VDSAT": 0.09296336899045772,
+        "ID": 0.0001275,
+        "gm": 0.001909520922857116,
+        "gds": 2.6195879643487972e-05
+      },
+      "M2": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.4981248804378738,
+        "VDS": 0.4981248804378738,
+        "VDSAT": 0.08405548640588294,
+        "ID": 9.465432809304579e-05,
+        "gm": 0.0015197696043934988,
+        "gds": 2.249178187996078e-05
+      },
+      "M3": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5042567257877772,
+        "VDS": 0.5036388102220386,
+        "VDSAT": 0.0963719303540932,
+        "ID": 0.0001275,
+        "gm": 0.0019085215382061598,
+        "gds": 2.2039307597714796e-05
+      },
+      "M4": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5036388102220386,
+        "VDS": 0.6,
+        "VDSAT": 0.0960008260912418,
+        "ID": 0.00012833620512798418,
+        "gm": 0.00192125407917929,
+        "gds": 2.0316752057827373e-05
+      },
+      "M5": {
+        "W": 0.0,
+        "L": 0.0,
+        "VGS": NaN,
+        "VDS": 0.10187511956212619,
+        "VDSAT": 0.0,
+        "ID": NaN,
+        "gm": 0.0,
+        "gds": 0.0
+      }
+    },
+    "constraints": [
+      {
+        "name": "Gain_min",
+        "kind": "min",
+        "limit": 20.0,
+        "achieved": 31.483794584187518,
+        "residual": -1.1483794584187517,
+        "scale": 10.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "GBW_min",
+        "kind": "min",
+        "limit": 20000000.0,
+        "achieved": 184725798.467336,
+        "residual": -8.2362899233668,
+        "scale": 20000000.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Power_max",
+        "kind": "max",
+        "limit": 5e-05,
+        "achieved": 0.000306,
+        "residual": 5.119999999999999,
+        "scale": 5e-05,
+        "passed": false,
+        "detail": ""
+      },
+      {
+        "name": "PM_min",
+        "kind": "min",
+        "limit": 45.0,
+        "achieved": 73.23018953063075,
+        "residual": -0.6273375451251278,
+        "scale": 45.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Sat_margin_min",
+        "kind": "min",
+        "limit": 0.05,
+        "achieved": 0.4072668798679454,
+        "residual": -7.145337597358908,
+        "scale": 0.05,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_nmos_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 8.081926380208045e-05,
+        "residual": -0.6767229447916782,
+        "scale": 0.00025,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_pmos_max",
+        "kind": "max",
+        "limit": 0.00075,
+        "achieved": 0.00016042325853202088,
+        "residual": -0.7861023219573054,
+        "scale": 0.00075,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "L_domain",
+        "kind": "domain",
+        "limit": [
+          6e-08,
+          1.5e-06
+        ],
+        "achieved": [
+          7.8e-07,
+          7.8e-07,
+          7.8e-07,
+          7.8e-07
+        ],
+        "residual": 0.0,
+        "scale": 1.0,
+        "passed": true,
+        "detail": ""
+      }
+    ],
+    "verdict": false,
+    "warnings": [
+      "pair current mismatch -26% vs assumed Itail/2"
+    ],
+    "dc_diagnostics": {
+      "Vtail": 0.10187511956212619,
+      "Vmirror": 0.6963611897779614,
+      "pair_current_mismatch": -0.2576131129957193,
+      "mirror_current_mismatch": 0.006558471592032694
+    }
+  },
+  "test2_high_gain": {
+    "request": {
+      "Gain_min": 35.0,
+      "GBW_min": 50000000.0,
+      "CL_pF": 1.0,
+      "Power_max": 0.00015
+    },
+    "design": {
+      "L1": 7.8e-07,
+      "gmid1": 15.0,
+      "L3": 7.8e-07,
+      "gmid3": 15.0,
+      "Itail": 0.000255
+    },
+    "provenance": {
+      "oracle_version": "analog_ai-0.1.0-proxy",
+      "timestamp": "2026-09-01T23:10:18"
+    },
+    "metrics": {
+      "DC_Gain_dB": 31.483794584187518,
+      "GBW": 184725798.467336,
+      "PM": 73.23018953063075,
+      "Power": 0.000306,
+      "SR": 255000000.00000003,
+      "Swing": 1.0199436875028753,
+      "ICMR_min": 0.515936232590738,
+      "min_sat_margin": 0.4072668798679454,
+      "Area": 3.763383348411981e-10
+    },
+    "devices": {
+      "M1": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.515936232590738,
+        "VDS": 0.5944860702158352,
+        "VDSAT": 0.09296336899045772,
+        "ID": 0.0001275,
+        "gm": 0.001909520922857116,
+        "gds": 2.6195879643487972e-05
+      },
+      "M2": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.4981248804378738,
+        "VDS": 0.4981248804378738,
+        "VDSAT": 0.08405548640588294,
+        "ID": 9.465432809304579e-05,
+        "gm": 0.0015197696043934988,
+        "gds": 2.249178187996078e-05
+      },
+      "M3": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5042567257877772,
+        "VDS": 0.5036388102220386,
+        "VDSAT": 0.0963719303540932,
+        "ID": 0.0001275,
+        "gm": 0.0019085215382061598,
+        "gds": 2.2039307597714796e-05
+      },
+      "M4": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5036388102220386,
+        "VDS": 0.6,
+        "VDSAT": 0.0960008260912418,
+        "ID": 0.00012833620512798418,
+        "gm": 0.00192125407917929,
+        "gds": 2.0316752057827373e-05
+      },
+      "M5": {
+        "W": 0.0,
+        "L": 0.0,
+        "VGS": NaN,
+        "VDS": 0.10187511956212619,
+        "VDSAT": 0.0,
+        "ID": NaN,
+        "gm": 0.0,
+        "gds": 0.0
+      }
+    },
+    "constraints": [
+      {
+        "name": "Gain_min",
+        "kind": "min",
+        "limit": 35.0,
+        "achieved": 31.483794584187518,
+        "residual": 0.3516205415812482,
+        "scale": 10.0,
+        "passed": false,
+        "detail": ""
+      },
+      {
+        "name": "GBW_min",
+        "kind": "min",
+        "limit": 50000000.0,
+        "achieved": 184725798.467336,
+        "residual": -2.6945159693467198,
+        "scale": 50000000.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Power_max",
+        "kind": "max",
+        "limit": 0.00015,
+        "achieved": 0.000306,
+        "residual": 1.0400000000000003,
+        "scale": 0.00015,
+        "passed": false,
+        "detail": ""
+      },
+      {
+        "name": "PM_min",
+        "kind": "min",
+        "limit": 45.0,
+        "achieved": 73.23018953063075,
+        "residual": -0.6273375451251278,
+        "scale": 45.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Sat_margin_min",
+        "kind": "min",
+        "limit": 0.05,
+        "achieved": 0.4072668798679454,
+        "residual": -7.145337597358908,
+        "scale": 0.05,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_nmos_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 8.081926380208045e-05,
+        "residual": -0.6767229447916782,
+        "scale": 0.00025,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_pmos_max",
+        "kind": "max",
+        "limit": 0.00075,
+        "achieved": 0.00016042325853202088,
+        "residual": -0.7861023219573054,
+        "scale": 0.00075,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "L_domain",
+        "kind": "domain",
+        "limit": [
+          6e-08,
+          1.5e-06
+        ],
+        "achieved": [
+          7.8e-07,
+          7.8e-07,
+          7.8e-07,
+          7.8e-07
+        ],
+        "residual": 0.0,
+        "scale": 1.0,
+        "passed": true,
+        "detail": ""
+      }
+    ],
+    "verdict": false,
+    "warnings": [
+      "pair current mismatch -26% vs assumed Itail/2"
+    ],
+    "dc_diagnostics": {
+      "Vtail": 0.10187511956212619,
+      "Vmirror": 0.6963611897779614,
+      "pair_current_mismatch": -0.2576131129957193,
+      "mirror_current_mismatch": 0.006558471592032694
+    }
+  },
+  "test3_heavy_load": {
+    "request": {
+      "Gain_min": 25.0,
+      "GBW_min": 50000000.0,
+      "CL_pF": 4.0,
+      "Power_max": 0.00035
+    },
+    "design": {
+      "L1": 7.8e-07,
+      "gmid1": 15.0,
+      "L3": 7.8e-07,
+      "gmid3": 15.0,
+      "Itail": 0.000255
+    },
+    "provenance": {
+      "oracle_version": "analog_ai-0.1.0-proxy",
+      "timestamp": "2026-09-01T23:10:19"
+    },
+    "metrics": {
+      "DC_Gain_dB": 31.48379458418619,
+      "GBW": 62044378.92946981,
+      "PM": 81.50828122205563,
+      "Power": 0.000306,
+      "SR": 63750000.00000001,
+      "Swing": 1.0199436875028753,
+      "ICMR_min": 0.515936232590738,
+      "min_sat_margin": 0.4072668798679454,
+      "Area": 3.763383348411981e-10
+    },
+    "devices": {
+      "M1": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.515936232590738,
+        "VDS": 0.5944860702158352,
+        "VDSAT": 0.09296336899045772,
+        "ID": 0.0001275,
+        "gm": 0.001909520922857116,
+        "gds": 2.6195879643487972e-05
+      },
+      "M2": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.4981248804378738,
+        "VDS": 0.4981248804378738,
+        "VDSAT": 0.08405548640588294,
+        "ID": 9.465432809304579e-05,
+        "gm": 0.0015197696043934988,
+        "gds": 2.249178187996078e-05
+      },
+      "M3": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5042567257877772,
+        "VDS": 0.5036388102220386,
+        "VDSAT": 0.0963719303540932,
+        "ID": 0.0001275,
+        "gm": 0.0019085215382061598,
+        "gds": 2.2039307597714796e-05
+      },
+      "M4": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5036388102220386,
+        "VDS": 0.6,
+        "VDSAT": 0.0960008260912418,
+        "ID": 0.00012833620512798418,
+        "gm": 0.00192125407917929,
+        "gds": 2.0316752057827373e-05
+      },
+      "M5": {
+        "W": 0.0,
+        "L": 0.0,
+        "VGS": NaN,
+        "VDS": 0.10187511956212619,
+        "VDSAT": 0.0,
+        "ID": NaN,
+        "gm": 0.0,
+        "gds": 0.0
+      }
+    },
+    "constraints": [
+      {
+        "name": "Gain_min",
+        "kind": "min",
+        "limit": 25.0,
+        "achieved": 31.48379458418619,
+        "residual": -0.6483794584186189,
+        "scale": 10.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "GBW_min",
+        "kind": "min",
+        "limit": 50000000.0,
+        "achieved": 62044378.92946981,
+        "residual": -0.2408875785893962,
+        "scale": 50000000.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Power_max",
+        "kind": "max",
+        "limit": 0.00035,
+        "achieved": 0.000306,
+        "residual": -0.12571428571428567,
+        "scale": 0.00035,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "PM_min",
+        "kind": "min",
+        "limit": 45.0,
+        "achieved": 81.50828122205563,
+        "residual": -0.8112951382679029,
+        "scale": 45.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Sat_margin_min",
+        "kind": "min",
+        "limit": 0.05,
+        "achieved": 0.4072668798679454,
+        "residual": -7.145337597358908,
+        "scale": 0.05,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_nmos_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 8.081926380208045e-05,
+        "residual": -0.6767229447916782,
+        "scale": 0.00025,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_pmos_max",
+        "kind": "max",
+        "limit": 0.00075,
+        "achieved": 0.00016042325853202088,
+        "residual": -0.7861023219573054,
+        "scale": 0.00075,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "L_domain",
+        "kind": "domain",
+        "limit": [
+          6e-08,
+          1.5e-06
+        ],
+        "achieved": [
+          7.8e-07,
+          7.8e-07,
+          7.8e-07,
+          7.8e-07
+        ],
+        "residual": 0.0,
+        "scale": 1.0,
+        "passed": true,
+        "detail": ""
+      }
+    ],
+    "verdict": true,
+    "warnings": [
+      "pair current mismatch -26% vs assumed Itail/2"
+    ],
+    "dc_diagnostics": {
+      "Vtail": 0.10187511956212619,
+      "Vmirror": 0.6963611897779614,
+      "pair_current_mismatch": -0.2576131129957193,
+      "mirror_current_mismatch": 0.006558471592032694
+    }
+  },
+  "test4_light_load": {
+    "request": {
+      "Gain_min": 20.0,
+      "GBW_min": 250000000.0,
+      "CL_pF": 0.2,
+      "Power_max": 0.0002
+    },
+    "design": {
+      "L1": 7.8e-07,
+      "gmid1": 15.0,
+      "L3": 7.8e-07,
+      "gmid3": 15.0,
+      "Itail": 0.000255
+    },
+    "provenance": {
+      "oracle_version": "analog_ai-0.1.0-proxy",
+      "timestamp": "2026-09-01T23:10:19"
+    },
+    "metrics": {
+      "DC_Gain_dB": 31.48379458418761,
+      "GBW": 511705080.9181688,
+      "PM": 78.79685179371948,
+      "Power": 0.000306,
+      "SR": 1275000000.0,
+      "Swing": 1.0199436875028753,
+      "ICMR_min": 0.515936232590738,
+      "min_sat_margin": 0.4072668798679454,
+      "Area": 3.763383348411981e-10
+    },
+    "devices": {
+      "M1": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.515936232590738,
+        "VDS": 0.5944860702158352,
+        "VDSAT": 0.09296336899045772,
+        "ID": 0.0001275,
+        "gm": 0.001909520922857116,
+        "gds": 2.6195879643487972e-05
+      },
+      "M2": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.4981248804378738,
+        "VDS": 0.4981248804378738,
+        "VDSAT": 0.08405548640588294,
+        "ID": 9.465432809304579e-05,
+        "gm": 0.0015197696043934988,
+        "gds": 2.249178187996078e-05
+      },
+      "M3": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5042567257877772,
+        "VDS": 0.5036388102220386,
+        "VDSAT": 0.0963719303540932,
+        "ID": 0.0001275,
+        "gm": 0.0019085215382061598,
+        "gds": 2.2039307597714796e-05
+      },
+      "M4": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5036388102220386,
+        "VDS": 0.6,
+        "VDSAT": 0.0960008260912418,
+        "ID": 0.00012833620512798418,
+        "gm": 0.00192125407917929,
+        "gds": 2.0316752057827373e-05
+      },
+      "M5": {
+        "W": 0.0,
+        "L": 0.0,
+        "VGS": NaN,
+        "VDS": 0.10187511956212619,
+        "VDSAT": 0.0,
+        "ID": NaN,
+        "gm": 0.0,
+        "gds": 0.0
+      }
+    },
+    "constraints": [
+      {
+        "name": "Gain_min",
+        "kind": "min",
+        "limit": 20.0,
+        "achieved": 31.48379458418761,
+        "residual": -1.148379458418761,
+        "scale": 10.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "GBW_min",
+        "kind": "min",
+        "limit": 250000000.0,
+        "achieved": 511705080.9181688,
+        "residual": -1.0468203236726752,
+        "scale": 250000000.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Power_max",
+        "kind": "max",
+        "limit": 0.0002,
+        "achieved": 0.000306,
+        "residual": 0.53,
+        "scale": 0.0002,
+        "passed": false,
+        "detail": ""
+      },
+      {
+        "name": "PM_min",
+        "kind": "min",
+        "limit": 45.0,
+        "achieved": 78.79685179371948,
+        "residual": -0.7510411509715441,
+        "scale": 45.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Sat_margin_min",
+        "kind": "min",
+        "limit": 0.05,
+        "achieved": 0.4072668798679454,
+        "residual": -7.145337597358908,
+        "scale": 0.05,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_nmos_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 8.081926380208045e-05,
+        "residual": -0.6767229447916782,
+        "scale": 0.00025,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_pmos_max",
+        "kind": "max",
+        "limit": 0.00075,
+        "achieved": 0.00016042325853202088,
+        "residual": -0.7861023219573054,
+        "scale": 0.00075,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "L_domain",
+        "kind": "domain",
+        "limit": [
+          6e-08,
+          1.5e-06
+        ],
+        "achieved": [
+          7.8e-07,
+          7.8e-07,
+          7.8e-07,
+          7.8e-07
+        ],
+        "residual": 0.0,
+        "scale": 1.0,
+        "passed": true,
+        "detail": ""
+      }
+    ],
+    "verdict": false,
+    "warnings": [
+      "pair current mismatch -26% vs assumed Itail/2"
+    ],
+    "dc_diagnostics": {
+      "Vtail": 0.10187511956212619,
+      "Vmirror": 0.6963611897779614,
+      "pair_current_mismatch": -0.2576131129957193,
+      "mirror_current_mismatch": 0.006558471592032694
+    }
+  },
+  "test5_balanced": {
+    "request": {
+      "Gain_min": 30.0,
+      "GBW_min": 100000000.0,
+      "CL_pF": 1.0,
+      "Power_max": 0.00025
+    },
+    "design": {
+      "L1": 7.8e-07,
+      "gmid1": 15.0,
+      "L3": 7.8e-07,
+      "gmid3": 15.0,
+      "Itail": 0.000255
+    },
+    "provenance": {
+      "oracle_version": "analog_ai-0.1.0-proxy",
+      "timestamp": "2026-09-01T23:10:19"
+    },
+    "metrics": {
+      "DC_Gain_dB": 31.483794584187518,
+      "GBW": 184725798.467336,
+      "PM": 73.23018953063075,
+      "Power": 0.000306,
+      "SR": 255000000.00000003,
+      "Swing": 1.0199436875028753,
+      "ICMR_min": 0.515936232590738,
+      "min_sat_margin": 0.4072668798679454,
+      "Area": 3.763383348411981e-10
+    },
+    "devices": {
+      "M1": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.515936232590738,
+        "VDS": 0.5944860702158352,
+        "VDSAT": 0.09296336899045772,
+        "ID": 0.0001275,
+        "gm": 0.001909520922857116,
+        "gds": 2.6195879643487972e-05
+      },
+      "M2": {
+        "W": 8.081926380208045e-05,
+        "L": 7.8e-07,
+        "VGS": 0.4981248804378738,
+        "VDS": 0.4981248804378738,
+        "VDSAT": 0.08405548640588294,
+        "ID": 9.465432809304579e-05,
+        "gm": 0.0015197696043934988,
+        "gds": 2.249178187996078e-05
+      },
+      "M3": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5042567257877772,
+        "VDS": 0.5036388102220386,
+        "VDSAT": 0.0963719303540932,
+        "ID": 0.0001275,
+        "gm": 0.0019085215382061598,
+        "gds": 2.2039307597714796e-05
+      },
+      "M4": {
+        "W": 0.00016042325853202088,
+        "L": 7.8e-07,
+        "VGS": 0.5036388102220386,
+        "VDS": 0.6,
+        "VDSAT": 0.0960008260912418,
+        "ID": 0.00012833620512798418,
+        "gm": 0.00192125407917929,
+        "gds": 2.0316752057827373e-05
+      },
+      "M5": {
+        "W": 0.0,
+        "L": 0.0,
+        "VGS": NaN,
+        "VDS": 0.10187511956212619,
+        "VDSAT": 0.0,
+        "ID": NaN,
+        "gm": 0.0,
+        "gds": 0.0
+      }
+    },
+    "constraints": [
+      {
+        "name": "Gain_min",
+        "kind": "min",
+        "limit": 30.0,
+        "achieved": 31.483794584187518,
+        "residual": -0.14837945841875175,
+        "scale": 10.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "GBW_min",
+        "kind": "min",
+        "limit": 100000000.0,
+        "achieved": 184725798.467336,
+        "residual": -0.84725798467336,
+        "scale": 100000000.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Power_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 0.000306,
+        "residual": 0.22400000000000003,
+        "scale": 0.00025,
+        "passed": false,
+        "detail": ""
+      },
+      {
+        "name": "PM_min",
+        "kind": "min",
+        "limit": 45.0,
+        "achieved": 73.23018953063075,
+        "residual": -0.6273375451251278,
+        "scale": 45.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Sat_margin_min",
+        "kind": "min",
+        "limit": 0.05,
+        "achieved": 0.4072668798679454,
+        "residual": -7.145337597358908,
+        "scale": 0.05,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_nmos_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 8.081926380208045e-05,
+        "residual": -0.6767229447916782,
+        "scale": 0.00025,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_pmos_max",
+        "kind": "max",
+        "limit": 0.00075,
+        "achieved": 0.00016042325853202088,
+        "residual": -0.7861023219573054,
+        "scale": 0.00075,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "L_domain",
+        "kind": "domain",
+        "limit": [
+          6e-08,
+          1.5e-06
+        ],
+        "achieved": [
+          7.8e-07,
+          7.8e-07,
+          7.8e-07,
+          7.8e-07
+        ],
+        "residual": 0.0,
+        "scale": 1.0,
+        "passed": true,
+        "detail": ""
+      }
+    ],
+    "verdict": false,
+    "warnings": [
+      "pair current mismatch -26% vs assumed Itail/2"
+    ],
+    "dc_diagnostics": {
+      "Vtail": 0.10187511956212619,
+      "Vmirror": 0.6963611897779614,
+      "pair_current_mismatch": -0.2576131129957193,
+      "mirror_current_mismatch": 0.006558471592032694
+    }
+  }
+}

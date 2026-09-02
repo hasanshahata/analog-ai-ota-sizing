@@ -1,0 +1,21 @@
+{
+  "id": "soonashahata/ota-rl-model-v7",
+  "id_no": 132377686,
+  "title": "OTA_RL_Model_V7",
+  "code_file": "ota-rl-model-v7.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [],
+  "dataset_sources": [
+    "soonashahata/analog-ai-code-v7"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:37c64f7dd9c54116ecd1bcc88817c5469b88387388fade02bfa8bf3fc647d461",
+  "machine_shape": "Gpu"
+}

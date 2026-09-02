@@ -1,0 +1,318 @@
+"""Canonical 5T-OTA evaluator.
+
+Fixes vs. the legacy V2-V12 `circuits/ota5t.py`:
+- **Matched devices stay matched.** M2 reuses M1's geometry (W/L) and M4 reuses
+  M3's; each is only re-characterized at its own VDS. The legacy code called
+  `size_device` independently per device, so the "matched" pair could end up
+  with different widths (visible in the archived netlists: M1=289.9um vs
+  M2=292.5um).
+- **Invalid operating points are rejected, not silently clamped.** Negative
+  VDS/Vtail used to be clamped to 10 mV and evaluated anyway; that now marks
+  the design invalid.
+- **Two operating-point modes** (see `evaluate`):
+  * `imposed` (legacy semantics, V9-V12 comparability) with explicit
+    self-consistency diagnostics (`pair/mirror_current_mismatch`);
+  * `solved` - the DC operating point is computed from the LUT device curves
+    by Newton iteration on the KCL residuals (`dc_solver.py`). Since the LUTs
+    are Spectre-characterized, this mode contains no simulator and no imposed
+    bias: it is device data + circuit laws, end to end.
+- Optional finite tail device (`tail_device="finite"`, 7-parameter vector).
+
+The AC stage is a small-signal MNA in both modes, with documented
+approximations (see `mna.py`): source-bulk capacitances neglected,
+first 0 dB crossing only.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+
+from ..config import VDD, VICM, VOCM
+from ..devices.device_model import DeviceModel
+from ..devices.lut import DomainError
+from .dc_solver import DCConvergenceError, solve_operating_point
+from .mna import MNAEngine
+
+
+class InvalidDesignError(ValueError):
+    """The design vector does not admit a consistent operating point."""
+
+
+class OTA5T:
+    def __init__(self, device_model: DeviceModel, vdd: float = VDD,
+                 tail_device: str = "ideal", op_point: str = "imposed"):
+        if tail_device not in ("ideal", "finite"):
+            raise ValueError("tail_device must be 'ideal' or 'finite'")
+        if op_point not in ("imposed", "solved"):
+            raise ValueError("op_point must be 'imposed' or 'solved'")
+        if tail_device == "finite" and op_point == "solved":
+            raise NotImplementedError("solved op point requires the ideal tail")
+        self.dm = device_model
+        self.mna = MNAEngine()
+        self.VDD = vdd
+        self.Vicm = vdd / 2.0
+        self.Vocm = vdd / 2.0
+        self.tail_device = tail_device
+        self.op_point = op_point
+
+    # ------------------------------------------------------------ public ---
+    def evaluate(self, x, CL: float, freqs=None, op_point: str | None = None) -> dict:
+        """Evaluate the OTA for a design vector.
+
+        x = [L1, gmid1, L3, gmid3, Itail]              (tail_device="ideal")
+        x = [L1, gmid1, L3, gmid3, L5, gmid5, Itail]   (tail_device="finite")
+
+        op_point:
+          "imposed" - legacy proxy semantics (Vicm=Vocm=VDD/2, Itail/2 per
+                      branch). Kept for V9-V12 comparability; reports the
+                      current-mismatch diagnostics of the imposed point.
+          "solved"  - the DC operating point is *solved* from the LUT device
+                      curves by driving KCL residuals to zero
+                      (circuit/dc_solver.py). The LUTs are Spectre-derived,
+                      so this chain contains no simulator and no imposed
+                      bias assumptions; the output node settles where the
+                      currents actually balance.
+
+        Raises InvalidDesignError / DomainError for designs with no consistent
+        operating point or out-of-LUT-domain parameters. Callers (RL env,
+        optimizer) treat those as invalid evaluations with a finite penalty.
+        """
+        op_point = op_point or self.op_point
+        if op_point == "solved":
+            return self._evaluate_solved(x, CL, freqs)
+        return self._evaluate_imposed(x, CL, freqs)
+
+    # ---------------------------------------------------- imposed (legacy) --
+    def _evaluate_imposed(self, x, CL: float, freqs) -> dict:
+        if self.tail_device == "finite":
+            if len(x) != 7:
+                raise InvalidDesignError(
+                    f"tail_device='finite' requires 7 parameters, got {len(x)}")
+            L1, gmid1, L3, gmid3, L5, gmid5, Itail = map(float, x)
+        else:
+            if len(x) != 5:
+                raise InvalidDesignError(
+                    f"tail_device='ideal' requires 5 parameters, got {len(x)}")
+            L1, gmid1, L3, gmid3, Itail = map(float, x)
+            L5 = gmid5 = None
+
+        if not (Itail > 0.0) or CL <= 0.0:
+            raise InvalidDesignError("Itail and CL must be positive")
+
+        warnings: list[str] = []
+
+        Id_branch = Itail / 2.0
+
+        # --- imposed operating point (documented approximation) -----------
+        # First pass: assume VDS1 = VDD/2 to find VGS1.
+        temp_m1 = self.dm.size_device("nch", gmid1, L1, Id_branch,
+                                      VDS=self.VDD / 2.0, VSB=0.0)
+        VGS1 = temp_m1["VGS"]
+        Vtail = self.Vicm - VGS1
+        if Vtail <= 0.0:
+            raise InvalidDesignError(f"Vtail = {Vtail*1e3:.1f} mV <= 0 "
+                                     "(VGS1 exceeds input common mode)")
+
+        # Tail device.
+        if self.tail_device == "finite":
+            VDS5 = Vtail
+            m5 = self.dm.size_device("nch", gmid5, L5, Itail, VDS=VDS5, VSB=0.0)
+        else:
+            m5 = ideal_tail(Vtail)
+
+        # PMOS mirror: M3 is diode-connected (VDS3 = VGS3).
+        temp_m3 = self.dm.size_device("pch", gmid3, L3, Id_branch, VDS=0.6, VSB=0.0)
+        VGS3 = temp_m3["VGS"]
+        Vmirror = self.VDD - VGS3
+        if Vmirror <= 0.0:
+            raise InvalidDesignError(f"Vmirror = {Vmirror*1e3:.1f} mV <= 0")
+        m3 = self.dm.size_device("pch", gmid3, L3, Id_branch,
+                                 VDS=VGS3, VSB=0.0)
+
+        # M4: SAME geometry and gate-source voltage as M3, own VDS.
+        VDS4 = self.VDD - self.Vocm
+        m4 = self.dm.params_at_geometry("pch", m3["W"], m3["L"],
+                                        VGS=VGS3, VDS=VDS4, VSB=0.0)
+
+        # Input pair: M1 sets the geometry; M2 reuses it at its own VDS.
+        VDS1 = Vmirror - Vtail
+        if VDS1 <= 0.0:
+            raise InvalidDesignError(f"VDS1 = {VDS1*1e3:.1f} mV <= 0")
+        VSB1 = Vtail
+        m1 = self.dm.size_device("nch", gmid1, L1, Id_branch,
+                                 VDS=VDS1, VSB=VSB1)
+
+        VDS2 = self.Vocm - Vtail
+        if VDS2 <= 0.0:
+            raise InvalidDesignError(f"VDS2 = {VDS2*1e3:.1f} mV <= 0")
+        m2 = self.dm.params_at_geometry("nch", m1["W"], m1["L"],
+                                        VGS=VGS1, VDS=VDS2, VSB=Vtail)
+
+        # --- DC / large-signal quantities ---------------------------------
+        Power = self.VDD * Itail
+        SR = Itail / CL
+
+        sat_m1 = m1["VDS"] - m1["VDSAT"]
+        sat_m2 = m2["VDS"] - m2["VDSAT"]
+        sat_m3 = m3["VDS"] - m3["VDSAT"]
+        sat_m4 = m4["VDS"] - m4["VDSAT"]
+        if self.tail_device == "finite":
+            sat_m5 = m5["VDS"] - m5["VDSAT"]
+        else:
+            sat_m5 = float("inf")  # ideal tail: no device to leave saturation
+        min_sat_margin = float(min(sat_m1, sat_m2, sat_m3, sat_m4, sat_m5))
+
+        Swing = self.VDD - m4["VDSAT"] - m2["VDSAT"] - (
+            m5["VDSAT"] if self.tail_device == "finite" else 0.0)
+        ICMR_min = m1["VGS"] + (m5["VDSAT"] if self.tail_device == "finite" else 0.0)
+
+        # DC self-consistency diagnostics for the imposed operating point.
+        pair_current_mismatch = (m2["id_at_bias"] - Id_branch) / Id_branch
+        mirror_current_mismatch = (m4["id_at_bias"] - Id_branch) / Id_branch
+        if abs(pair_current_mismatch) > 0.2:
+            warnings.append(
+                f"pair current mismatch {100*pair_current_mismatch:.0f}% vs assumed Itail/2")
+        if abs(mirror_current_mismatch) > 0.2:
+            warnings.append(
+                f"mirror current mismatch {100*mirror_current_mismatch:.0f}% vs assumed Itail/2")
+        if min_sat_margin < 0.0:
+            warnings.append("device out of saturation (negative saturation margin)")
+
+        # --- AC small-signal proxy ----------------------------------------
+        if freqs is None:
+            freqs = self.mna.default_freqs()
+        V_out = self.mna.solve_ac(m1, m2, m3, m4, m5, CL, freqs)
+        ac = self.mna.extract_metrics(freqs, V_out)
+        if not ac["gbw_valid"]:
+            warnings.append("no 0 dB crossing below sweep maximum")
+
+        if self.tail_device == "finite":
+            Area = 2 * m1["W"] * m1["L"] + 2 * m3["W"] * m3["L"] + m5["W"] * m5["L"]
+        else:
+            Area = 2 * m1["W"] * m1["L"] + 2 * m3["W"] * m3["L"]
+
+        return {
+            "Power": Power,
+            "SR": SR,
+            "Swing": Swing,
+            "ICMR_min": ICMR_min,
+            "min_sat_margin": min_sat_margin,
+            "sat_m1": sat_m1, "sat_m2": sat_m2, "sat_m3": sat_m3,
+            "sat_m4": sat_m4, "sat_m5": sat_m5,
+            "DC_Gain_dB": ac["DC_Gain_dB"],
+            "GBW": ac["GBW"],
+            "gbw_valid": ac["gbw_valid"],
+            "PM": ac["PM"],
+            "Area": Area,
+            "CL": CL,
+            "Vtail": Vtail,
+            "Vmirror": Vmirror,
+            "pair_current_mismatch": float(pair_current_mismatch),
+            "mirror_current_mismatch": float(mirror_current_mismatch),
+            "warnings": warnings,
+            "devices": {"M1": m1, "M2": m2, "M3": m3, "M4": m4, "M5": m5},
+        }
+
+    # ----------------------------------------------------- solved (KCL) -----
+    def _evaluate_solved(self, x, CL: float, freqs) -> dict:
+        if len(x) != 5:
+            raise InvalidDesignError(
+                f"op_point='solved' requires 5 parameters, got {len(x)}")
+        L1, gmid1, L3, gmid3, Itail = map(float, x)
+        if not (Itail > 0.0) or CL <= 0.0:
+            raise InvalidDesignError("Itail and CL must be positive")
+
+        try:
+            op = solve_operating_point(self.dm, L1, gmid1, L3, gmid3, Itail,
+                                       vdd=self.VDD, vicm=self.Vicm)
+        except DCConvergenceError as exc:
+            raise InvalidDesignError(str(exc)) from exc
+
+        warnings: list[str] = []
+        if op["domain_clamps"]:
+            warnings.append("operating point reached a LUT axis limit: "
+                            + ", ".join(op["domain_clamps"]))
+
+        # Device dicts for the small-signal solve, from the SOLVED bias.
+        def dev(p, name):
+            d = dict(p)
+            d.update(type="nch" if name in ("M1", "M2") else "pch",
+                     id_at_bias=p["ID"], VDSAT=p["VDSAT"])
+            d.setdefault("gmbs", 0.2 * p["gm"])
+            d.setdefault("cgs", 0.0)
+            d.setdefault("cgd", 0.0)
+            d.setdefault("cdd", 0.0)
+            return d
+
+        m1, m2 = dev(op["M1"], "M1"), dev(op["M2"], "M2")
+        m3, m4 = dev(op["M3"], "M3"), dev(op["M4"], "M4")
+        m5 = ideal_tail(op["Vtail"])
+
+        vt, vm, vo = op["Vtail"], op["Vmirror"], op["Vout"]
+
+        # Large-signal quantities at the solved point.
+        Power = self.VDD * Itail
+        SR = Itail / CL
+        sat = {n: d["VDS"] - d["VDSAT"] for n, d in
+               (("M1", m1), ("M2", m2), ("M3", m3), ("M4", m4))}
+        min_sat_margin = float(min(sat.values()))
+        Swing = self.VDD - m4["VDSAT"] - m2["VDSAT"]
+        ICMR_min = m1["VGS"]
+
+        gmid_dev = max(abs(op[n]["gmid_error"]) for n in ("M1", "M3"))
+        if gmid_dev > 2.0:
+            warnings.append(
+                f"achieved gm/Id deviates up to {gmid_dev:.1f} from target "
+                "(op-point feedback through channel-length modulation)")
+        if min_sat_margin < 0.0:
+            worst = min(sat, key=sat.get)
+            warnings.append(f"{worst} out of saturation at the solved point")
+
+        # AC small-signal at the solved bias.
+        if freqs is None:
+            freqs = self.mna.default_freqs()
+        V_out = self.mna.solve_ac(m1, m2, m3, m4, m5, CL, freqs)
+        ac = self.mna.extract_metrics(freqs, V_out)
+        if not ac["gbw_valid"]:
+            warnings.append("no 0 dB crossing below sweep maximum")
+
+        Area = 2 * m1["W"] * m1["L"] + 2 * m3["W"] * m3["L"]
+
+        return {
+            "Power": Power,
+            "SR": SR,
+            "Swing": Swing,
+            "ICMR_min": ICMR_min,
+            "min_sat_margin": min_sat_margin,
+            "sat_m1": sat["M1"], "sat_m2": sat["M2"],
+            "sat_m3": sat["M3"], "sat_m4": sat["M4"], "sat_m5": float("inf"),
+            "DC_Gain_dB": ac["DC_Gain_dB"],
+            "GBW": ac["GBW"],
+            "gbw_valid": ac["gbw_valid"],
+            "PM": ac["PM"],
+            "Area": Area,
+            "CL": CL,
+            "Vtail": vt,
+            "Vmirror": vm,
+            "Vout": vo,
+            "pair_current_mismatch": float((m2["ID"] - Itail / 2.0) / (Itail / 2.0)),
+            "mirror_current_mismatch": float((m4["ID"] - Itail / 2.0) / (Itail / 2.0)),
+            "kcl_residuals": op["kcl_residuals"],
+            "gmid_solved": {n: {"target": op[n]["gmid_target"],
+                                "achieved": op[n]["gmid_achieved"]}
+                            for n in ("M1", "M3")},
+            "warnings": warnings,
+            "devices": {"M1": m1, "M2": m2, "M3": m3, "M4": m4, "M5": m5},
+        }
+
+
+def ideal_tail(VDS: float) -> dict:
+    """Ideal tail current source: infinite output resistance, no parasitics."""
+    return {
+        "type": "ideal_tail", "W": 0.0, "L": 0.0,
+        "VGS": float("nan"), "VDS": VDS, "VSB": 0.0,
+        "VDSAT": 0.0, "VTH": float("nan"), "ID": float("nan"),
+        "gm": 0.0, "gds": 0.0, "gmbs": 0.0,
+        "cgg": 0.0, "cgs": 0.0, "cgd": 0.0, "cdd": 0.0,
+        "id_at_bias": 0.0,
+    }

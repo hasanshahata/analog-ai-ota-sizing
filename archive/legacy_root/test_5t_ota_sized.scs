@@ -1,0 +1,27 @@
+// 5T OTA Sized by Analog AI Optimizer
+// Technology: TSMC 65nm
+
+simulator lang=spectre
+global 0 vdd!
+
+// Subcircuit Definition
+subckt OTA5T (inp inm vout)
+M1 (vmirror inp vtail 0) nch w=289.9111u l=0.5719u
+M2 (vout inm vtail 0) nch w=292.5302u l=0.5719u
+M3 (vmirror vmirror vdd! vdd!) pch w=27.2793u l=0.3250u
+M4 (vout vmirror vdd! vdd!) pch w=27.0064u l=0.3250u
+M5 (vtail vbiastail 0 0) nch w=47.5189u l=0.4829u
+Vbias (vbiastail 0) vsource dc=0.4974
+ends OTA5T
+
+// Testbench
+Vdd (vdd! 0) vsource dc=1.2
+Vcm_in (vicm 0) vsource dc=0.6
+Vinp (inp vicm) vsource dc=0 mag=0.5
+Vinm (inm vicm) vsource dc=0 mag=-0.5 phase=180
+X1 (inp inm vout) OTA5T
+CL (vout 0) capacitor c=1p
+
+// Analyses
+dcOp dc
+acSweep ac start=1 stop=10G dec=20

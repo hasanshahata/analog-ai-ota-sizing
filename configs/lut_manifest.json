@@ -1,0 +1,12 @@
+{
+  "nch": {
+    "bytes": 2763639830,
+    "file": "TSMC_fast_65nm_nch.pkl",
+    "sha256": "20c15dd9215789d94a438ffd14229f8ab09459474bb965371077a5435ed87e01"
+  },
+  "pch": {
+    "bytes": 2763639830,
+    "file": "TSMC_fast_65nm_pch.pkl",
+    "sha256": "ea80ded3113fb3b701b5bbca9fc4f854c1b1742bb716e668dc95fe92ac169a6c"
+  }
+}

@@ -1,0 +1,26 @@
+# --- Large binary data (kept out of git; backed up separately) ---
+*.pkl
+*.pkl.gz
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Experiment outputs (regenerable / voluminous) ---
+runs/
+*.tfevents.*
+*.log
+
+# --- OS / editor ---
+Thumbs.db
+.DS_Store
+
+# --- Dataset shards (append logs; consolidated files are committed) ---
+data/*/*_shards/
+data/*/state.json

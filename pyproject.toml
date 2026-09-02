@@ -1,0 +1,19 @@
+[project]
+name = "analog-ai-optimization"
+version = "0.1.0"
+description = "Goal-conditioned OTA sizing: gm/Id LUT proxy, hard-constraint verifier, RL environment, and baselines"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "gymnasium>=0.29",
+    "pyarrow>=14",
+]
+
+[project.optional-dependencies]
+rl = ["stable-baselines3==2.9.0", "torch>=2.0"]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

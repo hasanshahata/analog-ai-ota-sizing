@@ -1,0 +1,13 @@
+{
+  "id": "soonashahata/ota-rl-model-v3",
+  "title": "OTA_RL_Model_V3",
+  "code_file": "Kaggle_Analog_RL_Trainer.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": ["soonashahata/analog-ai-code-v3"],
+  "competition_sources": [],
+  "kernel_sources": []
+}
