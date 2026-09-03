@@ -196,7 +196,8 @@ def risk_metrics(risk_model, x_test: np.ndarray, y_test: np.ndarray,
     if len(y_test) == 0:
         return {"n": 0}
     with torch.no_grad():
-        logits = risk_model(torch.as_tensor(x_test, device=device))
+        logits = risk_model(torch.as_tensor(x_test, dtype=torch.float32,
+                                            device=device))
     pred = (logits.cpu().numpy() > 0.0).astype(float)
     tp = float(((pred == 0) & (y_test == 0)).sum())
     fp = float(((pred == 0) & (y_test == 1)).sum())
