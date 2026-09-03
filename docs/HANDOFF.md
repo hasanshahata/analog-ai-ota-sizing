@@ -28,19 +28,18 @@ oracle → dataset → supervised model → verifier.
 | Differential-evolution baseline, imposed | `baseline_de` | **5/5 PASS** | `baseline_de_summary.md` |
 | DE baseline, solved op point | `baseline_de_solved` | **5/5 PASS** (completed 2026-09-02 on the new PC) | `baseline_de_solved_summary.md` |
 
-Tests: **42 unit tests + 3 integration tests pass** (integration auto-skips
+Tests: **60 unit tests + 3 integration tests pass** (integration auto-skips
 without the LUTs). One caveat: running the integration tests *while* a
-baseline process holds both LUTs in memory can error on this 13.9 GB machine
+baseline process holds both LUTs in memory can error on a ~14 GB machine
 (memory contention) — run them when nothing else has the LUTs loaded.
 
 ## 3. Setting up a new PC
 
 Requirements: Python 3.11 (3.12+ works for everything except loading the
 Kaggle-era model zips), ~8 GB free disk beyond the repo, ≥ 8 GB RAM for the
-LUTs. NOTE (2026-09-02, new PC): the project is currently **unversioned** —
-the `.git` folder did not survive the move, so all history lives only on the
-old machine (there it was branch `main`). Re-init or copy `.git` over before
-making changes you want tracked. Also beware: a stray git repo was found at
+LUTs. NOTE (2026-09-03): version control is restored as a **fresh repo**
+(branch `main`, tag `oracle-v0.1.0+dataset-pilot`) — the original history
+still lives only on the old machine. Also beware: a stray git repo exists at
 the user's home directory root — always run git from inside the project.
 
 ```bash
@@ -110,11 +109,12 @@ Run everything from the repo root so `tech_luts/` resolves.
 | Path | Contents |
 |---|---|
 | `analog_ai/` | canonical package: `devices/` (LUT+domain checks, matched sizing), `circuit/` (MNA, OTA proxy, **dc_solver.py** KCL solve), `evaluation/` (hard constraint verifier, record evaluator), `envs/` (V9–V12-compatible gym env), `utils/netlist.py`, `config.py` (single design contract) |
-| `scripts/` | `evaluate_tests.py`, `optimize_baseline.py` (both resumable) |
+| `scripts/` | `evaluate_tests.py`, `optimize_baseline.py`, `build_dataset.py`, `train_surrogate.py`, `evaluate_surrogate.py` (all resumable) |
 | `tests/` | unit tests on a synthetic square-law LUT + real-LUT integration tests |
 | `configs/test_cases/` | the five frozen regression JSONs |
-| `models/` | PPO agents v1–v12, `checkpoints/`, `training_telemetry/` |
-| `evaluation_results/` | historical v2–v12 tables + `canonical/` (current evidence) |
+| `models/` | PPO agents v1–v12, `checkpoints/`, `training_telemetry/`, `surrogate/poc/` (best-of-K checkpoints + champion) |
+| `evaluation_results/` | historical v2–v12 tables + `canonical/` (current evidence, incl. `surrogate_poc_summary.md`) |
+| `data/pilot/` | Phase 3 dataset: 24.6k design rows, 33.2k verified request rows, splits v2, manifest (consolidated parquet committed; shards are local) |
 | `docs/` | `codex_plan.md` (the plan), `CORRECTION_LOG.md` (done so far), `PROJECT_REVIEW.md` (audit), `DESIGN_CONTRACT.md` (frozen contract), `context.md` (historical diary — start at its STATUS banner), `HANDOFF.md` (this file) |
 | `archive/` | frozen V2–V12 trainer trees, legacy root package, web app, Kaggle notebooks — **never import from here** |
 
@@ -130,7 +130,5 @@ Run everything from the repo root so `tech_luts/` resolves.
 4. **Phase 5 continuation** — close 85.7% -> 95%: wider DE-fallback coverage,
    parallelized builder + scaled dataset, MDN if heads under-cover.
 5. **Phase 6** — held-out evaluation at scale (thousands of targets, seeds),
-   goal-sensitivity test, report raw vs post-verification pass rates.
-4. **Phase 6** — held-out evaluation at scale (thousands of targets, seeds),
    goal-sensitivity test, report raw vs post-verification pass rates.
 6. Optional: LUT checksums now exist in `configs/lut_manifest.json`; remaining: finite-M5 support in solved mode (currently imposed-only); parallelized dataset builder for scaled runs.
