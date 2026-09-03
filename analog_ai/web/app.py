@@ -38,6 +38,15 @@ from .schemas import (STATUS_SUCCESS, SizeRequest, build_error_response,
 log = logging.getLogger("analog_ai.web")
 
 _STATIC_DIR = Path(__file__).resolve().parents[2] / "web_app" / "static"
+
+
+class _NoCacheStaticFiles(StaticFiles):
+    """Always revalidate static assets so UI updates are never stale."""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
 _NETLIST_TEMPLATE = (Path(__file__).resolve().parents[2]
                      / "5T_OTA_netlist_cadence.txt")
 
@@ -139,6 +148,6 @@ def create_app(runtime: SizingRuntime | None = None,
         return PlainTextResponse(text)
 
     if _STATIC_DIR.exists():
-        app.mount("/", StaticFiles(directory=str(_STATIC_DIR), html=True),
-                  name="static")
+        app.mount("/", _NoCacheStaticFiles(directory=str(_STATIC_DIR),
+                                           html=True), name="static")
     return app

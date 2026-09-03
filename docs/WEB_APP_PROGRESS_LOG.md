@@ -173,3 +173,18 @@ failure, correction, and decision.
   export 200 with correct parameters line + analyses. 34 web tests green
   (2 new netlist tests). Note: Tailwind CDN + Google Fonts require
   internet; offline the layout degrades (API unaffected).
+
+## 2026-09-04 — UI fix: removed circuit card + disclaimer; stale-cache fix
+
+- Removed (user request): the "Differential 5-Transistor Cell" card and the
+  visible scope-disclaimer line. The scope warning remains in every API
+  response (scope_warning field) but is no longer shown in the browser.
+- Bug "Size button shows nothing": root cause was a stale browser-cached
+  app.js from the previous layout — its handlers reference element ids that
+  no longer exist, so the submit handler died silently on null elements.
+  Fixes: (1) static files now served with Cache-Control: no-cache (ETag
+  revalidation, never stale); (2) explicit ?v=2 on style.css/app.js;
+  (3) app.js renders the idle banner on load so the page always shows a
+  status banner, giving immediate feedback when the engine runs.
+- Verified: no-cache header live, both elements gone from the served page,
+  JS syntax OK, 34 web tests green.

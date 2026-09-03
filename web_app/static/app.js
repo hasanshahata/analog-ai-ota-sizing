@@ -331,4 +331,5 @@ $("size-form").addEventListener("submit", async (ev) => {
 });
 
 updateOvershoot();
+renderIdle();
 pollHealth();
