@@ -207,3 +207,74 @@ def risk_metrics(risk_model, x_test: np.ndarray, y_test: np.ndarray,
     return {"n": int(len(y_test)), "neg_precision": precision,
             "neg_recall": recall,
             "accuracy": float((pred == y_test).mean())}
+
+
+def eval_request_staged(ota, model, specs: dict, feat_lo, feat_hi,
+                        device: str = "cpu", local: bool = True,
+                        global_fallback: bool = True,
+                        trust_fracs=(0.02, 0.05, 0.10),
+                        n_heads_local: int = 2, global_maxiter: int = 20,
+                        seed: int = 0) -> dict:
+    """Full deployment ladder for one request (gate G6 statuses):
+
+    verified -> verified_best_of_k -> local_refinement_verified ->
+    global_fallback_verified -> unresolved. Each stage's oracle cost and
+    provenance are recorded; the verifier alone decides every pass.
+    """
+    designs = propose(model, specs, feat_lo, feat_hi, device)
+    rows = [_verify(ota, d, specs) for d in designs]
+
+    def _viol(r):
+        v = r.get("worst_violation")
+        return np.inf if v is None else float(v)
+
+    raw_pass = bool(rows[0]["verdict"])
+    order = sorted(range(len(rows)),
+                   key=lambda i: (not rows[i]["verdict"], _viol(rows[i])))
+    bok_pass = bool(rows[order[0]]["verdict"])
+    record = {
+        "request": specs,
+        "status": ("verified" if raw_pass else
+                   "verified_best_of_k" if bok_pass else "unresolved"),
+        "head": int(order[0]),
+        "heads_pass": [bool(r["verdict"]) for r in rows],
+        "design": designs[order[0]].tolist(),
+        "worst_violation": _viol(rows[order[0]])
+        if np.isfinite(_viol(rows[order[0]])) else None,
+        "n_oracle_evals": len(rows),
+        "stages": [],
+    }
+    if record["status"] != "unresolved":
+        return record
+
+    if local:
+        from ..optimization.local_refine import local_refine
+        candidates = [designs[i] for i in order]
+        lr = local_refine(ota, specs, candidates, trust_fracs=trust_fracs,
+                          n_heads=n_heads_local, verifier=_verify)
+        record["n_oracle_evals"] += lr["n_evals"]
+        record["stages"].append({
+            "stage": "local_refinement", "status": lr["status"],
+            "head": lr["head"], "trust_frac": lr["trust_frac"],
+            "n_evals": lr["n_evals"], "runtime_s": lr["runtime_s"],
+            "stages": lr["stages"]})
+        if lr["status"] == "local_refinement_verified":
+            record["status"] = "local_refinement_verified"
+            record["design"] = lr["design"]
+            record["worst_violation"] = 0.0
+            record["refined_head"] = lr["head"]
+            return record
+
+    if global_fallback:
+        ref = refine(ota, specs, seed=seed, maxiter=global_maxiter)
+        record["n_oracle_evals"] += ref["n_evals"]
+        record["stages"].append({
+            "stage": "global_fallback", "passed": ref["passed"],
+            "n_evals": ref["n_evals"], "runtime_s": ref["runtime_s"],
+            "objective": ref["objective"]})
+        if ref["passed"]:
+            record["status"] = "global_fallback_verified"
+            record["design"] = [ref["design"][n] for n in
+                                ("L1", "gmid1", "L3", "gmid3", "Itail")]
+            record["worst_violation"] = 0.0
+    return record
