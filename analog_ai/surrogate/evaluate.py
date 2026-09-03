@@ -238,6 +238,7 @@ def eval_request_staged(ota, model, specs: dict, feat_lo, feat_hi,
                    "verified_best_of_k" if bok_pass else "unresolved"),
         "head": int(order[0]),
         "heads_pass": [bool(r["verdict"]) for r in rows],
+        "heads_invalid": [not bool(r["valid"]) for r in rows],
         "design": designs[order[0]].tolist(),
         "worst_violation": _viol(rows[order[0]])
         if np.isfinite(_viol(rows[order[0]])) else None,

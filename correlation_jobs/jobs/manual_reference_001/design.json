@@ -1,0 +1,15 @@
+{
+  "case_id": "manual_reference_001",
+  "topology": "5t_ota_ideal_tail",
+  "corner": "tt_lib",
+  "vdd_V": 1.2,
+  "vicm_V": 0.6,
+  "cl_F": 1e-12,
+  "geometry": {
+    "L1": 2.4200854275916126e-07,
+    "W1": 0.00010734,
+    "L3": 5.006991076947239e-07,
+    "W3": 7.27366e-06,
+    "Itail": 5.668548180753582e-05
+  }
+}

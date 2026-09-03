@@ -279,11 +279,42 @@ proposals using the oracle; on out-of-proxy requests the risk head (Phase E
 work) remains the router. The ideal-tail and proxy-vs-Spectre caveats from
 the previous entry are unchanged.
 
+## 2026-09-03 — Phase E: risk-head boundary evidence complete
+
+The full resumable certification run completed all 120 boundary requests and
+wrote `risk_evidence_records.json`, `risk_evidence_report.json`, and
+`risk_evidence_report.md` under `evaluation_results/canonical/`.
+
+- Synthetic-OOD cohort: 2,211 cases, reported separately from feasibility
+  evidence; 99.95% flagged at the 0.5 threshold.
+- Certified-boundary cohort: 103 cases with usable evidence classes,
+  comprising 78 verified-feasible and 25 unresolved-after-budget cases.
+- Awaiting certification: 17 cases, excluded from certified metrics because
+  the declared cap of 25 global-DE failures was reached.
+- Boundary risk AUC: 0.9987.
+- At risk threshold 0.5: flagged fraction 18.45%, precision 1.00, recall
+  0.76.
+- Flagged requests had 0% pipeline pass rate; unflagged requests had 92.86%
+  pipeline pass rate.
+
+Interpretation is deliberately limited: `unresolved_after_budget` means the
+pipeline and declared global-DE budget did not find a solution; it is not a
+proof of physical infeasibility. Phase E's exit gate is met because synthetic
+OOD and optimizer-tested boundary evidence are separated and calibration,
+threshold, coverage, and difficulty evidence are reported explicitly.
+
 ## Still open (in plan order)
 
-1. **G1** — SPICE correlation of the proxy, including SR/swing validation
-   (needs simulator + PDK access).
-2. **Phase 5** — supervised amortized inverse design (best-of-K / MDN)
-   trained on `data/pilot` (extend the dataset first if it proves too small;
-   parallelize the builder for scaled-up runs).
-3. **Phase 6** — held-out/boundary/OOD evaluation at scale, seeds × 5–10.
+1. **Gate G / Spectre correlation — IN PROGRESS**: golden Cadence netlist
+   audited, blind job pipeline operational end-to-end, manual reference case
+   passes all tolerances (see `docs/CADENCE_CORRELATION_LOG.md`); Step 4
+   25-case stratified campaign is built but not yet staged/run. SR/swing
+   validation still open after the nominal campaign.
+2. **Finite-M5 solved mode** (Phase F) — prerequisite for any dataset
+   scale-up or production claim.
+3. **Phase E follow-up** — 17 boundary requests awaiting certification
+   (raise the global-DE cap and re-run the same command).
+4. **Phase D (optional)** — K/diversity ablations; heads show no collapse,
+   low expected gain.
+5. **Phase H** — 7-parameter dataset retrain, only after finite-M5 and the
+   correlation gate land.

@@ -103,6 +103,21 @@ show no collapse — low expected gain), then Phase F finite-M5 solved mode,
 Phase G Spectre correlation, and only then Phase H dataset retraining.
 The dataset stays frozen until the M5/correlation decisions are made.
 
+**Update 2026-09-03 (later): Phase E done; Cadence correlation started.**
+Phase E (risk-head evidence) is complete: 120 independently sampled boundary
+requests, 103 certified (78 verified-feasible / 25 unresolved-after-budget,
+17 awaiting a raised global-DE cap). Boundary-cohort risk AUC 0.9987;
+precision 1.00, recall 0.76 at threshold 0.5; flagged requests have 0%
+pipeline pass vs 92.9% unflagged — the risk head transfers beyond synthetic
+negatives. Report: `risk_evidence_report.md`. Separately, a Cadence Spectre
+correlation workstream now exists (`analog_ai/correlation/`,
+`docs/CADENCE_CORRELATION_LOG.md`): golden netlist audited, blind job
+pipeline validated end-to-end on a Debian VM (Spectre 14.1/IC617), and the
+manual reference case passes all frozen tolerances (gain +0.21 dB, GBW
+-3.7%, PM -2.53 deg, power -0.00005%). Step 4 (25-case stratified campaign)
+is built and tested but not yet staged/run — nothing is blocking it now
+that the LUT engine is free.
+
 ## 5. Command reference
 
 ```bash

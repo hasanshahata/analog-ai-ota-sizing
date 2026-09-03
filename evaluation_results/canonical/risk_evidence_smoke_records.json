@@ -1,0 +1,62 @@
+{
+  "independent_corners-0000": {
+    "cohort": "independent_corners",
+    "request": {
+      "Gain_min": 26.377895924096844,
+      "GBW_min": 217734242.20550358,
+      "CL_pF": 3.461676507571033,
+      "Power_max": 6.692096937819527e-05
+    },
+    "failure_probability": 0.9999999999890179,
+    "pipeline_status": "unresolved",
+    "heads_invalid": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "design": [
+      1.1842542171478271e-07,
+      24.991787672042847,
+      6.520275861024857e-08,
+      10.418387055397034,
+      7.219307795166969e-05
+    ],
+    "worst_violation": 0.8292930077310555,
+    "n_oracle_evals": 1965,
+    "stage_runtime_s": 151.4,
+    "evidence_class": null
+  },
+  "boundary_straddle-0000": {
+    "cohort": "boundary_straddle",
+    "request": {
+      "Gain_min": 26.160911643720986,
+      "GBW_min": 29337096.66152652,
+      "Power_max": 0.00013718792976678785,
+      "CL_pF": 5.0,
+      "source_design_id": "d00002948",
+      "exceeded_dim": 2
+    },
+    "failure_probability": 0.0,
+    "pipeline_status": "verified",
+    "heads_invalid": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "design": [
+      2.6166746377944945e-07,
+      19.358856678009033,
+      4.4342916011810304e-07,
+      20.487442016601562,
+      0.00010637524902820586
+    ],
+    "worst_violation": 0.0,
+    "n_oracle_evals": 5,
+    "stage_runtime_s": 0,
+    "evidence_class": "verified_feasible"
+  }
+}
