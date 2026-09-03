@@ -13,53 +13,105 @@
             sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
           },
+          colors: {
+            slate: { 850: '#152033', 950: '#090e17' },
+            cyan: { 450: '#00b4d8', 550: '#0096c7' },
+            emerald: { 450: '#10b981', 550: '#059669' },
+          }
         }
       }
     }
 </script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="style.css?v=2" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="style.css?v=3" rel="stylesheet"/>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen antialiased flex flex-col selection:bg-cyan-100 selection:text-cyan-900">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen antialiased flex flex-col selection:bg-cyan-100 selection:text-cyan-900 relative overflow-x-hidden">
+<!-- Circuit Trace Decorative Watermark (Silicon PCB accents) -->
+<div class="pointer-events-none fixed top-0 right-0 w-[520px] h-[340px] opacity-25 z-0 overflow-hidden">
+  <svg class="w-full h-full text-slate-400" fill="none" stroke="currentColor" stroke-width="1.2" viewbox="0 0 520 340">
+    <path class="circuit-pulse-line" d="M120 0 v60 h100 l40 40 h120 v80 h90 l50 50"></path>
+    <path d="M260 0 v40 h80 l30 30 h150"></path>
+    <path class="circuit-pulse-line" d="M40 0 v90 l30 30 h130 l40 40 v80 h160 l40 40 h80"></path>
+    <circle class="chip-glow-pulse" cx="220" cy="60" fill="#0284c7" r="3"></circle>
+    <circle class="chip-glow-pulse-delayed" cx="380" cy="180" fill="#06b6d4" r="3"></circle>
+    <circle class="chip-glow-pulse" cx="240" cy="240" fill="#38bdf8" r="3.5"></circle>
+    <circle cx="470" cy="250" fill="#0284c7" r="2.5"></circle>
+    <rect fill="none" height="50" rx="4" stroke="currentColor" stroke-dasharray="2,3" stroke-width="1" width="70" x="360" y="30"></rect>
+    <line x1="360" x2="352" y1="40" y2="40"></line>
+    <line x1="360" x2="352" y1="50" y2="50"></line>
+    <line x1="360" x2="352" y1="60" y2="60"></line>
+    <line x1="430" x2="438" y1="40" y2="40"></line>
+    <line x1="430" x2="438" y1="50" y2="50"></line>
+    <line x1="430" x2="438" y1="60" y2="60"></line>
+  </svg>
+</div>
+
 <!-- TopNavigation -->
-<header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+<header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-xs">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-cyan-400 font-mono font-bold text-sm shadow-sm ring-1 ring-slate-800">OTA</div>
-        <div>
-          <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span>Analog IC Studio</span>
-            <span class="text-slate-300">/</span>
-            <span class="text-slate-600 font-semibold">Sizing Engine</span>
+    <div class="flex items-center justify-between h-20">
+      <div class="flex items-center gap-4">
+        <div class="relative group">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 flex items-center justify-center text-cyan-400 font-mono font-bold text-sm shadow-md ring-1 ring-slate-800/80 transition-transform duration-200 group-hover:scale-105">
+            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+              <rect height="14" rx="2.5" stroke="currentColor" width="14" x="5" y="5"></rect>
+              <path d="M9 9h6v6H9z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2"></path>
+              <path d="M2 9h3M2 12h3M2 15h3M19 9h3M19 12h3M19 15h3M9 2v3M12 2v3M15 2v3M9 19v3M12 19v3M15 19v3" stroke-linecap="round"></path>
+            </svg>
+            <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-60"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500 border border-white"></span>
+            </span>
           </div>
-          <div class="flex items-center gap-2.5 mt-0.5">
-            <h1 class="text-base font-bold text-slate-900 tracking-tight">OTA Sizing Explorer</h1>
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 text-slate-700 border border-slate-200">TSMC 65nm · TT</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 text-xs font-mono font-medium text-slate-500 tracking-wide">
+            <span class="inline-flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              Analog IC Studio
+            </span>
+            <span class="text-slate-300">/</span>
+            <span class="text-slate-600 font-semibold flex items-center gap-1">
+              <svg class="w-3 h-3 text-cyan-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l3 3"></path></svg>
+              Sizing Engine
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 mt-1">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-slate-950 via-slate-900 to-slate-700">OTA Sizing Explorer</span>
+            </h1>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-mono font-semibold bg-gradient-to-r from-cyan-50 to-slate-100 text-cyan-900 border border-cyan-200/80 shadow-2xs">
+              <svg class="w-3 h-3 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><circle cx="12" cy="12" r="3"></circle></svg>
+              TSMC 65nm · TT Corner
+            </span>
           </div>
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <div id="engine-pill" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-medium shadow-2xs">
-          <span class="relative flex h-2 w-2">
-            <span id="engine-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span id="engine-dot-core" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        <div id="engine-pill" class="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono font-medium shadow-2xs">
+          <span class="relative flex h-2.5 w-2.5">
+            <span id="engine-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span id="engine-dot-core" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
           </span>
-          <span id="engine-text">Engine Loading</span>
+          <svg id="engine-wave" class="hidden w-4 h-3.5 stroke-current chip-glow-pulse" fill="none" stroke-width="2" viewbox="0 0 20 14">
+            <path d="M1 7h3l2.5-5 3.5 10 3-7 2 2h4" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span id="engine-text" class="font-semibold tracking-tight">Engine Loading</span>
         </div>
-        <div class="h-5 w-px bg-slate-200 hidden sm:block"></div>
+        <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
         <div class="flex items-center gap-2">
-          <button id="reset-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors shadow-2xs" type="button">
+          <button id="reset-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all shadow-2xs cursor-pointer active:scale-95" type="button">
             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
               <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
             <span>Reset Defaults</span>
           </button>
-          <button id="export-btn" disabled class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs disabled:opacity-40 disabled:cursor-not-allowed" type="button">
+          <button id="export-btn" disabled class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 transition-all shadow-xs cursor-pointer active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed" type="button">
             <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-              <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M6 6h12v12H6z" stroke-linecap="round"></path>
+              <circle cx="12" cy="12" fill="currentColor" r="1.5"></circle>
             </svg>
             <span>Export Spectre .scs</span>
           </button>
@@ -69,20 +121,32 @@
   </div>
 </header>
 
-<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
   <!-- Workspace Metadata Subheader -->
-  <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs">
+  <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs relative overflow-hidden">
+    <div class="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent"></div>
     <div class="flex flex-wrap items-center gap-2.5">
+      <span class="inline-flex items-center justify-center w-6 h-6 rounded bg-slate-100 border border-slate-200 text-slate-700">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+          <path d="M4 4v16l14-8L4 4z"></path>
+          <line x1="8" x2="8" y1="8" y2="12"></line>
+          <line x1="6" x2="10" y1="10" y2="10"></line>
+          <line x1="6" x2="10" y1="14" y2="14"></line>
+          <line x1="18" x2="22" y1="12" y2="12"></line>
+        </svg>
+      </span>
       <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Topology</span>
       <span class="text-sm font-semibold text-slate-800">Ideal-tail 5T OTA</span>
       <span class="text-slate-300">·</span>
-      <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">TSMC 65 nm CMOS</span>
-      <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">nominal TT Corner</span>
-      <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">VDD = 1.2 V</span>
+      <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">TSMC 65 nm CMOS</span>
+      <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">nominal TT Corner</span>
+      <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">VDD = 1.2 V</span>
     </div>
     <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
       <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
       <span>policy: <strong class="text-slate-700 font-semibold">tt-ideal-tail-gbw-v1</strong></span>
+      <span class="text-slate-300">·</span>
+      <span id="strip-engine-text" class="text-slate-400">LUT Engine Loading</span>
     </div>
   </div>
 
@@ -91,61 +155,102 @@
     <section class="lg:col-span-4 flex flex-col gap-6">
       <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-          <div>
-            <h2 class="text-sm font-bold text-slate-900">Target Specifications</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Constraint thresholds for LUT engine</p>
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-md bg-cyan-100/70 border border-cyan-200 flex items-center justify-center text-cyan-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+                <path d="M4 6h16M4 12h16M4 18h16M9 4v16M15 4v16"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-sm font-bold text-slate-900">Target Specifications</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Constraint thresholds for LUT engine</p>
+            </div>
           </div>
           <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-cyan-700 bg-cyan-50 border border-cyan-200/60 font-medium">4 Active Constraints</span>
         </div>
         <form id="size-form" class="p-5 space-y-4" novalidate>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gain">Min Gain (A<sub>v0</sub>)</label>
+            <label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gain">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Min Gain (A<sub>v0</sub>)
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Open-Loop</span>
+            </label>
             <div class="relative rounded-lg shadow-2xs">
-              <input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="min-gain" type="number" inputmode="decimal" min="20" max="45" step="0.5" value="35" required/>
+              <input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="min-gain" type="number" inputmode="decimal" min="20" max="45" step="0.5" value="35" required/>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"><span class="text-xs font-mono font-medium text-slate-500">dB</span></div>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1 font-mono">20 – 45 dB</p>
+            <p class="text-[11px] text-slate-400 mt-1 font-mono">Allowed 20 – 45 dB</p>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gbw">Min GBW (Bandwidth)</label>
+            <label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gbw">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M2 12c3-8 5-8 8 0s5 8 8 0 3-4 4-4" stroke-linecap="round"></path></svg>
+                Min GBW (Bandwidth)
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Unity Freq</span>
+            </label>
             <div class="relative rounded-lg shadow-2xs">
-              <input class="block w-full rounded-lg border-slate-300 pr-14 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="min-gbw" type="number" inputmode="decimal" min="50" max="300" step="1" value="100" required/>
+              <input class="block w-full rounded-lg border-slate-300 pr-14 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="min-gbw" type="number" inputmode="decimal" min="50" max="300" step="1" value="100" required/>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"><span class="text-xs font-mono font-medium text-slate-500">MHz</span></div>
             </div>
             <p id="overshoot-hint" class="text-[11px] text-slate-500 mt-1 font-mono">Overshoot target: 125.000 MHz (1.25×)</p>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="load-cap">Load Capacitance (C<sub>L</sub>)</label>
+            <label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="load-cap">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><line x1="2" x2="9" y1="12" y2="12"></line><line x1="9" x2="9" y1="5" y2="19"></line><line x1="15" x2="15" y1="5" y2="19"></line><line x1="15" x2="22" y1="12" y2="12"></line></svg>
+                Load Capacitance (C<sub>L</sub>)
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Output Pin</span>
+            </label>
             <div class="relative rounded-lg shadow-2xs">
-              <input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="load-cap" type="number" inputmode="decimal" min="0.1" max="5" step="0.1" value="1" required/>
+              <input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="load-cap" type="number" inputmode="decimal" min="0.1" max="5" step="0.1" value="1" required/>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"><span class="text-xs font-mono font-medium text-slate-500">pF</span></div>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1 font-mono">0.1 – 5 pF</p>
+            <p class="text-[11px] text-slate-400 mt-1 font-mono">Allowed 0.1 – 5 pF</p>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="max-power">Max Total Power (P<sub>diss</sub>)</label>
+            <label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="max-power">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M2 12h3l2-4 3 8 3-8 3 8 2-4h3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                Max Total Power (P<sub>diss</sub>)
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">VDD Budget</span>
+            </label>
             <div class="relative rounded-lg shadow-2xs">
-              <input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="max-power" type="number" inputmode="decimal" min="50" max="400" step="5" value="200" required/>
+              <input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="max-power" type="number" inputmode="decimal" min="50" max="400" step="5" value="200" required/>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"><span class="text-xs font-mono font-medium text-slate-500">µW</span></div>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1 font-mono">50 – 400 µW</p>
+            <p class="text-[11px] text-slate-400 mt-1 font-mono">Allowed 50 – 400 µW</p>
           </div>
           <div class="pt-2">
-            <button id="submit-btn" class="w-full cold-gradient-btn text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer" type="submit">
-              <svg id="submit-icon" class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+            <button id="submit-btn" class="relative group w-full cold-gradient-btn text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2.5 text-sm shadow-md cursor-pointer overflow-hidden border border-cyan-400/30" type="submit">
+              <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-400"></span>
+              </span>
+              <svg class="w-4 h-4 text-cyan-200 group-hover:rotate-6 transition-transform" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
                 <path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
-              <span id="submit-label">Size &amp; Synthesize OTA</span>
+              <span id="submit-label" class="font-bold tracking-tight">Size &amp; Synthesize OTA</span>
             </button>
           </div>
         </form>
         <div class="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 text-xs text-slate-600 space-y-2 font-mono">
-          <div class="flex justify-between">
-            <span class="text-slate-500">Internal Target:</span>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 flex items-center gap-1.5">
+              <svg class="w-3 h-3 text-cyan-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Internal Target:
+            </span>
             <span id="it-value" class="font-semibold text-slate-800">—</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-slate-500">Policy Algorithm:</span>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 flex items-center gap-1.5">
+              <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Policy Algorithm:
+            </span>
             <span id="pa-value" class="font-semibold text-slate-800">—</span>
           </div>
         </div>
@@ -158,32 +263,44 @@
 
       <div id="results-area" class="hidden space-y-6">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
-            <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">DC Gain</div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
+            <div class="flex items-center justify-between">
+              <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">DC Gain</div>
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-600 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 18l7-12 5 6 6-9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span id="m-gain" class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">—</span>
               <span class="text-xs font-mono font-medium text-slate-500">dB</span>
             </div>
             <div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium"><span id="m-gain-sub">—</span></div>
           </div>
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
-            <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Gain-BW Product</div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
+            <div class="flex items-center justify-between">
+              <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Gain-BW Product</div>
+              <svg class="w-3.5 h-3.5 text-cyan-500 group-hover:text-cyan-700 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M2 12h4l2-6 4 12 4-12 2 6h4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span id="m-gbw" class="text-2xl font-mono font-bold text-cyan-600 tabular-numbers">—</span>
               <span class="text-xs font-mono font-medium text-slate-500">MHz</span>
             </div>
             <div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium"><span id="m-gbw-sub">—</span></div>
           </div>
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
-            <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Phase Margin</div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
+            <div class="flex items-center justify-between">
+              <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Phase Margin</div>
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+            </div>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span id="m-pm" class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">—</span>
               <span class="text-xs font-mono font-medium text-slate-500">deg (°)</span>
             </div>
             <div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium"><span id="m-pm-sub">—</span></div>
           </div>
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
-            <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Power Dissipation</div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
+            <div class="flex items-center justify-between">
+              <div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Power Dissipation</div>
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
             <div class="mt-2 flex items-baseline gap-1.5">
               <span id="m-pwr" class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">—</span>
               <span class="text-xs font-mono font-medium text-slate-500">µW</span>
@@ -194,11 +311,23 @@
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
           <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
-            <div>
-              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Synthesized Transistor Geometries</h3>
-              <p class="text-xs text-slate-500">Device sizing (Width &amp; Length) &amp; Operating Point</p>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+                <rect height="18" rx="2" width="18" x="3" y="3"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+                <line x1="15" x2="15" y1="3" y2="21"></line>
+                <line x1="3" x2="21" y1="9" y2="9"></line>
+                <line x1="3" x2="21" y1="15" y2="15"></line>
+              </svg>
+              <div>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Synthesized Transistor Geometries</h3>
+                <p class="text-xs text-slate-500">Device sizing (Width &amp; Length) &amp; Operating Point</p>
+              </div>
             </div>
-            <span class="text-xs font-mono text-slate-500">Units in micrometers (µm)</span>
+            <span class="text-xs font-mono text-slate-500 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+              Units in micrometers (µm)
+            </span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm font-mono">
@@ -218,9 +347,15 @@
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
           <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
-            <div>
-              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Constraint Verification Matrix</h3>
-              <p class="text-xs text-slate-500">Pre-layout Lookup Table (LUT) Signoff vs User Constraints</p>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+              </svg>
+              <div>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Constraint Verification Matrix</h3>
+                <p class="text-xs text-slate-500">Pre-layout Lookup Table (LUT) Signoff vs User Constraints</p>
+              </div>
             </div>
             <div id="checks-badge" class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
               <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
@@ -245,7 +380,6 @@
           </div>
         </div>
       </div>
-
     </section>
   </div>
 </main>
@@ -253,18 +387,24 @@
 <footer class="border-t border-slate-200 bg-white py-4 mt-auto">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
     <div class="flex items-center gap-4">
-      <span>Analog Synthesis Core · oracle v0.1.0</span>
+      <span class="flex items-center gap-1.5 font-mono">
+        <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><circle cx="12" cy="12" r="2"></circle></svg>
+        Analog Synthesis Core · oracle v0.1.0
+      </span>
       <span class="text-slate-300">|</span>
       <span>Technology: TSMC 65 nm CRN65LP</span>
     </div>
     <div class="flex items-center gap-3">
-      <span id="backend-status" class="flex items-center gap-1.5 font-mono text-[11px] text-slate-600">
-        <span id="backend-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+      <span id="backend-status" class="flex items-center gap-2 font-mono text-[11px] text-slate-600">
+        <span class="relative flex h-2 w-2">
+          <span id="backend-ping" class="hidden animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+          <span id="backend-dot" class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+        </span>
         <span id="backend-text">Spectre LUT Backend Loading</span>
       </span>
     </div>
   </div>
 </footer>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

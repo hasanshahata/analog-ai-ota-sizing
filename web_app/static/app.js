@@ -1,4 +1,4 @@
-/* OTA Sizing Explorer - wiring for the stitch_UI design.
+/* OTA Sizing Explorer - wiring for the stitch_UI v2 design.
  * The server validates, guards (25% internal GBW), and verifies; this file
  * renders real data only. Unresolved/error states show no geometry. */
 "use strict";
@@ -11,7 +11,6 @@ const GUARD = 1.25;             // tt-ideal-tail-gbw-v1
 
 let current = null;             // last verified API response (enables export)
 let pollTimer = null;
-let healthTimer = null;
 
 /* ------------------------------------------------------------ helpers -- */
 function fmt(v, d) {
@@ -35,31 +34,41 @@ function esc(s) {
 function applyHealth(h) {
   const pill = $("engine-pill"), text = $("engine-text");
   const core = $("engine-dot-core"), ping = $("engine-ping");
-  const bDot = $("backend-dot"), bText = $("backend-text");
-  pill.classList.remove("bg-emerald-50/80", "border-emerald-200/80", "text-emerald-800",
-    "bg-amber-50", "border-amber-200", "text-amber-800",
-    "bg-red-50", "border-red-200", "text-red-700", "bg-slate-100", "text-slate-600");
+  const wave = $("engine-wave");
+  const bDot = $("backend-dot"), bPing = $("backend-ping"), bText = $("backend-text");
+  const strip = $("strip-engine-text");
+  pill.className = "hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium shadow-2xs ";
   if (h.state === "ready") {
     text.textContent = "Engine Ready";
-    pill.classList.add("bg-emerald-50/80", "border-emerald-200/80", "text-emerald-800");
-    core.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-500";
+    strip.textContent = "LUT Engine Online";
+    pill.classList.add("bg-emerald-50/90", "border-emerald-200/90", "text-emerald-800");
+    core.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500";
     ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
-    bDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+    wave.classList.remove("hidden");
+    wave.classList.add("text-emerald-600", "chip-glow-pulse");
+    bDot.className = "relative inline-flex rounded-full h-2 w-2 bg-cyan-500";
+    bPing.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75";
     bText.textContent = "Spectre LUT Backend Online";
   } else if (h.state === "loading") {
     text.textContent = "Engine Loading";
+    strip.textContent = "LUT Engine Loading";
     pill.classList.add("bg-amber-50", "border-amber-200", "text-amber-800");
-    core.className = "relative inline-flex rounded-full h-2 w-2 bg-amber-500";
-    ping.className = "hidden";
-    bDot.className = "w-1.5 h-1.5 rounded-full bg-amber-500";
+    core.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500";
+    ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
+    wave.classList.add("hidden");
+    bDot.className = "relative inline-flex rounded-full h-2 w-2 bg-amber-500";
+    bPing.className = "hidden";
     bText.textContent = "Spectre LUT Backend Loading";
     setTimeout(pollHealth, 3000);
   } else {
     text.textContent = "Engine Failed";
+    strip.textContent = "LUT Engine Offline";
     pill.classList.add("bg-red-50", "border-red-200", "text-red-700");
-    core.className = "relative inline-flex rounded-full h-2 w-2 bg-red-500";
+    core.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500";
     ping.className = "hidden";
-    bDot.className = "w-1.5 h-1.5 rounded-full bg-red-500";
+    wave.classList.add("hidden");
+    bDot.className = "relative inline-flex rounded-full h-2 w-2 bg-red-500";
+    bPing.className = "hidden";
     bText.textContent = "Spectre LUT Backend Offline";
   }
 }
@@ -68,41 +77,40 @@ function pollHealth() {
   fetch("/api/v1/health").then(r => r.json()).then(applyHealth)
     .catch(() => {
       $("engine-text").textContent = "Server Unreachable";
-      $("backend-dot").className = "w-1.5 h-1.5 rounded-full bg-red-500";
+      $("backend-dot").className = "relative inline-flex rounded-full h-2 w-2 bg-red-500";
       $("backend-text").textContent = "Spectre LUT Backend Offline";
     });
 }
 
 /* -------------------------------------------------------------- banner -- */
-function setBanner(kind, icon, title, sub, badge) {
+function setBanner(kind, icon, title, sub, pillHtml, badgeHtml) {
   const el = $("status-banner");
-  el.className = "rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 ";
+  const base = "rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 ";
   const styles = {
-    idle:   ["bg-slate-50 border border-slate-200", "text-slate-900", "text-slate-500"],
-    ok:     ["bg-emerald-50 border border-emerald-200", "text-emerald-950", "text-emerald-700"],
-    warn:   ["bg-amber-50 border border-amber-300", "text-amber-950", "text-amber-700"],
-    error:  ["bg-red-50 border border-red-300", "text-red-950", "text-red-700"],
+    idle:  { box: "bg-slate-50 border border-slate-200", title: "text-slate-900", sub: "text-slate-500" },
+    ok:    { box: "bg-gradient-to-r from-emerald-50 via-emerald-50/60 to-cyan-50/40 border border-emerald-200",
+             title: "text-emerald-950", sub: "text-emerald-700" },
+    warn:  { box: "bg-amber-50 border border-amber-300", title: "text-amber-950", sub: "text-amber-700" },
+    error: { box: "bg-red-50 border border-red-300", title: "text-red-950", sub: "text-red-700" },
   }[kind];
-  el.classList.add(...styles);
-  const badgeHtml = badge
-    ? '<div class="flex items-center gap-2"><span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-semibold border ' +
-      badge[0] + '">' + badge[1] + "</span></div>"
-    : "";
+  el.className = base + styles.box;
   el.innerHTML =
-    '<div class="flex items-center gap-3">' +
-    '<div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 shadow-xs ' + icon[0] + '">' + icon[1] + "</div>" +
-    '<div><h3 class="text-sm font-bold ' + styles[1] + '">' + title + "</h3>" +
-    '<p class="text-xs font-mono mt-0.5 ' + styles[2] + '">' + sub + "</p></div></div>" +
-    badgeHtml;
+    '<div class="flex items-center gap-3.5">' +
+    '<div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm ' + icon[0] + '">' + icon[1] + "</div>" +
+    '<div><div class="flex items-center gap-2">' +
+    '<h3 class="text-sm font-bold ' + styles.title + '">' + title + "</h3>" +
+    (pillHtml || "") + "</div>" +
+    '<p class="text-xs font-mono mt-0.5 ' + styles.sub + '">' + sub + "</p></div></div>" +
+    (badgeHtml ? '<div class="flex items-center gap-2">' + badgeHtml + "</div>" : "");
   el.classList.remove("hidden");
 }
 
 const ICONS = {
-  idle:  ["bg-slate-400", "i"],
-  ok:    ["bg-emerald-500",
+  idle:  ["bg-slate-400 ring-2 ring-slate-100", "i"],
+  ok:    ["bg-gradient-to-tr from-emerald-600 to-emerald-400 ring-2 ring-emerald-100",
           '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>'],
-  warn:  ["bg-amber-500", "!"],
-  error: ["bg-red-500", "✕"],
+  warn:  ["bg-amber-500 ring-2 ring-amber-100", "!"],
+  error: ["bg-red-500 ring-2 ring-red-100", "✕"],
 };
 
 /* ------------------------------------------------------------- render -- */
@@ -117,18 +125,27 @@ function renderSuccess(b) {
   current = b;
   $("export-btn").disabled = false;
 
+  const pill = '<span class="flex items-center gap-1 text-[11px] font-mono ' +
+    'text-emerald-700 bg-white/80 px-2 py-0.5 rounded-full border border-emerald-200">' +
+    '<svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" ' +
+    'stroke-width="2.5" viewbox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12">' +
+    '</polyline></svg>LUT-Verified</span>';
+  const badge = '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg ' +
+    'text-xs font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">' +
+    '<span class="w-2 h-2 rounded-full bg-emerald-500 chip-glow-pulse"></span>VERIFIED CANDIDATE</span>';
   setBanner("ok", ICONS.ok, "Verified sizing candidate found",
     esc(path.pipeline_status) + " · " + path.n_oracle_evals + " evaluations converged",
-    ["bg-emerald-100 text-emerald-800 border-emerald-300/60", "VERIFIED CANDIDATE"]);
+    pill, badge);
 
   $("m-gain").textContent = fmt(m.gain_dB, 2);
-  $("m-gain-sub").textContent = "Target: ≥ " + fmt(b.user_specs.Gain_min, 2);
+  $("m-gain-sub").textContent = "● Target: ≥ " + fmt(b.user_specs.Gain_min, 2);
   $("m-gbw").textContent = fmt(m.gbw_MHz, 2);
   const gbwMarginPct = (m.gbw_MHz - b.user_specs.GBW_min / 1e6)
     / (b.user_specs.GBW_min / 1e6) * 100;
   $("m-gbw-sub").textContent = signed(gbwMarginPct, 1, "%") + " over target";
   $("m-pm").textContent = fmt(m.pm_deg, 2);
-  $("m-pm-sub").textContent = m.pm_deg >= PM_FLOOR ? "Stable (> " + PM_FLOOR + "°)" : "Below floor";
+  $("m-pm-sub").textContent = m.pm_deg >= PM_FLOOR
+    ? "Stable (> " + PM_FLOOR + "°)" : "Below floor";
   $("m-pwr").textContent = fmt(m.power_uW, 2);
   const pwrPct = (b.user_specs.Power_max / 1e6 - m.power_uW)
     / (b.user_specs.Power_max / 1e6) * 100;
@@ -136,45 +153,48 @@ function renderSuccess(b) {
 
   const g1 = p.m1_m2, g3 = p.m3_m4;
   $("geometry-body").innerHTML =
-    row2("bg-cyan-500", "M1 = M2", "Input Pair, NMOS", g1.w_um, g1.l_um) +
-    row2("bg-indigo-500", "M3 = M4", "Mirror Load, PMOS", g3.w_um, g3.l_um) +
-    '<tr class="hover:bg-slate-50/70 transition-colors bg-slate-50/30 font-sans">' +
+    row2("bg-cyan-500 ring-cyan-100", "hover:bg-cyan-50/30", "M1 = M2",
+      "Input Pair, NMOS", "M5 12h14M13 6l6 6-6 6", g1.w_um, g1.l_um, "group-hover:text-cyan-700") +
+    row2("bg-indigo-500 ring-indigo-100", "hover:bg-indigo-50/30", "M3 = M4",
+      "Mirror Load, PMOS", "", g3.w_um, g3.l_um, "group-hover:text-indigo-700") +
+    '<tr class="hover:bg-amber-50/30 transition-colors bg-slate-50/30 font-sans group">' +
     '<td class="py-2.5 px-5 font-mono"><div class="flex items-center gap-2">' +
-    '<span class="w-2 h-2 rounded-full bg-amber-500"></span>' +
-    '<span class="font-bold text-slate-800">I<sub>tail</sub></span>' +
-    '<span class="text-xs text-slate-400">(Bias Sink Current)</span></div></td>' +
+    '<span class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-amber-100 group-hover:scale-125 transition-transform"></span>' +
+    '<span class="font-bold text-slate-900">I<sub>tail</sub></span>' +
+    '<span class="text-xs text-slate-500">(Bias Sink Current)</span></div></td>' +
     '<td class="py-2.5 px-5 text-right font-mono font-bold text-slate-900 tabular-numbers" colspan="2">' +
     fmt(p.itail_uA, 3) + ' <span class="font-normal text-slate-500">µA</span></td>' +
     '<td class="py-2.5 px-5 text-right font-mono text-xs text-slate-500" colspan="2">' +
     "V<sub>tail</sub> ≈ " + fmt(m.vtail_V, 3) + " V</td></tr>";
 
-  const rows = (b.constraints || []).map(constraintRow);
-  $("constraint-body").innerHTML = rows.join("");
+  $("constraint-body").innerHTML = (b.constraints || []).map(constraintRow).join("");
   const nPass = (b.constraints || []).filter(c => c.passed).length;
   const nAll = (b.constraints || []).length;
   $("checks-text").textContent = nPass + " / " + nAll + " Checks Passed";
-  const badge = $("checks-badge");
-  badge.classList.remove("text-emerald-700", "bg-emerald-50", "border-emerald-200",
+  const checksBadge = $("checks-badge");
+  checksBadge.classList.remove("text-emerald-700", "bg-emerald-50", "border-emerald-200",
     "text-red-700", "bg-red-50", "border-red-200");
-  if (nPass === nAll) badge.classList.add("text-emerald-700", "bg-emerald-50", "border-emerald-200");
-  else badge.classList.add("text-red-700", "bg-red-50", "border-red-200");
+  if (nPass === nAll) checksBadge.classList.add("text-emerald-700", "bg-emerald-50", "border-emerald-200");
+  else checksBadge.classList.add("text-red-700", "bg-red-50", "border-red-200");
 
   $("it-value").textContent = "GBW = " + fmt(b.internal_specs.GBW_min / 1e6, 3) + " MHz";
   $("pa-value").textContent = path.pipeline_status;
   $("results-area").classList.remove("hidden");
 }
 
-function row2(dot, name, role, w, l) {
-  return '<tr class="hover:bg-slate-50/70 transition-colors">' +
+function row2(dotCls, hoverCls, name, role, roleIcon, w, l, wHover) {
+  const roleHtml = roleIcon
+    ? ' <svg class="w-3 h-3 text-cyan-600 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="' + roleIcon + '"></path></svg>'
+    : ' <svg class="w-3 h-3 text-indigo-600 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg>';
+  return '<tr class="transition-colors group cursor-default ' + hoverCls + '">' +
     '<td class="py-3 px-5"><div class="flex items-center gap-2">' +
-    '<span class="w-2 h-2 rounded-full ' + dot + '"></span>' +
-    '<span class="font-bold text-slate-800">' + name + "</span>" +
-    '<span class="text-xs text-slate-400 font-sans">(' + role + ")</span></div></td>" +
-    '<td class="py-3 px-5 text-right font-bold text-slate-900 tabular-numbers">' + fmt(w, 3) + "</td>" +
+    '<span class="w-2.5 h-2.5 rounded-full ' + dotCls + ' group-hover:scale-125 transition-transform"></span>' +
+    '<span class="font-bold text-slate-900">' + name + "</span>" +
+    '<span class="text-xs text-slate-500 font-sans flex items-center gap-1">(' + role + ")" + roleHtml + "</span></div></td>" +
+    '<td class="py-3 px-5 text-right font-bold text-slate-900 tabular-numbers transition-colors ' + wHover + '">' + fmt(w, 3) + "</td>" +
     '<td class="py-3 px-5 text-right text-slate-700 tabular-numbers">' + fmt(l, 3) + "</td>" +
-    '<td class="py-3 px-5 text-right text-slate-500 tabular-numbers">' +
-    fmt(w / l, 2) + "</td>" +
-    '<td class="py-3 px-5 text-right text-slate-600 tabular-numbers">1×</td></tr>';
+    '<td class="py-3 px-5 text-right text-slate-500 tabular-numbers">' + fmt(w / l, 2) + "</td>" +
+    '<td class="py-3 px-5 text-right text-slate-600 tabular-numbers font-semibold">1×</td></tr>';
 }
 
 const C_LABELS = {
@@ -210,9 +230,12 @@ function constraintRow(c) {
 
 function renderUnresolved(b) {
   hideResults();
+  const badge = '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg ' +
+    'text-xs font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs">' +
+    '<span class="w-2 h-2 rounded-full bg-amber-500"></span>UNRESOLVED</span>';
   setBanner("warn", ICONS.warn, "No verified sizing within budget",
     b.n_oracle_evals + " evaluations · not proof of infeasibility — try relaxing a spec",
-    ["bg-amber-100 text-amber-800 border-amber-300/60", "UNRESOLVED"]);
+    null, badge);
   $("it-value").textContent = "—";
   $("pa-value").textContent = "unresolved";
 }
@@ -223,7 +246,7 @@ function renderError(code, message) {
     : code === "validation_error" ? "check the allowed ranges under each field"
     : code === "sizing_failed" ? "nothing was sized; see server log" : "";
   setBanner("error", ICONS.error, "Request refused",
-    esc(message || "unknown error") + (hint ? " — " + hint : ""), null);
+    esc(message || "unknown error") + (hint ? " — " + hint : ""), null, null);
   $("it-value").textContent = "—";
   $("pa-value").textContent = "—";
 }
@@ -231,7 +254,7 @@ function renderError(code, message) {
 function renderIdle() {
   hideResults();
   setBanner("idle", ICONS.idle, "Synthesis engine idle",
-    "Configure the target specifications and run the engine", null);
+    "Configure the target specifications and run the engine", null, null);
   $("it-value").textContent = "—";
   $("pa-value").textContent = "—";
 }
@@ -261,7 +284,7 @@ $("export-btn").addEventListener("click", () => {
     a.remove();
     URL.revokeObjectURL(a.href);
   }).catch(err => {
-    setBanner("error", ICONS.error, "Export failed", esc(err.message), null);
+    setBanner("error", ICONS.error, "Export failed", esc(err.message), null, null);
   }).finally(() => {
     if (current) $("export-btn").disabled = false;
   });

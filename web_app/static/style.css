@@ -1,15 +1,52 @@
-/* Custom pieces on top of the Tailwind CDN design (stitch_UI). */
+/* Custom pieces on top of the Tailwind CDN design (stitch_UI, v2 mock). */
 .tabular-numbers { font-variant-numeric: tabular-nums; }
+.frost-border { border-color: #E2E8F0; }
 
 .cold-gradient-btn {
-  background: linear-gradient(135deg, #0284C7 0%, #0F172A 100%);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 50%, #0F172A 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite alternate;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .cold-gradient-btn:hover {
-  background: linear-gradient(135deg, #0369A1 0%, #020617 100%);
-  box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.25);
+  box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
 }
-.cold-gradient-btn:disabled { opacity: 0.6; cursor: wait; }
+.cold-gradient-btn:active { transform: translateY(0); }
+.cold-gradient-btn:disabled { opacity: 0.6; cursor: wait; animation: none; }
+
+/* Electronic trace & IC design keyframe animations */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+@keyframes circuit-glow {
+  0%, 100% { stroke-opacity: 0.25; filter: drop-shadow(0 0 0px #0284c7); }
+  50% { stroke-opacity: 0.85; filter: drop-shadow(0 0 4px #38bdf8); }
+}
+@keyframes signal-wave {
+  0% { stroke-dashoffset: 60; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes chip-pin-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; filter: drop-shadow(0 0 3px #38bdf8); }
+}
+
+.circuit-pulse-line {
+  stroke-dasharray: 4, 4;
+  animation: signal-wave 4s linear infinite;
+}
+.chip-glow-pulse { animation: chip-pin-pulse 2.8s ease-in-out infinite; }
+.chip-glow-pulse-delayed { animation: chip-pin-pulse 2.8s ease-in-out 1.4s infinite; }
+
+.interactive-card {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.interactive-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(2, 132, 199, 0.25);
+}
 
 .spin { animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

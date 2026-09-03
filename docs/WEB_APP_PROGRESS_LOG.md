@@ -188,3 +188,27 @@ failure, correction, and decision.
   status banner, giving immediate feedback when the engine runs.
 - Verified: no-cache header live, both elements gone from the served page,
   JS syntax OK, 34 web tests green.
+
+## 2026-09-04 — stitch_UI v2 redesign + automation test plan
+
+- Redesigned web_app/static to the updated stitch_UI mock: circuit-trace
+  PCB watermark with pulse animations, enhanced header (h-20, backdrop
+  blur, silicon-die icon badge, gradient title), shimmer topology strip
+  with live LUT-engine state, spec-field icons + Open-Loop/Unity
+  Freq/Output Pin/VDD Budget tags, animated gradient submit button,
+  gradient success banner with LUT-Verified pill and VERIFIED CANDIDATE
+  badge, interactive metric cards, ring-dot geometry rows. Honest
+  substitutions kept: multiplier 1x, V_tail (not Vov), 45-degree PM floor,
+  LUT-Verified (not "Spectre Verified"), oracle v0.1.0, real W-limit and
+  L_domain rows. The circuit-description card and the scope disclaimer line
+  stay removed per the user's explicit earlier request (the regenerated
+  mock incidentally re-includes them).
+- Fixed a malformed pill/badge HTML-concatenation bug in the new banner
+  code (caught by node --check before serving) and a duplicate const.
+- Added tests/test_web_static.py (4 tests): JS-to-HTML id cross-reference,
+  duplicate-id, cache-busting version, innerHTML-target checks - this is
+  the regression guard for the stale-markup "button does nothing" bug
+  class. Web suite now 38 tests; full non-LUT suite green.
+- Wrote docs/WEB_APP_TEST_PLAN.md: L0-L5 layers, test matrix (implemented
+  vs specified), Playwright E2E blueprint, real-LUT E2E scripting, CI
+  gates, exit criteria.
