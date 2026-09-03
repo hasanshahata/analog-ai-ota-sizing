@@ -231,6 +231,54 @@ requests). Scaling the dataset, parallelizing the builder, and widening
 fallback coverage are the identified levers; finite-M5 and G1 correlation
 remain the physical gates before any of that counts as 5T-OTA sizing.
 
+## 2026-09-03 — Phases A-C of the execution plan: integrity, failure taxonomy, warm-start refinement
+
+**Phase A (clean baseline).** 64 unit + 3 real-LUT integration tests pass;
+LUT SHA-256s revalidated; dataset invariants recomputed (zero design-ID
+overlap, zero label/verdict contradictions, zero duplicate rows, manifest
+hashes match); the PoC pipeline reproduced under a new tag
+(`surrogate_poc_repro`) **bit-exactly**: raw 67.87% / best-of-K 85.33%,
+1500/1500 identical per-request statuses, identical case verdicts,
+champion seed2 re-derived deterministically.
+
+**Phase B (failure taxonomy**, `surrogate_failure_report.{json,md}`). All
+220 unresolved requests re-verified with full residual vectors: dominant
+failed constraint Power_max 157 (71%), GBW 55, Gain 6, widths 2; 132/220
+requests have power limits < 50 uW; **218/220 sit within training support**
+(nn distance < 0.05); zero all-invalid heads, zero selection failures,
+median pairwise head distance 0.54 (heads diverse, not collapsed). Verdict:
+the failures are near-misses inside training support, not a coverage or
+capacity problem - so local repair, not more data, is the intervention
+(codex_status_review_3.md Priority 1/2 confirmed).
+
+**Phase C (neural warm-start local refinement**, `optimization/local_refine.py`).
+Bounded Nelder-Mead around the best-ranked heads over a trust-region ladder
+(+2/5/10% of normalized range), objective = total violation first (smooth)
+with max-violation tie-break; the hard verifier alone accepts. Probing
+showed Powell with a max-only objective stalls (46 evals, no progress);
+Nelder-Mead + total-first repairs in ~127. New statuses:
+`local_refinement_verified` / `global_fallback_verified` recorded separately.
+
+**Benchmark (all 220 failures):**
+- recovery: **220/220 local, 0 needed global DE, 0 unresolved**
+- cost: median 506 oracle evals (p95 1055) vs ~1,732 for global DE;
+  median 26 s per failure
+- **end-to-end held-out: raw 67.87% -> best-of-K 85.33% -> 100.00% after
+  local refinement** on the same 1,500 requests
+
+**G3 (surrogate performance) is now met within the LUT proxy**: 100% on the
+five regression cases and >= 95% (measured 100%) held-out feasible pass
+after declared refinement, with usage and cost reported honestly. Exit
+gate C of the execution plan met on all three criteria.
+
+**Honest caveats:** every benchmark request derives from a verified design,
+so a feasible witness exists by construction - 100% means the pipeline
+*recovered all recoverable requests at materially lower oracle cost*, not
+that arbitrary requests are feasible. Refinement searches around model
+proposals using the oracle; on out-of-proxy requests the risk head (Phase E
+work) remains the router. The ideal-tail and proxy-vs-Spectre caveats from
+the previous entry are unchanged.
+
 ## Still open (in plan order)
 
 1. **G1** — SPICE correlation of the proxy, including SR/swing validation

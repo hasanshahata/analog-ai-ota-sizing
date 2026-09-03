@@ -62,30 +62,46 @@ py -3.11 -m venv .venv          # or: uv venv --python 3.11 .venv
 zips and checkpoints ARE in git. If `tech_luts/*.pkl` are missing, everything
 still runs on the synthetic-LUT test suite — only real-data runs skip/fail.
 
-## 4. In flight — nothing; Phase 5 PoC complete (2026-09-03)
+## 4. In flight — nothing; execution-plan Phases A-C complete (2026-09-03)
 
-Done since the move: DE solved-op-point baseline (**5/5 PASS**), **Phase 3**
-pilot dataset (`data/pilot/`, splits v2 — zero design-ID leakage), and the
-**Phase 5 PoC**: a best-of-5 proposal net + OOD risk head
-(`analog_ai/surrogate/`, checkpoints in `models/surrogate/poc/`, champion
-seed2). Held-out results (1,500 verified requests): raw 67.9% / best-of-K
-**85.3%** / after fallback 85.7%; NN baseline 57.7%; constant 0%; five
-regression cases **5/5**; risk head 99.97% accurate; ~5 oracle evals per
-request vs ~1,732 for DE. Gates: G4 pass, G6 honored, G3's 95% held-out bar
-not yet met (honest gap). Full table:
-`evaluation_results/canonical/surrogate_poc_summary.md` and the 2026-09-03
-entry in `CORRECTION_LOG.md`.
+**State of the system** (all evidence in `evaluation_results/canonical/`):
+LUT oracle + solved DC + hard verifier; DE baseline 5/5; pilot dataset with
+zero-leakage splits; best-of-5 surrogate + OOD risk head. The full
+deployment ladder now reads: propose 5 heads -> verify -> bounded local
+refinement around the best heads -> global DE (never needed so far).
 
-Reproduce:
+**End-to-end held-out results (1,500 verified requests, champion seed2):**
+
+| Ladder stage | Pass rate |
+|---|---|
+| Raw head-0 | 67.9% |
+| Best-of-K | 85.3% |
+| + local refinement | **100.0%** (220/220 failures recovered, 0 global DE) |
+
+Cost: local refinement median 506 oracle evals (p95 1055), 26 s — vs ~1,732
+evals for global DE. Phase A reproduction was bit-exact (1500/1500
+identical statuses). Failure taxonomy: Power_max dominates (157/220),
+218/220 within training support. **G3 met within the LUT proxy** (100% on
+regression cases; 100% >= 95% held-out after declared refinement).
+Caveats: benchmark requests derive from verified designs (feasible witness
+exists by construction); ideal-tail scope and proxy-vs-Spectre caveats
+unchanged. Key files: `surrogate_poc_summary.md`,
+`surrogate_failure_report.md`, `surrogate_poc_refined_records.json`,
+`surrogate_poc_repro_summary.md`, 2026-09-03 `CORRECTION_LOG.md` entries.
+
+Reproduce the ladder:
 
 ```bash
-.venv/Scripts/python scripts/train_surrogate.py --data data/pilot     --out models/surrogate/poc --k 5 --seeds 0,1,2
 .venv/Scripts/python scripts/evaluate_surrogate.py --stage all --n-eval 1500
+.venv/Scripts/python scripts/analyze_failures.py
+.venv/Scripts/python scripts/refine_failures.py
 ```
 
-Next planned work (in order): finite-M5 solved mode (physical gate), then
-closing the 85.7% -> 95% gap (wider fallback coverage, parallelized builder,
-scaled dataset).
+Next planned work (execution plan): Phase E risk-head evidence (certified
+boundary set + calibration), optional Phase D diversity ablations (heads
+show no collapse — low expected gain), then Phase F finite-M5 solved mode,
+Phase G Spectre correlation, and only then Phase H dataset retraining.
+The dataset stays frozen until the M5/correlation decisions are made.
 
 ## 5. Command reference
 
@@ -127,8 +143,9 @@ Run everything from the repo root so `tech_luts/` resolves.
 3. ~~Phase 5 PoC — supervised amortized inverse design~~ **Done 2026-09-03**
    (best-of-K + risk head; 85.3% held-out best-of-K, 5/5 regression cases).
    PPO one-step env stays a demoted ablation.
-4. **Phase 5 continuation** — close 85.7% -> 95%: wider DE-fallback coverage,
-   parallelized builder + scaled dataset, MDN if heads under-cover.
-5. **Phase 6** — held-out evaluation at scale (thousands of targets, seeds),
-   goal-sensitivity test, report raw vs post-verification pass rates.
+4. ~~Phase 5 continuation~~ **Superseded 2026-09-03** — warm-start local
+   refinement closed the gap entirely: 100% end-to-end held-out, G3 met
+   (within the LUT proxy). Global DE fallback never needed.
+5. **Phase E** (risk evidence) and **Phase 6** (evaluation at scale, PVT/
+   Monte Carlo per execution plan Phase I) — see §4 for the order.
 6. Optional: LUT checksums now exist in `configs/lut_manifest.json`; remaining: finite-M5 support in solved mode (currently imposed-only); parallelized dataset builder for scaled runs.
