@@ -148,3 +148,28 @@ failure, correction, and decision.
 - `node --check` clean; 32 web tests green; server restarted; live
   end-to-end check: same request as the user's screenshot renders
   `L 1.409 µm` with a bit-identical design (W 147.082 µm, 157.932 µA).
+
+## 2026-09-04 — UI redesign to the stitch_UI studio design (user request)
+
+- Replaced the minimal UI with the design from `stitch_UI/` (Tailwind CDN +
+  Inter/JetBrains Mono): header with engine status pill / Reset Defaults /
+  Export Spectre .scs, topology strip, left spec-input card with live
+  1.25x-overshoot hint and Internal Target / Policy Algorithm box, right
+  dashboard (status banner, 4 metric cards, geometry table, constraint
+  verification matrix), scope disclaimer, footer with backend status.
+- Honest substitutions for the mock's placeholder data: multiplier "16x/12x"
+  -> "1x" (single matched devices, m=1 in the golden netlist); "Vov ~168 mV"
+  -> real tail-node voltage from the LUT metrics; "Stable (> 60)" -> the
+  verifier's actual 45-degree floor; "OPTIMAL CONVERGENCE" -> "VERIFIED
+  CANDIDATE" (a verified candidate is not proven optimal); fabricated
+  "v2.4.19" -> oracle v0.1.0; constraint rows show real W_nmos_max/W_pmos_max
+  limits (250/750 um) and the real L_domain range instead of 0.00/NaN.
+- New endpoint `POST /api/v1/netlist`: renders the golden Spectre netlist
+  for a verified sizing via the canonical `spectre_job.render_netlist`
+  (pure text, independent of the LUT engine; validator rejects
+  out-of-domain geometry with 422). The Export button downloads the .scs.
+- Verified live (35dB/100MHz/1pF/200uW -> local_refinement_verified, 306
+  evals, 8/8 checks): identical design to the mock's numbers; netlist
+  export 200 with correct parameters line + analyses. 34 web tests green
+  (2 new netlist tests). Note: Tailwind CDN + Google Fonts require
+  internet; offline the layout degrades (API unaffected).

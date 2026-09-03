@@ -25,9 +25,11 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
+from ..correlation.spectre_job import CorrelationJobError, render_netlist
 from .runtime import RuntimeNotReady, SizingFailure, SizingRuntime
 from .schemas import (STATUS_SUCCESS, SizeRequest, build_error_response,
                       build_success_response, build_unresolved_response,
@@ -36,6 +38,19 @@ from .schemas import (STATUS_SUCCESS, SizeRequest, build_error_response,
 log = logging.getLogger("analog_ai.web")
 
 _STATIC_DIR = Path(__file__).resolve().parents[2] / "web_app" / "static"
+_NETLIST_TEMPLATE = (Path(__file__).resolve().parents[2]
+                     / "5T_OTA_netlist_cadence.txt")
+
+
+class NetlistRequest(BaseModel):
+    """Verified geometry (SI) + load for the golden-netlist export."""
+
+    W1: float = Field(..., gt=0, allow_inf_nan=False)
+    L1: float = Field(..., gt=0, allow_inf_nan=False)
+    W3: float = Field(..., gt=0, allow_inf_nan=False)
+    L3: float = Field(..., gt=0, allow_inf_nan=False)
+    Itail: float = Field(..., gt=0, allow_inf_nan=False)
+    CL_pF: float = Field(..., gt=0, allow_inf_nan=False)
 
 
 def create_app(runtime: SizingRuntime | None = None,
@@ -99,6 +114,29 @@ def create_app(runtime: SizingRuntime | None = None,
                  payload.get("pipeline_status") or record.get("status"),
                  record.get("n_oracle_evals"), elapsed)
         return JSONResponse(status_code=200, content=payload)
+
+    @app.post("/api/v1/netlist", response_class=PlainTextResponse)
+    def netlist(req: NetlistRequest) -> PlainTextResponse:
+        """Render the golden Spectre netlist for a verified sizing.
+
+        Pure text rendering - independent of the LUT engine. Rejects
+        out-of-domain geometry via the canonical validator.
+        """
+        try:
+            template = _NETLIST_TEMPLATE.read_text(encoding="utf-8")
+            text = render_netlist(
+                template,
+                {"L1": req.L1, "W1": req.W1, "L3": req.L3,
+                 "W3": req.W3, "Itail": req.Itail},
+                cl_f=req.CL_pF * 1e-12)
+        except CorrelationJobError as exc:
+            return JSONResponse(status_code=422, content=build_error_response(
+                "netlist_error",
+                "geometry rejected by the netlist validator"))
+        except FileNotFoundError:
+            return JSONResponse(status_code=500, content=build_error_response(
+                "netlist_error", "netlist template is missing on the server"))
+        return PlainTextResponse(text)
 
     if _STATIC_DIR.exists():
         app.mount("/", StaticFiles(directory=str(_STATIC_DIR), html=True),

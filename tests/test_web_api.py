@@ -160,3 +160,25 @@ def test_static_index_served(monkeypatch):
     r = client.get("/")
     if r.status_code == 200:         # static dir exists in the real repo
         assert "text/html" in r.headers["content-type"]
+
+
+NETLIST_BODY = {"W1": 20e-6, "L1": 0.5e-6, "W3": 10e-6, "L3": 0.6e-6,
+                "Itail": 75e-6, "CL_pF": 1.0}
+
+
+def test_netlist_export_renders_golden_template(monkeypatch):
+    client, _ = _client(monkeypatch)
+    r = client.post("/api/v1/netlist", json=NETLIST_BODY)
+    assert r.status_code == 200
+    text = r.text
+    assert "simulator lang=spectre" in text
+    assert "W12" in text and "Itail" in text
+    assert "acCorr" in text                      # analyses appended
+
+
+def test_netlist_export_rejects_bad_geometry(monkeypatch):
+    client, _ = _client(monkeypatch)
+    r = client.post("/api/v1/netlist",
+                    json={**NETLIST_BODY, "L1": -1e-6})
+    assert r.status_code == 422
+    assert "error" in r.json()

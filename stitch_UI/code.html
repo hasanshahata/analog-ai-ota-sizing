@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OTA Sizing Studio — Analog Synthesis Platform</title>
+<!-- Tailwind CSS v3 with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          },
+          colors: {
+            slate: {
+              850: '#152033',
+              950: '#090e17',
+            },
+            cyan: {
+              450: '#00b4d8',
+              550: '#0096c7',
+            },
+            emerald: {
+              450: '#10b981',
+              550: '#059669',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Core Component Styling -->
+<style data-purpose="custom-utilities">
+    .tabular-numbers {
+      font-variant-numeric: tabular-nums;
+    }
+    .frost-border {
+      border-color: #E2E8F0;
+    }
+    .cold-gradient-btn {
+      background: linear-gradient(135deg, #0284C7 0%, #0F172A 100%);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cold-gradient-btn:hover {
+      background: linear-gradient(135deg, #0369A1 0%, #020617 100%);
+      box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.25);
+    }
+    .active-tab-indicator::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #0284C7;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen antialiased flex flex-col selection:bg-cyan-100 selection:text-cyan-900">
+<!-- BEGIN: TopNavigation -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs" data-purpose="application-header">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Left: Workspace Breadcrumb & Title -->
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-cyan-400 font-mono font-bold text-sm shadow-sm ring-1 ring-slate-800">
+            OTA
+          </div>
+<div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="hover:text-slate-700 cursor-pointer">Analog IC Studio</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-600 font-semibold">Synthesis Engine v2.4</span>
+</div>
+<div class="flex items-center gap-2.5 mt-0.5">
+<h1 class="text-base font-bold text-slate-900 tracking-tight">OTA Sizing Explorer</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                TSMC 65nm · TT
+              </span>
+</div>
+</div>
+</div>
+<!-- Right: Status, Workspace Actions & Netlist Export -->
+<div class="flex items-center gap-4">
+<!-- Live Engine Status Badge -->
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50/80 border border-emerald-200/80 text-emerald-800 text-xs font-medium shadow-2xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+</span>
+<span>Engine Ready</span>
+</div>
+<!-- Divider -->
+<div class="h-5 w-px bg-slate-200 hidden sm:block"></div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors shadow-2xs" type="button">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Reset Defaults</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs" type="button">
+<svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Export Spectre .scs</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: TopNavigation -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" data-purpose="sizing-workspace">
+<!-- Workspace Metadata Subheader Banner -->
+<div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs">
+<div class="flex flex-wrap items-center gap-2.5">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400">Topology</span>
+<span class="text-sm font-semibold text-slate-800">Ideal-tail 5T OTA</span>
+<span class="text-slate-300">·</span>
+<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">TSMC 65 nm CMOS</span>
+<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">nominal TT Corner</span>
+<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">VDD = 1.2 V</span>
+</div>
+<div class="flex items-center gap-2 text-xs font-mono text-slate-500">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>policy: <strong class="text-slate-700 font-semibold">tt-ideal-tail-gbw-v1</strong></span>
+</div>
+</div>
+<!-- Layout Grid: Left Specs Panel (Inputs), Right Performance & Synthesis Dashboard -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Synthesis Target Inputs -->
+<section class="lg:col-span-4 flex flex-col gap-6" data-purpose="spec-input-card">
+<div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+<!-- Card Header -->
+<div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+<div>
+<h2 class="text-sm font-bold text-slate-900">Target Specifications</h2>
+<p class="text-xs text-slate-500 mt-0.5">Constraint thresholds for LUT engine</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-cyan-700 bg-cyan-50 border border-cyan-200/60 font-medium">
+              4 Active Constraints
+            </span>
+</div>
+<!-- Parameter Form -->
+<form class="p-5 space-y-4" onsubmit="event.preventDefault();">
+<!-- Min Gain Field -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gain">
+                Min Gain (A<sub>v0</sub>)
+              </label>
+<div class="relative rounded-lg shadow-2xs">
+<input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="min-gain" step="0.5" type="number" value="35"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="text-xs font-mono font-medium text-slate-500">dB</span>
+</div>
+</div>
+</div>
+<!-- Min GBW Field -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gbw">
+                Min GBW (Bandwidth)
+              </label>
+<div class="relative rounded-lg shadow-2xs">
+<input class="block w-full rounded-lg border-slate-300 pr-14 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="min-gbw" step="1" type="number" value="100"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="text-xs font-mono font-medium text-slate-500">MHz</span>
+</div>
+</div>
+<p class="text-[11px] text-slate-500 mt-1 font-mono">Overshoot target: 125.000 MHz (1.25×)</p>
+</div>
+<!-- Load Capacitance Field -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="load-cap">
+                Load Capacitance (C<sub>L</sub>)
+              </label>
+<div class="relative rounded-lg shadow-2xs">
+<input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="load-cap" step="0.1" type="number" value="1"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="text-xs font-mono font-medium text-slate-500">pF</span>
+</div>
+</div>
+</div>
+<!-- Max Power Field -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="max-power">
+                Max Total Power (P<sub>diss</sub>)
+              </label>
+<div class="relative rounded-lg shadow-2xs">
+<input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30" id="max-power" step="5" type="number" value="200"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="text-xs font-mono font-medium text-slate-500">µW</span>
+</div>
+</div>
+</div>
+<!-- Optimization & Execution Button -->
+<div class="pt-2">
+<button class="w-full cold-gradient-btn text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer" type="submit">
+<svg class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Size &amp; Synthesize OTA</span>
+</button>
+</div>
+</form>
+<!-- Secondary Engineering Parameters -->
+<div class="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 text-xs text-slate-600 space-y-2 font-mono">
+<div class="flex justify-between">
+<span class="text-slate-500">Internal Target:</span>
+<span class="font-semibold text-slate-800">GBW = 125.000 MHz</span>
+</div>
+<div class="flex justify-between">
+<span class="text-slate-500">Policy Algorithm:</span>
+<span class="font-semibold text-slate-800">local_refinement_verified</span>
+</div>
+</div>
+</div>
+<!-- Schematic / Circuit Representation Minimal Diagram -->
+<div class="bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-cyan-50 border border-cyan-100 flex items-center justify-center flex-shrink-0 text-cyan-600">
+<svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M3 8h4m0 0v8m0-8l6-4v16l-6-4m6-4h8m-3-3l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="text-xs">
+<p class="font-bold text-slate-800">Differential 5-Transistor Cell</p>
+<p class="text-slate-500 mt-0.5 leading-relaxed">NMOS input pair (M1, M2) with PMOS active current mirror load (M3, M4) &amp; ideal tail sink.</p>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: Synthesis Results & Constraint Verification -->
+<section class="lg:col-span-8 space-y-6" data-purpose="synthesis-results-view">
+<!-- Verification Success Banner -->
+<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3" data-purpose="status-verification-banner">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-xs">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-sm font-bold text-emerald-950">Verified sizing candidate found</h3>
+<p class="text-xs font-mono text-emerald-700 mt-0.5">local_refinement_verified · 306 evaluations converged</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300/60">
+              OPTIMAL CONVERGENCE
+            </span>
+</div>
+</div>
+<!-- 4 Key Performance Stat Cards Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5" data-purpose="performance-metric-cards">
+<!-- Gain Metric -->
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">DC Gain</div>
+<div class="mt-2 flex items-baseline gap-1.5">
+<span class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">35.00</span>
+<span class="text-xs font-mono font-medium text-slate-500">dB</span>
+</div>
+<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
+<span>● Target: ≥ 35.00</span>
+</div>
+</div>
+<!-- GBW Metric -->
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Gain-BW Product</div>
+<div class="mt-2 flex items-baseline gap-1.5">
+<span class="text-2xl font-mono font-bold text-cyan-600 tabular-numbers">125.83</span>
+<span class="text-xs font-mono font-medium text-slate-500">MHz</span>
+</div>
+<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
+<span>+25.8% margin</span>
+</div>
+</div>
+<!-- Phase Margin Metric -->
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Phase Margin</div>
+<div class="mt-2 flex items-baseline gap-1.5">
+<span class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">73.32</span>
+<span class="text-xs font-mono font-medium text-slate-500">deg (°)</span>
+</div>
+<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
+<span>Stable (&gt; 60°)</span>
+</div>
+</div>
+<!-- Power Dissipation Metric -->
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Power Dissipation</div>
+<div class="mt-2 flex items-baseline gap-1.5">
+<span class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">189.52</span>
+<span class="text-xs font-mono font-medium text-slate-500">µW</span>
+</div>
+<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
+<span>-5.2% budget</span>
+</div>
+</div>
+</div>
+<!-- Transistor Geometries Table Card -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden" data-purpose="transistor-sizing-table">
+<div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
+<div>
+<h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Synthesized Transistor Geometries</h3>
+<p class="text-xs text-slate-500">Device sizing (Width &amp; Length) &amp; Operating Point</p>
+</div>
+<span class="text-xs font-mono text-slate-500">Units in micrometers (µm)</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm font-mono">
+<thead class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+<tr>
+<th class="py-2.5 px-5 font-semibold text-slate-600" scope="col">Device Component</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Width W (µm)</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Length L (µm)</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">W / L Aspect</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Multiplier</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Row: M1 = M2 -->
+<tr class="hover:bg-slate-50/70 transition-colors">
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+<span class="font-bold text-slate-800">M1 = M2</span>
+<span class="text-xs text-slate-400 font-sans">(Input Pair, NMOS)</span>
+</div>
+</td>
+<td class="py-3 px-5 text-right font-bold text-slate-900 tabular-numbers">147.082</td>
+<td class="py-3 px-5 text-right text-slate-700 tabular-numbers">1.409</td>
+<td class="py-3 px-5 text-right text-slate-500 tabular-numbers">104.38</td>
+<td class="py-3 px-5 text-right text-slate-600 tabular-numbers">16×</td>
+</tr>
+<!-- Row: M3 = M4 -->
+<tr class="hover:bg-slate-50/70 transition-colors">
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+<span class="font-bold text-slate-800">M3 = M4</span>
+<span class="text-xs text-slate-400 font-sans">(Mirror Load, PMOS)</span>
+</div>
+</td>
+<td class="py-3 px-5 text-right font-bold text-slate-900 tabular-numbers">100.578</td>
+<td class="py-3 px-5 text-right text-slate-700 tabular-numbers">1.354</td>
+<td class="py-3 px-5 text-right text-slate-500 tabular-numbers">74.28</td>
+<td class="py-3 px-5 text-right text-slate-600 tabular-numbers">12×</td>
+</tr>
+<!-- Row: Tail Current -->
+<tr class="hover:bg-slate-50/70 transition-colors bg-slate-50/30 font-sans">
+<td class="py-2.5 px-5 font-mono">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+<span class="font-bold text-slate-800">I<sub>tail</sub></span>
+<span class="text-xs text-slate-400">(Bias Sink Current)</span>
+</div>
+</td>
+<td class="py-2.5 px-5 text-right font-mono font-bold text-slate-900 tabular-numbers" colspan="2">
+                    157.932 <span class="font-normal text-slate-500">µA</span>
+</td>
+<td class="py-2.5 px-5 text-right font-mono text-xs text-slate-500" colspan="2">
+                    V<sub>ov</sub> ≈ 168 mV
+                  </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Constraint Verification Table Card -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden" data-purpose="constraint-pass-matrix">
+<div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
+<div>
+<h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Constraint Verification Matrix</h3>
+<p class="text-xs text-slate-500">Pre-layout Lookup Table (LUT) Signoff vs User Constraints</p>
+</div>
+<div class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+<svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>8 / 8 Checks Passed</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-mono text-xs">
+<thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] font-semibold">
+<tr>
+<th class="py-2.5 px-5 font-semibold text-slate-600" scope="col">Constraint Name</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Required</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Achieved</th>
+<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Margin</th>
+<th class="py-2.5 px-5 text-center font-semibold text-slate-600" scope="col">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Gain Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">Gain_min</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">35.00 dB</td>
+<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">35.00 dB</td>
+<td class="py-2.5 px-5 text-right text-slate-500 tabular-numbers">0.00 dB</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- GBW Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">GBW_min</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">100.00 MHz</td>
+<td class="py-2.5 px-5 text-right font-semibold text-cyan-700 tabular-numbers">125.83 MHz</td>
+<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+25.83 MHz</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- Power Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">Power_max</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">200.00 µW</td>
+<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">189.52 µW</td>
+<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+10.48 µW</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- PM Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">PM_min</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">45.00 °</td>
+<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">73.32 °</td>
+<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+28.32 °</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- Saturation Margin -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">Sat_margin_min</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">0.05</td>
+<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">0.42</td>
+<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+0.37</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- W_nmos_max Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">W_nmos_max</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">0.00</td>
+<td class="py-2.5 px-5 text-right text-slate-700 tabular-numbers">0.00</td>
+<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">bound</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- W_pmos_max Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">W_pmos_max</td>
+<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">0.00</td>
+<td class="py-2.5 px-5 text-right text-slate-700 tabular-numbers">0.00</td>
+<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">bound</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+<!-- L_domain Check -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-2.5 px-5 font-semibold text-slate-800">L_domain</td>
+<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">NaN</td>
+<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">NaN</td>
+<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">—</td>
+<td class="py-2.5 px-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Official Tool Disclaimer / Verification Notice -->
+<div class="flex items-center gap-2 text-xs font-mono text-slate-500 px-1 pt-1" data-purpose="cadence-disclaimer">
+<svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Nominal LUT candidate — not PVT / post-layout signoff. Cadence Virtuoso / Spectre is the final authority.</span>
+</div>
+</section>
+</div>
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: ApplicationFooter -->
+<footer class="border-t border-slate-200 bg-white py-4 mt-auto">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+<div class="flex items-center gap-4">
+<span>Analog Synthesis Core · v2.4.19</span>
+<span class="text-slate-300">|</span>
+<span>Technology: TSMC 65 nm CRN65LP</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5 font-mono text-[11px] text-slate-600">
+<span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+          Spectre LUT Backend Online
+        </span>
+</div>
+</div>
+</footer>
+<!-- END: ApplicationFooter -->
+</body></html>
