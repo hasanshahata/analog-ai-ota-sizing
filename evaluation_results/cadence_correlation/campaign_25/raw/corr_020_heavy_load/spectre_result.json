@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "corr_020_heavy_load",
+  "status": "completed",
+  "dc_gain_dB": 26.7794910054181,
+  "bw_3db_Hz": 6418603.69816418,
+  "gbw_Hz": 139905194.214387,
+  "phase_at_gbw_deg": -90.6815610839716,
+  "phase_margin_deg": 89.3184389160284,
+  "vout_dc_V": 0.687564265134154,
+  "vtail_dc_V": 0.145158355087284,
+  "vmirror_dc_V": 0.687583460097319,
+  "vdd_current_A": -0.000435513353998694,
+  "power_W": 0.000522616024798433
+}

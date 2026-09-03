@@ -27,6 +27,7 @@ executed is `docs/codex_plan.md`.
 | `evaluation_results/` | Historical result tables + `canonical/` outputs of the new evaluator |
 | `tech_luts/` | TSMC 65 nm NMOS/PMOS characterization LUTs (**2.76 GB each**, not in git) |
 | `docs/` | `context.md` (version history diary), `PROJECT_REVIEW.md`, `codex_plan.md` (remediation plan), `DESIGN_CONTRACT.md` |
+| `web_app/` | Static browser UI for the sizing web app (`analog_ai/web/` backend) |
 | `archive/` | Frozen history: `versions/` (V2–V12 trainer trees), `legacy_root/` (old 7-param package, web app, old scripts), `kaggle/` (notebook builders). Do not import from here. |
 
 ## Setup
@@ -57,6 +58,21 @@ Optional (loading/training PPO models, ~2.5 GB): `stable-baselines3==2.9.0 torch
 ```
 
 Run scripts and tests from the repository root so `tech_luts/` resolves.
+
+## Web app
+
+A small local web application exposes the guarded, hard-verified nominal-TT
+sizing pipeline (ideal-tail 5T OTA): enter four specifications, get a
+verified candidate sizing or an explicit `unresolved` result with no
+dimensions.
+
+```bash
+uv pip install --python .venv/Scripts/python.exe -e ".[web]" torch
+.venv/Scripts/python scripts/run_web_app.py     # http://127.0.0.1:8000/
+```
+
+Scope and honest limitations: `docs/WEB_APP_USER_GUIDE.md`; implementation
+log: `docs/WEB_APP_PROGRESS_LOG.md`.
 
 ## Key properties of the canonical package
 

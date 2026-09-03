@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv2_019_heavy_load",
+  "status": "completed",
+  "dc_gain_dB": 29.823594114303,
+  "bw_3db_Hz": 3126212.58787624,
+  "gbw_Hz": 96033504.936074,
+  "phase_at_gbw_deg": -93.4397175680381,
+  "phase_margin_deg": 86.5602824319619,
+  "vout_dc_V": 0.706176597957266,
+  "vtail_dc_V": 0.124733794735322,
+  "vmirror_dc_V": 0.706177305788053,
+  "vdd_current_A": -0.000326496884551475,
+  "power_W": 0.000391796261461771
+}

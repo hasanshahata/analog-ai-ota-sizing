@@ -118,6 +118,19 @@ manual reference case passes all frozen tolerances (gain +0.21 dB, GBW
 is built and tested but not yet staged/run — nothing is blocking it now
 that the LUT engine is free.
 
+**Update 2026-09-03 (evening): web app complete (Phases W0-W5).**
+A local web application around `analog_ai/sizing.py` now exists:
+`analog_ai/web/` (FastAPI backend: frozen schemas, single-worker runtime,
+versioned `/api/v1/health` + `/api/v1/size`), `web_app/static/`
+(dependency-free UI), and `scripts/run_web_app.py` (launch). Four inputs
+(gain dB, GBW MHz, CL pF, power uW, TARGET_RANGES-bounded, never clipped);
+results are hard-verified candidates or an explicit unresolved with no
+geometry; every response carries the scope warning and the
+`tt-ideal-tail-gbw-v1` guard provenance. Tests: 32 web tests + full
+non-LUT suite green. Real-LUT parity smoke vs a direct API call: PASS
+(`evaluation_results/web_app/parity_smoke_001.json`). Docs:
+`docs/WEB_APP_USER_GUIDE.md`, `docs/WEB_APP_PROGRESS_LOG.md`.
+
 ## 5. Command reference
 
 ```bash
@@ -133,6 +146,9 @@ that the LUT engine is free.
 # legacy V9-V12 semantics and historical numbers.
 ```
 
+# local web app (guarded nominal-TT sizing; ~5.5 GB LUTs load at startup):
+.venv/Scripts/python scripts/run_web_app.py          # http://127.0.0.1:8000/
+
 Run everything from the repo root so `tech_luts/` resolves.
 
 ## 6. Where things live
@@ -147,6 +163,8 @@ Run everything from the repo root so `tech_luts/` resolves.
 | `evaluation_results/` | historical v2–v12 tables + `canonical/` (current evidence, incl. `surrogate_poc_summary.md`) |
 | `data/pilot/` | Phase 3 dataset: 24.6k design rows, 33.2k verified request rows, splits v2, manifest (consolidated parquet committed; shards are local) |
 | `docs/` | `codex_plan.md` (the plan), `CORRECTION_LOG.md` (done so far), `PROJECT_REVIEW.md` (audit), `DESIGN_CONTRACT.md` (frozen contract), `context.md` (historical diary — start at its STATUS banner), `HANDOFF.md` (this file) |
+| `web_app/static/` | Browser UI (HTML/CSS/JS, no build system) for the sizing web app |
+| `analog_ai/web/` | FastAPI backend: `schemas.py` (frozen W0 contract), `runtime.py` (single-worker sizing service), `app.py` (HTTP API) |
 | `archive/` | frozen V2–V12 trainer trees, legacy root package, web app, Kaggle notebooks — **never import from here** |
 
 ## 7. Next steps (in `codex_plan.md` order)

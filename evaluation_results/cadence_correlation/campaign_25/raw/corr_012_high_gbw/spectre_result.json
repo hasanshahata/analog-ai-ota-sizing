@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "corr_012_high_gbw",
+  "status": "completed",
+  "dc_gain_dB": 30.8955248624209,
+  "bw_3db_Hz": 43426639.1180925,
+  "gbw_Hz": 1015259753.36921,
+  "phase_at_gbw_deg": -108.293130774293,
+  "phase_margin_deg": 71.7068692257072,
+  "vout_dc_V": 0.663812223532993,
+  "vtail_dc_V": 0.0965973724852771,
+  "vmirror_dc_V": 0.663818463366791,
+  "vdd_current_A": -0.000426260133611672,
+  "power_W": 0.000511512160334006
+}

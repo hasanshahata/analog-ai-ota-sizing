@@ -1,0 +1,15 @@
+{
+  "case_id": "corr_021_boundary",
+  "topology": "5t_ota_ideal_tail",
+  "corner": "tt_lib",
+  "vdd_V": 1.2,
+  "vicm_V": 0.6,
+  "cl_F": 2e-13,
+  "geometry": {
+    "L1": 4.1717162733078e-07,
+    "W1": 2.269287714127438e-06,
+    "L3": 1.259876828139227e-06,
+    "W3": 1.0467579060950211e-05,
+    "Itail": 1e-05
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv2_023_boundary",
+  "status": "pending",
+  "netlist": "input.scs",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "template_sha256": "9e2014300171939e8ccc77781bb42a63b28b468d043bd2ec90890ab116a1351c",
+  "netlist_sha256": "aee9f759ad406545a562d2fa29ee40071d1fd6d054378c8e4d700eb9de567d4b",
+  "package_version": "0.1.0",
+  "oracle_version": "analog_ai-0.1.0-proxy",
+  "simulator": "spectre",
+  "corner": "tt_lib",
+  "category": "boundary",
+  "category_rank": 3,
+  "source_row_id": "r00023854",
+  "pipeline_status": "local_refinement_verified",
+  "pipeline_oracle_evals": 1205,
+  "calibration_policy": "tt-ideal-tail-gbw-v1",
+  "gbw_guard_band": 0.25
+}

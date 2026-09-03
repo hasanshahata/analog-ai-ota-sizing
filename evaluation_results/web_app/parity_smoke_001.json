@@ -1,0 +1,65 @@
+{
+  "date": "2026-09-03",
+  "purpose": "W4 real-LUT web/direct parity smoke",
+  "request_ui": {
+    "Gain_min_dB": 32.0,
+    "GBW_min_MHz": 120.0,
+    "CL_pF": 2.0,
+    "Power_max_uW": 250.0
+  },
+  "request_canonical": {
+    "Gain_min": 32.0,
+    "GBW_min": 120000000.0,
+    "CL_pF": 2.0,
+    "Power_max": 0.00025
+  },
+  "champion": "seed2.pt",
+  "web": {
+    "status": "success",
+    "pipeline_status": "local_refinement_verified",
+    "n_oracle_evals": 75,
+    "design": {
+      "m1_m2": {
+        "w_m": 0.0002279067863219521,
+        "l_m": 6.158247854740908e-07
+      },
+      "m3_m4": {
+        "w_m": 1.7367442787436533e-05,
+        "l_m": 4.061101842288574e-07
+      },
+      "itail_a": 0.00020420926917791364
+    },
+    "policy": "tt-ideal-tail-gbw-v1"
+  },
+  "direct": {
+    "status": "local_refinement_verified",
+    "n_oracle_evals": 75,
+    "design_variables": {
+      "L1": 6.158247854740908e-07,
+      "gmid1": 20.442858123779295,
+      "L3": 4.061101842288574e-07,
+      "gmid3": 8.400322282314301,
+      "Itail": 0.00020420926917791364
+    },
+    "physical_design": {
+      "L1": 6.158247854740908e-07,
+      "W1": 0.0002279067863219521,
+      "L3": 4.061101842288574e-07,
+      "W3": 1.7367442787436533e-05,
+      "Itail": 0.00020420926917791364
+    },
+    "policy": "tt-ideal-tail-gbw-v1"
+  },
+  "parity_checks": {
+    "design_variables": true,
+    "lut_metrics": true,
+    "user_verdict": true,
+    "internal_verdict": true,
+    "policy": true,
+    "internal_gbw": true,
+    "n_evals": true,
+    "pipeline_status": true
+  },
+  "parity_result": "PASS",
+  "notes": "web request served by scripts/run_web_app.py on 127.0.0.1:8017, seed=0 both paths; web latency 7.7s (local_refinement_verified, 75 oracle evals). Extreme corner request (44.5dB/290MHz/5pF/55uW) correctly returned HTTP 200 with status=unresolved and no geometry after 3,944 evals (~9.4 min); out-of-range request (GBW 900 MHz) returned HTTP 422."
+}

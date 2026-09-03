@@ -353,3 +353,250 @@ Current status: **automation complete and tested; real job generation is
 waiting for the already-running Phase E certification process to release the
 large LUT engine.** This avoids loading a second approximately 5.5 GB LUT
 copy concurrently. No Cadence campaign jobs have yet been staged in Step 4.
+
+### Real 25-case generation and staging
+
+Phase E completed and released the LUT engine. The real campaign generator
+then ran to completion against the solved typical-corner oracle:
+
+```text
+25/25 jobs generated
+6 verified directly by head 0
+6 verified by best-of-5 selection
+13 verified after local refinement
+0 required global fallback
+0 unresolved
+```
+
+Post-generation validation found exactly five jobs in each of the five
+campaign regimes, 25 manifest entries, and no missing files or netlist hash
+mismatches. A dry collection pass correctly reported 0/25 completed and
+25 pending before any Spectre execution.
+
+All 25 public payloads were staged to `E:\Cadence_AI_Share\jobs`. The staged
+content was audited after copying:
+
+- 25 staged campaign directories;
+- zero missing public files;
+- zero `request_private.json` or `expected_private.json` files exposed.
+
+The host retains the private requests and LUT predictions under
+`correlation_jobs/campaign_25`. Initial pending reports are under
+`evaluation_results/cadence_correlation/campaign_25`.
+
+Current status: **25/25 jobs are ready for the Debian Spectre worker.** Run:
+
+```bash
+bash /mnt/hgfs/Cadence_AI_Share/runner/run_jobs.sh
+```
+
+The worker is resumable and will skip the already completed manual reference
+case. Step 4 remains open until the 25 Spectre results are collected and
+compared on the host.
+
+## 2026-09-03 — Step 4 result: 25-case Spectre campaign complete
+
+The Debian worker completed 25/25 campaign cases; the manual reference job
+was correctly skipped as already complete. Host collection then joined the
+blind measurements to private requests and LUT predictions.
+
+Headline results:
+
+- Correlation tolerance pass: **19/25 (76%)**.
+- All original specifications pass in Spectre: **5/25 (20%)**.
+- False proxy passes: **20/25**, all caused solely by `GBW_min`.
+- Mean signed Spectre-minus-LUT error: gain +0.174 dB, GBW -6.05%, phase
+  margin -1.91 degrees, and power -0.00013%.
+- Worst errors: gain 0.287 dB, GBW 16.74%, phase margin 6.18 degrees, and
+  DC-node voltage 16.54 mV; power remains essentially exact because the
+  circuit uses an ideal tail-current source.
+- Regime correlation passes: low power 5/5, high gain 4/5, high GBW 0/5,
+  heavy load 5/5, and boundary 5/5.
+- Regime Spectre specification passes: low power 1/5, high gain 0/5, high
+  GBW 0/5, heavy load 1/5, and boundary 3/5.
+
+Cause: the optimizer generally used almost all available LUT-side GBW
+margin. Median predicted GBW margin was only +1.35%, while Spectre GBW was
+systematically lower; median measured margin became -2.00%. Consequently,
+many designs can be within correlation tolerance yet narrowly miss the
+requested GBW.
+
+Evidence is stored at
+`evaluation_results/cadence_correlation/campaign_25/`, including the
+machine-readable records, per-case summary, detailed analysis, and 25 raw
+Spectre result/OCEAN/Spectre-log triplets.
+
+Conclusion: **the unguarded LUT pipeline is not yet physically dependable
+for arbitrary requested specifications.** The next correction is a
+Spectre-informed GBW guard band/calibration model, followed by a new blind
+validation campaign not used to fit that correction.
+
+Status after Step 4: **complete, with a failed zero-false-pass acceptance
+gate and a localized GBW model gap.**
+
+## 2026-09-03 — GBW correction Step 1: policy frozen
+
+Added a reproducible calibration analysis over the 25 completed cases.
+`Spectre GBW / LUT GBW` has mean 0.9395 and minimum 0.8326. Covering the
+worst observed ratio requires a 20.11% increase in the LUT-side target.
+
+Frozen candidate policy `tt-ideal-tail-gbw-v1` uses a 25% guard band:
+
+```text
+internal_GBW_min = user_GBW_min * 1.25
+```
+
+The external user specification is unchanged. Only the internal optimization
+target is strengthened. The implementation preserves the input dictionary,
+changes no other specification, validates the guard-band range, and records
+the policy version. Calibration-focused regression tests: **12/12 PASS**.
+
+Evidence/code:
+
+- `analog_ai/correlation/calibration.py`
+- `scripts/analyze_cadence_calibration.py`
+- `tests/test_correlation_calibration.py`
+- `evaluation_results/cadence_correlation/campaign_25/gbw_calibration_v1.json`
+
+Status: **correction Step 1 complete.** The 25% value is derived from the
+first campaign and is not yet validated. Step 2 must integrate it into the
+sizing/verification path while retaining both user and internal targets.
+
+## 2026-09-03 — GBW correction Step 2: guarded sizing integrated
+
+Implemented `analog_ai.sizing.size_ideal_tail_ota` as the deployment-facing
+black-box boundary. Its four external inputs remain Gain minimum, GBW minimum,
+load capacitance, and maximum power. Internally it creates a copy with
+`GBW_min *= 1.25`; the neural proposal, best-of-K selection, local refinement,
+global fallback, and hard verifier all receive this protected request.
+
+The returned record explicitly includes:
+
+- original `user_specs`;
+- protected `internal_specs`;
+- calibration policy/version and scope;
+- pipeline status and oracle cost;
+- canonical design variables and physical W/L/tail current;
+- LUT metrics;
+- separate user-contract and internal-contract residuals/verdicts.
+
+An unresolved request has no physical sizing and both verdicts false. A
+supposedly successful staged result that fails re-verification against the
+internal contract raises an error rather than being exported.
+
+The Cadence campaign builder now calls this API and defaults to the frozen
+25% guard band. Each future manifest/job records its policy version and margin;
+private expected metrics and requests remain hidden from the guest simulator.
+
+Verification:
+
+- focused sizing/calibration/campaign/exporter/runner suite: **18/18 PASS**;
+- complete non-LUT regression suite: **88/88 PASS**.
+
+Status: **correction Step 2 complete.** No claim about physical success is
+made yet. Step 3 must select requests disjoint from the 25 calibration source
+rows and generate a new blind campaign using this protected path.
+
+## 2026-09-03 — GBW correction Step 3: disjoint blind jobs generated
+
+The selector now accepts an explicit set of excluded source-row IDs. The
+first 25-case calibration manifest is mandatory input to the guarded
+validation build. A pre-generation audit confirmed 25 unique initial rows,
+five per regime, with zero calibration overlap.
+
+The first fixed-list attempt correctly stopped after three accepted jobs when
+row `r00014056` remained unresolved after global fallback. This revealed that
+the stronger protected contract can reject requests that passed the original
+unguarded proxy. The incomplete directory
+`correlation_jobs/guardband_validation_25/` is retained as failure history and
+was not staged.
+
+The campaign protocol was then corrected to:
+
+1. freeze a deterministic pool of 20 candidates per regime;
+2. attempt candidates in order under the identical full sizing ladder;
+3. record every accepted and unresolved attempt incrementally;
+4. export only protected-contract passes;
+5. continue until each regime has five accepted designs;
+6. fail if the frozen pool cannot fill a quota.
+
+Final campaign `ideal_tail_tt_guardband_validation_25_v2`:
+
+| Quantity | Result |
+|---|---:|
+| Accepted Cadence jobs | 25 |
+| Total sizing attempts | 34 |
+| Unresolved/rejected attempts | 9 |
+| Calibration source-row overlap | 0 |
+| Internal GBW guard band | 25% |
+| Bad netlist hashes | 0 |
+| Internal-contract verdicts | 25/25 PASS |
+| User-contract LUT verdicts | 25/25 PASS |
+
+Accepted sizing path:
+
+- direct head 0: 10;
+- best-of-5: 8;
+- local refinement: 7;
+- global fallback successes: 0.
+
+Rejected attempts by regime: low power 2, high gain 3, high GBW 0, heavy
+load 3, boundary 1. These are deployment rejection/coverage evidence and are
+not sent to Cadence because no physical design passed the protected contract.
+
+All 25 `gbv2_*` jobs were staged to the VMware share. Privacy audit: 25 jobs,
+zero missing public files, zero private request/expected-result files exposed.
+Focused correlation/sizing/runner suite: **19/19 PASS**.
+
+Status: **correction Step 3 complete.** Run inside Debian:
+
+```bash
+bash /mnt/hgfs/Cadence_AI_Share/runner/run_jobs.sh
+```
+
+The resumable worker will skip the prior `corr_*` and manual results and run
+only the new `gbv2_*` jobs. Step 4 begins when those results are returned.
+
+## 2026-09-03 — GBW correction Steps 4–5: validation result
+
+The user completed all 25 `gbv2_*` simulations. Collection and evidence
+checks found 25/25 result JSON files, 25 clean Spectre logs reporting zero
+errors and zero simulator warnings, and 25 OCEAN metric records. All raw JSON
+and logs are archived under
+`evaluation_results/cadence_correlation/guardband_validation_25_v2/raw/`.
+
+Primary safety result:
+
+- original user specifications passing in Spectre: **25/25**;
+- false proxy passes: **0/25**;
+- minimum measured GBW margin above the user request: **4.45%**;
+- median measured GBW margin: **22.51%**.
+
+The zero-false-pass gate therefore passes on this disjoint nominal-TT
+validation sample. This is a substantial improvement from 5/25 physical
+specification passes in the unguarded campaign.
+
+Underlying proxy correlation remains imperfect:
+
+- all correlation tolerances pass: 15/25;
+- mean signed GBW error: -7.63%; worst: -19.74%;
+- ten cases exceed the 10% GBW correlation tolerance;
+- one case also exceeds the 5-degree PM tolerance;
+- gain MAE 0.211 dB, PM MAE 1.83 degrees, power relative MAE 0.00013%,
+  and worst DC-node error 15.45 mV.
+
+The new minimum `Spectre GBW / LUT GBW` ratio is 0.8026, close to the 0.8000
+limit that an exact-boundary 25% uplift can protect. Accordingly, v1 remains
+a conservative nominal-TT deployment policy but not a universal guarantee.
+It must not be extrapolated to PVT, other supplies/common modes, finite tail
+devices, or other technologies.
+
+Coverage cost: 34 requests were attempted to produce the 25 protected
+designs, so guarded acceptance was 73.5%; nine requests safely returned
+unresolved after the declared budget. A richer calibration is worth studying
+to reduce rejection and overdesign, but it must not replace the fixed policy
+until a third disjoint campaign validates it.
+
+Status: **Steps 4 and 5 complete. Fixed 25% policy retained; nominal disjoint
+zero-false-pass validation gate passed.** Detailed analysis is in
+`evaluation_results/cadence_correlation/guardband_validation_25_v2/validation_analysis.md`.

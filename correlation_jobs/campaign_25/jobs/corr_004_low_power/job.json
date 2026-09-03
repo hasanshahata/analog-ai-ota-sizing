@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "case_id": "corr_004_low_power",
+  "status": "pending",
+  "netlist": "input.scs",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "template_sha256": "9e2014300171939e8ccc77781bb42a63b28b468d043bd2ec90890ab116a1351c",
+  "netlist_sha256": "f1c7b78022fee648fbd61db9f29d79c0262c55556086111d6189e88fd18feb95",
+  "package_version": "0.1.0",
+  "oracle_version": "analog_ai-0.1.0-proxy",
+  "simulator": "spectre",
+  "corner": "tt_lib",
+  "category": "low_power",
+  "category_rank": 4,
+  "source_row_id": "r00004981",
+  "pipeline_status": "local_refinement_verified",
+  "pipeline_oracle_evals": 221
+}

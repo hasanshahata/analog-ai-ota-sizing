@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv2_001_low_power",
+  "status": "completed",
+  "dc_gain_dB": 30.8947561568325,
+  "bw_3db_Hz": 1569772.95928229,
+  "gbw_Hz": 52460103.5290695,
+  "phase_at_gbw_deg": -98.6955873520151,
+  "phase_margin_deg": 81.3044126479849,
+  "vout_dc_V": 0.75049046629957,
+  "vtail_dc_V": 0.138668685305652,
+  "vmirror_dc_V": 0.750492079918989,
+  "vdd_current_A": -3.64148227519764e-05,
+  "power_W": 4.36977873023717e-05
+}

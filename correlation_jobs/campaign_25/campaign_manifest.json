@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "campaign": "ideal_tail_tt_25",
+  "selection": {
+    "categories": 5,
+    "n_each": 5,
+    "source_split": "test",
+    "seed": 20260903
+  },
+  "champion": "seed2.pt",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "cases": [
+    {
+      "case_id": "corr_001_low_power",
+      "category": "low_power",
+      "category_rank": 1,
+      "source_row_id": "r00011946",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 508
+    },
+    {
+      "case_id": "corr_002_low_power",
+      "category": "low_power",
+      "category_rank": 2,
+      "source_row_id": "r00028872",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605
+    },
+    {
+      "case_id": "corr_003_low_power",
+      "category": "low_power",
+      "category_rank": 3,
+      "source_row_id": "r00015432",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605
+    },
+    {
+      "case_id": "corr_004_low_power",
+      "category": "low_power",
+      "category_rank": 4,
+      "source_row_id": "r00004981",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 221
+    },
+    {
+      "case_id": "corr_005_low_power",
+      "category": "low_power",
+      "category_rank": 5,
+      "source_row_id": "r00021043",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 166
+    },
+    {
+      "case_id": "corr_006_high_gain",
+      "category": "high_gain",
+      "category_rank": 1,
+      "source_row_id": "r00008272",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_007_high_gain",
+      "category": "high_gain",
+      "category_rank": 2,
+      "source_row_id": "r00021619",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_008_high_gain",
+      "category": "high_gain",
+      "category_rank": 3,
+      "source_row_id": "r00011845",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605
+    },
+    {
+      "case_id": "corr_009_high_gain",
+      "category": "high_gain",
+      "category_rank": 4,
+      "source_row_id": "r00028525",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_010_high_gain",
+      "category": "high_gain",
+      "category_rank": 5,
+      "source_row_id": "r00001537",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1761
+    },
+    {
+      "case_id": "corr_011_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 1,
+      "source_row_id": "r00026236",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_012_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 2,
+      "source_row_id": "r00018532",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_013_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 3,
+      "source_row_id": "r00028648",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_014_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 4,
+      "source_row_id": "r00029961",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_015_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 5,
+      "source_row_id": "r00017623",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605
+    },
+    {
+      "case_id": "corr_016_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 1,
+      "source_row_id": "r00030544",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_017_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 2,
+      "source_row_id": "r00021183",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 248
+    },
+    {
+      "case_id": "corr_018_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 3,
+      "source_row_id": "r00031219",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_019_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 4,
+      "source_row_id": "r00032794",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 470
+    },
+    {
+      "case_id": "corr_020_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 5,
+      "source_row_id": "r00010870",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1062
+    },
+    {
+      "case_id": "corr_021_boundary",
+      "category": "boundary",
+      "category_rank": 1,
+      "source_row_id": "r00003268",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 144
+    },
+    {
+      "case_id": "corr_022_boundary",
+      "category": "boundary",
+      "category_rank": 2,
+      "source_row_id": "r00012061",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_023_boundary",
+      "category": "boundary",
+      "category_rank": 3,
+      "source_row_id": "r00002554",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605
+    },
+    {
+      "case_id": "corr_024_boundary",
+      "category": "boundary",
+      "category_rank": 4,
+      "source_row_id": "r00028402",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5
+    },
+    {
+      "case_id": "corr_025_boundary",
+      "category": "boundary",
+      "category_rank": 5,
+      "source_row_id": "r00010930",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5
+    }
+  ]
+}

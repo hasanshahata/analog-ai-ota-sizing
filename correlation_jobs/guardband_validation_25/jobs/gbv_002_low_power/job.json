@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv_002_low_power",
+  "status": "pending",
+  "netlist": "input.scs",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "template_sha256": "9e2014300171939e8ccc77781bb42a63b28b468d043bd2ec90890ab116a1351c",
+  "netlist_sha256": "3bb602ebed0f3e216b1e0c76a12b8fdad79aa11b826df0d56b5f1e906f09976c",
+  "package_version": "0.1.0",
+  "oracle_version": "analog_ai-0.1.0-proxy",
+  "simulator": "spectre",
+  "corner": "tt_lib",
+  "category": "low_power",
+  "category_rank": 2,
+  "source_row_id": "r00028875",
+  "pipeline_status": "local_refinement_verified",
+  "pipeline_oracle_evals": 429,
+  "calibration_policy": "tt-ideal-tail-gbw-v1",
+  "gbw_guard_band": 0.25
+}

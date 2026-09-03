@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv2_023_boundary",
+  "status": "completed",
+  "dc_gain_dB": 34.2467808545923,
+  "bw_3db_Hz": 5686544.56493855,
+  "gbw_Hz": 251482070.502253,
+  "phase_at_gbw_deg": -106.680394683742,
+  "phase_margin_deg": 73.3196053162584,
+  "vout_dc_V": 0.502034844302118,
+  "vtail_dc_V": 0.100110867120487,
+  "vmirror_dc_V": 0.502036294740495,
+  "vdd_current_A": -0.000276508288624531,
+  "power_W": 0.000331809946349437
+}

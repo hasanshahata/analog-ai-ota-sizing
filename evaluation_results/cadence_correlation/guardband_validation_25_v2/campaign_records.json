@@ -1,0 +1,3187 @@
+{
+  "schema_version": 1,
+  "counts": {
+    "total": 25,
+    "completed": 25,
+    "pending": 0,
+    "correlation_passed": 15,
+    "false_proxy_passes": 0
+  },
+  "records": [
+    {
+      "case_id": "gbv2_001_low_power",
+      "status": "completed",
+      "category": "low_power",
+      "source_row_id": "r00027426",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 28.780960422807702,
+        "GBW_min": 38896944.3486929,
+        "CL_pF": 1.0,
+        "Power_max": 4.511727078672704e-05
+      },
+      "expected": {
+        "dc_gain_dB": 30.681502818262565,
+        "gbw_Hz": 54208480.533536024,
+        "phase_margin_deg": 82.74609001333036,
+        "power_W": 4.369780857861042e-05,
+        "vout_dc_V": 0.752336704669706,
+        "vtail_dc_V": 0.14826263294272518,
+        "vmirror_dc_V": 0.752336704669706
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_001_low_power",
+        "status": "completed",
+        "dc_gain_dB": 30.8947561568325,
+        "bw_3db_Hz": 1569772.95928229,
+        "gbw_Hz": 52460103.5290695,
+        "phase_at_gbw_deg": -98.6955873520151,
+        "phase_margin_deg": 81.3044126479849,
+        "vout_dc_V": 0.75049046629957,
+        "vtail_dc_V": 0.138668685305652,
+        "vmirror_dc_V": 0.750492079918989,
+        "vdd_current_A": -3.64148227519764e-05,
+        "power_W": 4.36977873023717e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 30.681502818262565,
+          "measured": 30.8947561568325,
+          "signed_difference": 0.21325333856993467,
+          "error": 0.21325333856993467,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 54208480.533536024,
+          "measured": 52460103.5290695,
+          "signed_difference": -1748377.0044665262,
+          "error": 0.03225283179418568,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 82.74609001333036,
+          "measured": 81.3044126479849,
+          "signed_difference": -1.4416773653454555,
+          "error": 1.4416773653454555,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 4.369780857861042e-05,
+          "measured": 4.36977873023717e-05,
+          "signed_difference": -2.1276238718970567e-11,
+          "error": 4.868948675239757e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.752336704669706,
+          "measured": 0.75049046629957,
+          "signed_difference": -0.0018462383701360885,
+          "error": 0.0018462383701360885,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.14826263294272518,
+          "measured": 0.138668685305652,
+          "signed_difference": -0.009593947637073191,
+          "error": 0.009593947637073191,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.752336704669706,
+          "measured": 0.750492079918989,
+          "signed_difference": -0.0018446247507170055,
+          "error": 0.0018446247507170055,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_002_low_power",
+      "status": "completed",
+      "category": "low_power",
+      "source_row_id": "r00009136",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 30.54759490320428,
+        "GBW_min": 103966500.57626197,
+        "CL_pF": 0.2,
+        "Power_max": 4.120139832208494e-05
+      },
+      "expected": {
+        "dc_gain_dB": 32.62398438090748,
+        "gbw_Hz": 146893614.5548723,
+        "phase_margin_deg": 74.06511626745264,
+        "power_W": 4.09327883720398e-05,
+        "vout_dc_V": 0.6806862114188174,
+        "vtail_dc_V": 0.13136936729747373,
+        "vmirror_dc_V": 0.6806862114188164
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_002_low_power",
+        "status": "completed",
+        "dc_gain_dB": 32.8659215090481,
+        "bw_3db_Hz": 4965551.8691967,
+        "gbw_Hz": 138827657.074831,
+        "phase_at_gbw_deg": -106.877907441212,
+        "phase_margin_deg": 73.1220925587884,
+        "vout_dc_V": 0.679209136941833,
+        "vtail_dc_V": 0.124117931727815,
+        "vmirror_dc_V": 0.679235957995365,
+        "vdd_current_A": -3.41106323848813e-05,
+        "power_W": 4.09327588618576e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 32.62398438090748,
+          "measured": 32.8659215090481,
+          "signed_difference": 0.24193712814061996,
+          "error": 0.24193712814061996,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 146893614.5548723,
+          "measured": 138827657.074831,
+          "signed_difference": -8065957.480041295,
+          "error": 0.05491019813545568,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 74.06511626745264,
+          "measured": 73.1220925587884,
+          "signed_difference": -0.9430237086642421,
+          "error": 0.9430237086642421,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 4.09327883720398e-05,
+          "measured": 4.09327588618576e-05,
+          "signed_difference": -2.951018219393177e-11,
+          "error": 7.209423879387963e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.6806862114188174,
+          "measured": 0.679209136941833,
+          "signed_difference": -0.001477074476984308,
+          "error": 0.001477074476984308,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.13136936729747373,
+          "measured": 0.124117931727815,
+          "signed_difference": -0.0072514355696587235,
+          "error": 0.0072514355696587235,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.6806862114188164,
+          "measured": 0.679235957995365,
+          "signed_difference": -0.0014502534234513975,
+          "error": 0.0014502534234513975,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_003_low_power",
+      "status": "completed",
+      "category": "low_power",
+      "source_row_id": "r00004131",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 28.739100319546193,
+        "GBW_min": 101413185.17654039,
+        "CL_pF": 0.2,
+        "Power_max": 3.9023558994577625e-05
+      },
+      "expected": {
+        "dc_gain_dB": 31.789962489075954,
+        "gbw_Hz": 126766719.4920894,
+        "phase_margin_deg": 73.10831607469034,
+        "power_W": 3.033392164120382e-05,
+        "vout_dc_V": 0.6794424884591475,
+        "vtail_dc_V": 0.1328887932946493,
+        "vmirror_dc_V": 0.6794424884591489
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_003_low_power",
+        "status": "completed",
+        "dc_gain_dB": 32.012771970974,
+        "bw_3db_Hz": 4391422.58205989,
+        "gbw_Hz": 121306764.306632,
+        "phase_at_gbw_deg": -107.672090283313,
+        "phase_margin_deg": 72.3279097166865,
+        "vout_dc_V": 0.678391034953358,
+        "vtail_dc_V": 0.123205215694347,
+        "vmirror_dc_V": 0.678216561335342,
+        "vdd_current_A": -2.52782590558585e-05,
+        "power_W": 3.03339108670302e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 31.789962489075954,
+          "measured": 32.012771970974,
+          "signed_difference": 0.2228094818980466,
+          "error": 0.2228094818980466,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 126766719.4920894,
+          "measured": 121306764.306632,
+          "signed_difference": -5459955.185457408,
+          "error": 0.0430708880637881,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 73.10831607469034,
+          "measured": 72.3279097166865,
+          "signed_difference": -0.7804063580038303,
+          "error": 0.7804063580038303,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 3.033392164120382e-05,
+          "measured": 3.03339108670302e-05,
+          "signed_difference": -1.077417362006219e-11,
+          "error": 3.5518564818296307e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.6794424884591475,
+          "measured": 0.678391034953358,
+          "signed_difference": -0.0010514535057895014,
+          "error": 0.0010514535057895014,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.1328887932946493,
+          "measured": 0.123205215694347,
+          "signed_difference": -0.009683577600302307,
+          "error": 0.009683577600302307,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.6794424884591489,
+          "measured": 0.678216561335342,
+          "signed_difference": -0.0012259271238068692,
+          "error": 0.0012259271238068692,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_004_low_power",
+      "status": "completed",
+      "category": "low_power",
+      "source_row_id": "r00005295",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 31.797772770418213,
+        "GBW_min": 24729507.253491227,
+        "CL_pF": 1.0,
+        "Power_max": 3.715096985024224e-05
+      },
+      "expected": {
+        "dc_gain_dB": 33.48790438415363,
+        "gbw_Hz": 35237726.136178814,
+        "phase_margin_deg": 79.44101960386374,
+        "power_W": 3.667863142490387e-05,
+        "vout_dc_V": 0.6527673847283643,
+        "vtail_dc_V": 0.10123053233418985,
+        "vmirror_dc_V": 0.6527673847283786
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_004_low_power",
+        "status": "completed",
+        "dc_gain_dB": 33.7363269274682,
+        "bw_3db_Hz": 769666.991949747,
+        "gbw_Hz": 34668629.7038271,
+        "phase_at_gbw_deg": -101.213624909443,
+        "phase_margin_deg": 78.7863750905573,
+        "vout_dc_V": 0.651258638463812,
+        "vtail_dc_V": 0.0970462588405144,
+        "vmirror_dc_V": 0.651258271696094,
+        "vdd_current_A": -3.05654877316165e-05,
+        "power_W": 3.66785852779398e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 33.48790438415363,
+          "measured": 33.7363269274682,
+          "signed_difference": 0.24842254331456814,
+          "error": 0.24842254331456814,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 35237726.136178814,
+          "measured": 34668629.7038271,
+          "signed_difference": -569096.4323517159,
+          "error": 0.016150203056587716,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 79.44101960386374,
+          "measured": 78.7863750905573,
+          "signed_difference": -0.6546445133064367,
+          "error": 0.6546445133064367,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 3.667863142490387e-05,
+          "measured": 3.66785852779398e-05,
+          "signed_difference": -4.6146964071194785e-11,
+          "error": 1.2581430189312395e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.6527673847283643,
+          "measured": 0.651258638463812,
+          "signed_difference": -0.0015087462645522187,
+          "error": 0.0015087462645522187,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.10123053233418985,
+          "measured": 0.0970462588405144,
+          "signed_difference": -0.00418427349367545,
+          "error": 0.00418427349367545,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.6527673847283786,
+          "measured": 0.651258271696094,
+          "signed_difference": -0.0015091130322846258,
+          "error": 0.0015091130322846258,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_005_low_power",
+      "status": "completed",
+      "category": "low_power",
+      "source_row_id": "r00015898",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 32.231376578322056,
+        "GBW_min": 35034489.83677113,
+        "CL_pF": 1.0,
+        "Power_max": 3.581909044387262e-05
+      },
+      "expected": {
+        "dc_gain_dB": 33.33423883856467,
+        "gbw_Hz": 45471915.027038574,
+        "phase_margin_deg": 81.14344260645264,
+        "power_W": 3.528831557929516e-05,
+        "vout_dc_V": 0.5996309807225503,
+        "vtail_dc_V": 0.16781415915428585,
+        "vmirror_dc_V": 0.5996309807225499
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_005_low_power",
+        "status": "completed",
+        "dc_gain_dB": 33.5952141699902,
+        "bw_3db_Hz": 987617.373703097,
+        "gbw_Hz": 44607661.6414791,
+        "phase_at_gbw_deg": -100.085297878741,
+        "phase_margin_deg": 79.9147021212595,
+        "vout_dc_V": 0.598505461492198,
+        "vtail_dc_V": 0.161427496126638,
+        "vmirror_dc_V": 0.598679929490637,
+        "vdd_current_A": -2.94068874562486e-05,
+        "power_W": 3.52882649474983e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 33.33423883856467,
+          "measured": 33.5952141699902,
+          "signed_difference": 0.2609753314255272,
+          "error": 0.2609753314255272,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 45471915.027038574,
+          "measured": 44607661.6414791,
+          "signed_difference": -864253.3855594769,
+          "error": 0.01900631158915505,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 81.14344260645264,
+          "measured": 79.9147021212595,
+          "signed_difference": -1.2287404851931427,
+          "error": 1.2287404851931427,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 3.528831557929516e-05,
+          "measured": 3.52882649474983e-05,
+          "signed_difference": -5.063179685764344e-11,
+          "error": 1.434803447726783e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5996309807225503,
+          "measured": 0.598505461492198,
+          "signed_difference": -0.001125519230352312,
+          "error": 0.001125519230352312,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.16781415915428585,
+          "measured": 0.161427496126638,
+          "signed_difference": -0.006386663027647843,
+          "error": 0.006386663027647843,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5996309807225499,
+          "measured": 0.598679929490637,
+          "signed_difference": -0.0009510512319129694,
+          "error": 0.0009510512319129694,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_006_high_gain",
+      "status": "completed",
+      "category": "high_gain",
+      "source_row_id": "r00007611",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 32.780700523883674,
+        "GBW_min": 5071741.806508875,
+        "CL_pF": 5.0,
+        "Power_max": 2.6219616085907568e-05
+      },
+      "expected": {
+        "dc_gain_dB": 34.10702836810388,
+        "gbw_Hz": 6339677.291183429,
+        "phase_margin_deg": 89.50643680333619,
+        "power_W": 2.465762532971384e-05,
+        "vout_dc_V": 0.565912741921213,
+        "vtail_dc_V": 0.15523313204428862,
+        "vmirror_dc_V": 0.5659127419212107
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_006_high_gain",
+        "status": "completed",
+        "dc_gain_dB": 34.3570822664491,
+        "bw_3db_Hz": 121236.554255778,
+        "gbw_Hz": 6336789.9241808,
+        "phase_at_gbw_deg": -90.7434375281822,
+        "phase_margin_deg": 89.2565624718178,
+        "vout_dc_V": 0.565368418960773,
+        "vtail_dc_V": 0.150512673504999,
+        "vmirror_dc_V": 0.5658909399716,
+        "vdd_current_A": -2.05479771776892e-05,
+        "power_W": 2.4657572613227e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 34.10702836810388,
+          "measured": 34.3570822664491,
+          "signed_difference": 0.2500538983452145,
+          "error": 0.2500538983452145,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 6339677.291183429,
+          "measured": 6336789.9241808,
+          "signed_difference": -2887.3670026287436,
+          "error": 0.0004554438451692481,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 89.50643680333619,
+          "measured": 89.2565624718178,
+          "signed_difference": -0.24987433151838445,
+          "error": 0.24987433151838445,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 2.465762532971384e-05,
+          "measured": 2.4657572613227e-05,
+          "signed_difference": -5.271648683918373e-11,
+          "error": 2.137938513310824e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.565912741921213,
+          "measured": 0.565368418960773,
+          "signed_difference": -0.0005443229604400468,
+          "error": 0.0005443229604400468,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.15523313204428862,
+          "measured": 0.150512673504999,
+          "signed_difference": -0.004720458539289624,
+          "error": 0.004720458539289624,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5659127419212107,
+          "measured": 0.5658909399716,
+          "signed_difference": -2.1801949610655846e-05,
+          "error": 2.1801949610655846e-05,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_007_high_gain",
+      "status": "completed",
+      "category": "high_gain",
+      "source_row_id": "r00015397",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 32.83365129415762,
+        "GBW_min": 57896091.47987492,
+        "CL_pF": 5.0,
+        "Power_max": 0.00033680851746164826
+      },
+      "expected": {
+        "dc_gain_dB": 33.21575996968512,
+        "gbw_Hz": 72568338.54890406,
+        "phase_margin_deg": 76.94085680836103,
+        "power_W": 0.00032876027606964115,
+        "vout_dc_V": 0.5904162505643186,
+        "vtail_dc_V": 0.14607867493671628,
+        "vmirror_dc_V": 0.5904162505643201
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_007_high_gain",
+        "status": "completed",
+        "dc_gain_dB": 33.4776003953804,
+        "bw_3db_Hz": 1703652.09083269,
+        "gbw_Hz": 70814323.395526,
+        "phase_at_gbw_deg": -104.173180542027,
+        "phase_margin_deg": 75.8268194579732,
+        "vout_dc_V": 0.588278132407168,
+        "vtail_dc_V": 0.139384179908189,
+        "vmirror_dc_V": 0.588281369419202,
+        "vdd_current_A": -0.000273966566512367,
+        "power_W": 0.00032875987981484
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 33.21575996968512,
+          "measured": 33.4776003953804,
+          "signed_difference": 0.2618404256952829,
+          "error": 0.2618404256952829,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 72568338.54890406,
+          "measured": 70814323.395526,
+          "signed_difference": -1754015.1533780545,
+          "error": 0.02417052930316184,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 76.94085680836103,
+          "measured": 75.8268194579732,
+          "signed_difference": -1.1140373503878322,
+          "error": 1.1140373503878322,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.00032876027606964115,
+          "measured": 0.00032875987981484,
+          "signed_difference": -3.962548011612367e-10,
+          "error": 1.2053001229299924e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5904162505643186,
+          "measured": 0.588278132407168,
+          "signed_difference": -0.0021381181571505925,
+          "error": 0.0021381181571505925,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.14607867493671628,
+          "measured": 0.139384179908189,
+          "signed_difference": -0.006694495028527286,
+          "error": 0.006694495028527286,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5904162505643201,
+          "measured": 0.588281369419202,
+          "signed_difference": -0.0021348811451181726,
+          "error": 0.0021348811451181726,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_008_high_gain",
+      "status": "completed",
+      "category": "high_gain",
+      "source_row_id": "r00012066",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 32.96184281241006,
+        "GBW_min": 29601291.083785076,
+        "CL_pF": 5.0,
+        "Power_max": 0.0001786918360939084
+      },
+      "expected": {
+        "dc_gain_dB": 33.613462529649325,
+        "gbw_Hz": 37967822.62878577,
+        "phase_margin_deg": 86.00800321058375,
+        "power_W": 0.00017326343393325806,
+        "vout_dc_V": 0.5847558482517841,
+        "vtail_dc_V": 0.1219362181299441,
+        "vmirror_dc_V": 0.5847558482517811
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_008_high_gain",
+        "status": "completed",
+        "dc_gain_dB": 33.8882798683612,
+        "bw_3db_Hz": 769634.090280077,
+        "gbw_Hz": 37609153.4407079,
+        "phase_at_gbw_deg": -94.7505303283263,
+        "phase_margin_deg": 85.2494696716737,
+        "vout_dc_V": 0.582713713891548,
+        "vtail_dc_V": 0.11777665183421,
+        "vmirror_dc_V": 0.582900153644328,
+        "vdd_current_A": -0.000144385893851819,
+        "power_W": 0.000173263072622183
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 33.613462529649325,
+          "measured": 33.8882798683612,
+          "signed_difference": 0.27481733871187686,
+          "error": 0.27481733871187686,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 37967822.62878577,
+          "measured": 37609153.4407079,
+          "signed_difference": -358669.18807786703,
+          "error": 0.009446662021802051,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 86.00800321058375,
+          "measured": 85.2494696716737,
+          "signed_difference": -0.7585335389100578,
+          "error": 0.7585335389100578,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.00017326343393325806,
+          "measured": 0.000173263072622183,
+          "signed_difference": -3.6131107505302414e-10,
+          "error": 2.085327912825524e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5847558482517841,
+          "measured": 0.582713713891548,
+          "signed_difference": -0.0020421343602360364,
+          "error": 0.0020421343602360364,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.1219362181299441,
+          "measured": 0.11777665183421,
+          "signed_difference": -0.004159566295734093,
+          "error": 0.004159566295734093,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5847558482517811,
+          "measured": 0.582900153644328,
+          "signed_difference": -0.0018556946074530511,
+          "error": 0.0018556946074530511,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_009_high_gain",
+      "status": "completed",
+      "category": "high_gain",
+      "source_row_id": "r00008488",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 33.09205361382755,
+        "GBW_min": 539586575.4760482,
+        "CL_pF": 0.2,
+        "Power_max": 0.00021769631449162247
+      },
+      "expected": {
+        "dc_gain_dB": 33.35179942134119,
+        "gbw_Hz": 675164211.3044875,
+        "phase_margin_deg": 73.21250474330395,
+        "power_W": 0.00021166086696624753,
+        "vout_dc_V": 0.5280914654752673,
+        "vtail_dc_V": 0.10283467698104526,
+        "vmirror_dc_V": 0.5280914654752777
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_009_high_gain",
+        "status": "completed",
+        "dc_gain_dB": 33.5698760482412,
+        "bw_3db_Hz": 16289821.9343089,
+        "gbw_Hz": 587572762.8954,
+        "phase_at_gbw_deg": -111.288306038136,
+        "phase_margin_deg": 68.7116939618637,
+        "vout_dc_V": 0.525463348984734,
+        "vtail_dc_V": 0.10018414796914,
+        "vmirror_dc_V": 0.525462065576052,
+        "vdd_current_A": -0.000176383510278899,
+        "power_W": 0.000211660212334679
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 33.35179942134119,
+          "measured": 33.5698760482412,
+          "signed_difference": 0.2180766269000074,
+          "error": 0.2180766269000074,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 675164211.3044875,
+          "measured": 587572762.8954,
+          "signed_difference": -87591448.40908742,
+          "error": 0.12973354769479212,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 73.21250474330395,
+          "measured": 68.7116939618637,
+          "signed_difference": -4.500810781440251,
+          "error": 4.500810781440251,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.00021166086696624753,
+          "measured": 0.000211660212334679,
+          "signed_difference": -6.546315685438796e-10,
+          "error": 3.0928323120223745e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5280914654752673,
+          "measured": 0.525463348984734,
+          "signed_difference": -0.0026281164905332943,
+          "error": 0.0026281164905332943,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.10283467698104526,
+          "measured": 0.10018414796914,
+          "signed_difference": -0.0026505290119052533,
+          "error": 0.0026505290119052533,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5280914654752777,
+          "measured": 0.525462065576052,
+          "signed_difference": -0.002629399899225726,
+          "error": 0.002629399899225726,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_010_high_gain",
+      "status": "completed",
+      "category": "high_gain",
+      "source_row_id": "r00031999",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 33.18413944828217,
+        "GBW_min": 119781386.61648957,
+        "CL_pF": 1.0,
+        "Power_max": 0.00018571026286940518
+      },
+      "expected": {
+        "dc_gain_dB": 33.80711564787952,
+        "gbw_Hz": 151901537.8989716,
+        "phase_margin_deg": 78.74588033503882,
+        "power_W": 0.00017525454305648803,
+        "vout_dc_V": 0.5728641618847533,
+        "vtail_dc_V": 0.09708958662317843,
+        "vmirror_dc_V": 0.5728641618847536
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_010_high_gain",
+        "status": "completed",
+        "dc_gain_dB": 34.0308943788635,
+        "bw_3db_Hz": 3199346.67913985,
+        "gbw_Hz": 146742397.335643,
+        "phase_at_gbw_deg": -102.948268562572,
+        "phase_margin_deg": 77.0517314374283,
+        "vout_dc_V": 0.570798442398406,
+        "vtail_dc_V": 0.0946505726543859,
+        "vmirror_dc_V": 0.57079480409701,
+        "vdd_current_A": -0.000146044981904649,
+        "power_W": 0.000175253978285579
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 33.80711564787952,
+          "measured": 34.0308943788635,
+          "signed_difference": 0.22377873098398027,
+          "error": 0.22377873098398027,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 151901537.8989716,
+          "measured": 146742397.335643,
+          "signed_difference": -5159140.563328594,
+          "error": 0.03396371514526663,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 78.74588033503882,
+          "measured": 77.0517314374283,
+          "signed_difference": -1.6941488976105177,
+          "error": 1.6941488976105177,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.00017525454305648803,
+          "measured": 0.000175253978285579,
+          "signed_difference": -5.647709090217216e-10,
+          "error": 3.2225749996089103e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5728641618847533,
+          "measured": 0.570798442398406,
+          "signed_difference": -0.0020657194863472617,
+          "error": 0.0020657194863472617,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.09708958662317843,
+          "measured": 0.0946505726543859,
+          "signed_difference": -0.002439013968792536,
+          "error": 0.002439013968792536,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5728641618847536,
+          "measured": 0.57079480409701,
+          "signed_difference": -0.002069357787743642,
+          "error": 0.002069357787743642,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_011_high_gbw",
+      "status": "completed",
+      "category": "high_gbw",
+      "source_row_id": "r00014463",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 29.89381887183478,
+        "GBW_min": 696076926.412517,
+        "CL_pF": 0.2,
+        "Power_max": 0.00047441086628027384
+      },
+      "expected": {
+        "dc_gain_dB": 30.814262705611448,
+        "gbw_Hz": 902951330.6195555,
+        "phase_margin_deg": 78.34494415757318,
+        "power_W": 0.0004690113945007324,
+        "vout_dc_V": 0.7000498676724347,
+        "vtail_dc_V": 0.09872855044199003,
+        "vmirror_dc_V": 0.7000498676724671
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_011_high_gbw",
+        "status": "completed",
+        "dc_gain_dB": 31.0101628356891,
+        "bw_3db_Hz": 33144431.9179153,
+        "gbw_Hz": 743227652.22823,
+        "phase_at_gbw_deg": -104.360922268583,
+        "phase_margin_deg": 75.6390777314169,
+        "vout_dc_V": 0.697941126264867,
+        "vtail_dc_V": 0.0910598789853935,
+        "vmirror_dc_V": 0.697950107701415,
+        "vdd_current_A": -0.000390842610339288,
+        "power_W": 0.000469011132407146
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 30.814262705611448,
+          "measured": 31.0101628356891,
+          "signed_difference": 0.1959001300776535,
+          "error": 0.1959001300776535,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 902951330.6195555,
+          "measured": 743227652.22823,
+          "signed_difference": -159723678.39132547,
+          "error": 0.17689068388850138,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 78.34494415757318,
+          "measured": 75.6390777314169,
+          "signed_difference": -2.705866426156277,
+          "error": 2.705866426156277,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0004690113945007324,
+          "measured": 0.000469011132407146,
+          "signed_difference": -2.620935864172669e-10,
+          "error": 5.58821362317366e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7000498676724347,
+          "measured": 0.697941126264867,
+          "signed_difference": -0.0021087414075676714,
+          "error": 0.0021087414075676714,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.09872855044199003,
+          "measured": 0.0910598789853935,
+          "signed_difference": -0.007668671456596526,
+          "error": 0.007668671456596526,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7000498676724671,
+          "measured": 0.697950107701415,
+          "signed_difference": -0.002099759971052162,
+          "error": 0.002099759971052162,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_012_high_gbw",
+      "status": "completed",
+      "category": "high_gbw",
+      "source_row_id": "r00008154",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 20.406346118324546,
+        "GBW_min": 709127107.6179554,
+        "CL_pF": 0.2,
+        "Power_max": 0.0005775746511751154
+      },
+      "expected": {
+        "dc_gain_dB": 27.29189063762171,
+        "gbw_Hz": 992207276.6814201,
+        "phase_margin_deg": 75.90253778391543,
+        "power_W": 0.0005149333333969116,
+        "vout_dc_V": 0.7317834103982441,
+        "vtail_dc_V": 0.06377411215589657,
+        "vmirror_dc_V": 0.7317834103982427
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_012_high_gbw",
+        "status": "completed",
+        "dc_gain_dB": 27.3962602446601,
+        "bw_3db_Hz": 44770708.853542,
+        "gbw_Hz": 796382487.642632,
+        "phase_at_gbw_deg": -103.926358148392,
+        "phase_margin_deg": 76.0736418516075,
+        "vout_dc_V": 0.728596759587556,
+        "vtail_dc_V": 0.0495188425357799,
+        "vmirror_dc_V": 0.728597830455035,
+        "vdd_current_A": -0.000429111063681862,
+        "power_W": 0.000514933276418235
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 27.29189063762171,
+          "measured": 27.3962602446601,
+          "signed_difference": 0.10436960703838949,
+          "error": 0.10436960703838949,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 992207276.6814201,
+          "measured": 796382487.642632,
+          "signed_difference": -195824789.03878808,
+          "error": 0.19736278259695117,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 75.90253778391543,
+          "measured": 76.0736418516075,
+          "signed_difference": 0.17110406769207032,
+          "error": 0.17110406769207032,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0005149333333969116,
+          "measured": 0.000514933276418235,
+          "signed_difference": -5.697867665969275e-11,
+          "error": 1.1065253104477794e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7317834103982441,
+          "measured": 0.728596759587556,
+          "signed_difference": -0.003186650810688141,
+          "error": 0.003186650810688141,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.06377411215589657,
+          "measured": 0.0495188425357799,
+          "signed_difference": -0.014255269620116667,
+          "error": 0.014255269620116667,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7317834103982427,
+          "measured": 0.728597830455035,
+          "signed_difference": -0.0031855799432076726,
+          "error": 0.0031855799432076726,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_013_high_gbw",
+      "status": "completed",
+      "category": "high_gbw",
+      "source_row_id": "r00007714",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 32.15618526103211,
+        "GBW_min": 728509695.0089685,
+        "CL_pF": 0.2,
+        "Power_max": 0.00026609793991571587
+      },
+      "expected": {
+        "dc_gain_dB": 32.15618526665649,
+        "gbw_Hz": 910637119.2269673,
+        "phase_margin_deg": 75.7811061433927,
+        "power_W": 0.0002603170974764612,
+        "vout_dc_V": 0.5065135775653958,
+        "vtail_dc_V": 0.10650787227459432,
+        "vmirror_dc_V": 0.5065135775653952
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_013_high_gbw",
+        "status": "completed",
+        "dc_gain_dB": 32.3734923747325,
+        "bw_3db_Hz": 22052460.6588268,
+        "gbw_Hz": 760947304.905232,
+        "phase_at_gbw_deg": -110.875629925926,
+        "phase_margin_deg": 69.1243700740735,
+        "vout_dc_V": 0.502810433086676,
+        "vtail_dc_V": 0.103468242163081,
+        "vmirror_dc_V": 0.502851890020591,
+        "vdd_current_A": -0.000216930285654176,
+        "power_W": 0.000260316342785011
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 32.15618526665649,
+          "measured": 32.3734923747325,
+          "signed_difference": 0.21730710807600673,
+          "error": 0.21730710807600673,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 910637119.2269673,
+          "measured": 760947304.905232,
+          "signed_difference": -149689814.32173538,
+          "error": 0.16437921446558854,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 75.7811061433927,
+          "measured": 69.1243700740735,
+          "signed_difference": -6.656736069319209,
+          "error": 6.656736069319209,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": false
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0002603170974764612,
+          "measured": 0.000260316342785011,
+          "signed_difference": -7.546914501752738e-10,
+          "error": 2.8991236361012197e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5065135775653958,
+          "measured": 0.502810433086676,
+          "signed_difference": -0.0037031444787198886,
+          "error": 0.0037031444787198886,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.10650787227459432,
+          "measured": 0.103468242163081,
+          "signed_difference": -0.003039630111513328,
+          "error": 0.003039630111513328,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5065135775653952,
+          "measured": 0.502851890020591,
+          "signed_difference": -0.0036616875448041153,
+          "error": 0.0036616875448041153,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_014_high_gbw",
+      "status": "completed",
+      "category": "high_gbw",
+      "source_row_id": "r00008901",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 27.090608725105835,
+        "GBW_min": 757675538.1054275,
+        "CL_pF": 0.2,
+        "Power_max": 0.00035782253752236824
+      },
+      "expected": {
+        "dc_gain_dB": 29.204881259838963,
+        "gbw_Hz": 1015517125.7847397,
+        "phase_margin_deg": 74.89333796137375,
+        "power_W": 0.0003372945713996887,
+        "vout_dc_V": 0.7023234100587141,
+        "vtail_dc_V": 0.10200721701557305,
+        "vmirror_dc_V": 0.702323410058468
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_014_high_gbw",
+        "status": "completed",
+        "dc_gain_dB": 29.3504298444752,
+        "bw_3db_Hz": 38740272.5762233,
+        "gbw_Hz": 862875088.659734,
+        "phase_at_gbw_deg": -107.429588572484,
+        "phase_margin_deg": 72.5704114275157,
+        "vout_dc_V": 0.699004594825002,
+        "vtail_dc_V": 0.091604586937707,
+        "vmirror_dc_V": 0.69909722823322,
+        "vdd_current_A": -0.000281078724003488,
+        "power_W": 0.000337294468804186
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 29.204881259838963,
+          "measured": 29.3504298444752,
+          "signed_difference": 0.14554858463623788,
+          "error": 0.14554858463623788,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 1015517125.7847397,
+          "measured": 862875088.659734,
+          "signed_difference": -152642037.12500572,
+          "error": 0.15030966317485955,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 74.89333796137375,
+          "measured": 72.5704114275157,
+          "signed_difference": -2.322926533858052,
+          "error": 2.322926533858052,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0003372945713996887,
+          "measured": 0.000337294468804186,
+          "signed_difference": -1.0259550273141599e-10,
+          "error": 3.041718172506309e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7023234100587141,
+          "measured": 0.699004594825002,
+          "signed_difference": -0.0033188152337121357,
+          "error": 0.0033188152337121357,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.10200721701557305,
+          "measured": 0.091604586937707,
+          "signed_difference": -0.010402630077866057,
+          "error": 0.010402630077866057,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.702323410058468,
+          "measured": 0.69909722823322,
+          "signed_difference": -0.003226181825248031,
+          "error": 0.003226181825248031,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_015_high_gbw",
+      "status": "completed",
+      "category": "high_gbw",
+      "source_row_id": "r00031005",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 31.27988466997891,
+        "GBW_min": 780464510.0104195,
+        "CL_pF": 0.2,
+        "Power_max": 0.00044537841158871186
+      },
+      "expected": {
+        "dc_gain_dB": 32.728629086215605,
+        "gbw_Hz": 1019364253.1440011,
+        "phase_margin_deg": 73.7942948211432,
+        "power_W": 0.0004369825422763825,
+        "vout_dc_V": 0.5505756718849606,
+        "vtail_dc_V": 0.07087684314807019,
+        "vmirror_dc_V": 0.5505756718849536
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_015_high_gbw",
+        "status": "completed",
+        "dc_gain_dB": 32.9507070989644,
+        "bw_3db_Hz": 29002548.8200128,
+        "gbw_Hz": 880083370.733198,
+        "phase_at_gbw_deg": -110.813825318876,
+        "phase_margin_deg": 69.186174681124,
+        "vout_dc_V": 0.54771367221054,
+        "vtail_dc_V": 0.0676988370183105,
+        "vmirror_dc_V": 0.547718696986986,
+        "vdd_current_A": -0.000364151289216494,
+        "power_W": 0.000436981547059792
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 32.728629086215605,
+          "measured": 32.9507070989644,
+          "signed_difference": 0.22207801274879557,
+          "error": 0.22207801274879557,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 1019364253.1440011,
+          "measured": 880083370.733198,
+          "signed_difference": -139280882.41080308,
+          "error": 0.13663504677667707,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 73.7942948211432,
+          "measured": 69.186174681124,
+          "signed_difference": -4.608120140019196,
+          "error": 4.608120140019196,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0004369825422763825,
+          "measured": 0.000436981547059792,
+          "signed_difference": -9.952165904532004e-10,
+          "error": 2.277474485064775e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5505756718849606,
+          "measured": 0.54771367221054,
+          "signed_difference": -0.002861999674420579,
+          "error": 0.002861999674420579,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.07087684314807019,
+          "measured": 0.0676988370183105,
+          "signed_difference": -0.003178006129759686,
+          "error": 0.003178006129759686,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5505756718849536,
+          "measured": 0.547718696986986,
+          "signed_difference": -0.0028569748979675458,
+          "error": 0.0028569748979675458,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_016_heavy_load",
+      "status": "completed",
+      "category": "heavy_load",
+      "source_row_id": "r00031668",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 31.094028359529513,
+        "GBW_min": 63811622.04283241,
+        "CL_pF": 5.0,
+        "Power_max": 0.0003710312300646109
+      },
+      "expected": {
+        "dc_gain_dB": 31.813732553768446,
+        "gbw_Hz": 83973652.36571197,
+        "phase_margin_deg": 87.95743969130918,
+        "power_W": 0.0003699663004875183,
+        "vout_dc_V": 0.5727864847239547,
+        "vtail_dc_V": 0.12268181728790271,
+        "vmirror_dc_V": 0.5727864847239216
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_016_heavy_load",
+        "status": "completed",
+        "dc_gain_dB": 32.0416521675989,
+        "bw_3db_Hz": 2081186.50478315,
+        "gbw_Hz": 82826520.5302727,
+        "phase_at_gbw_deg": -93.0581735555461,
+        "phase_margin_deg": 86.9418264444539,
+        "vout_dc_V": 0.56985522358934,
+        "vtail_dc_V": 0.115921366497464,
+        "vmirror_dc_V": 0.569853990547928,
+        "vdd_current_A": -0.000308304962565568,
+        "power_W": 0.000369965955078681
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 31.813732553768446,
+          "measured": 32.0416521675989,
+          "signed_difference": 0.22791961383045134,
+          "error": 0.22791961383045134,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 83973652.36571197,
+          "measured": 82826520.5302727,
+          "signed_difference": -1147131.8354392648,
+          "error": 0.013660616194748966,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 87.95743969130918,
+          "measured": 86.9418264444539,
+          "signed_difference": -1.0156132468552812,
+          "error": 1.0156132468552812,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0003699663004875183,
+          "measured": 0.000369965955078681,
+          "signed_difference": -3.454088372744843e-10,
+          "error": 9.336224321494316e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5727864847239547,
+          "measured": 0.56985522358934,
+          "signed_difference": -0.0029312611346146156,
+          "error": 0.0029312611346146156,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.12268181728790271,
+          "measured": 0.115921366497464,
+          "signed_difference": -0.006760450790438716,
+          "error": 0.006760450790438716,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5727864847239216,
+          "measured": 0.569853990547928,
+          "signed_difference": -0.0029324941759936163,
+          "error": 0.0029324941759936163,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_017_heavy_load",
+      "status": "completed",
+      "category": "heavy_load",
+      "source_row_id": "r00019113",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 30.682044290081457,
+        "GBW_min": 67038727.210976146,
+        "CL_pF": 5.0,
+        "Power_max": 0.0005236803330867471
+      },
+      "expected": {
+        "dc_gain_dB": 31.39147976498762,
+        "gbw_Hz": 84538195.1194051,
+        "phase_margin_deg": 76.7642942380424,
+        "power_W": 0.0005037121653556824,
+        "vout_dc_V": 0.7092628970225457,
+        "vtail_dc_V": 0.08499314494947047,
+        "vmirror_dc_V": 0.7092628970225523
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_017_heavy_load",
+        "status": "completed",
+        "dc_gain_dB": 31.6154762269891,
+        "bw_3db_Hz": 2447165.53102155,
+        "gbw_Hz": 81304830.4159255,
+        "phase_at_gbw_deg": -104.042875874465,
+        "phase_margin_deg": 75.9571241255349,
+        "vout_dc_V": 0.707683322795061,
+        "vtail_dc_V": 0.078233286220933,
+        "vmirror_dc_V": 0.707685650504967,
+        "vdd_current_A": -0.000419759843669415,
+        "power_W": 0.000503711812403298
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 31.39147976498762,
+          "measured": 31.6154762269891,
+          "signed_difference": 0.22399646200148027,
+          "error": 0.22399646200148027,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 84538195.1194051,
+          "measured": 81304830.4159255,
+          "signed_difference": -3233364.703479603,
+          "error": 0.038247382723426614,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 76.7642942380424,
+          "measured": 75.9571241255349,
+          "signed_difference": -0.8071701125074924,
+          "error": 0.8071701125074924,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0005037121653556824,
+          "measured": 0.000503711812403298,
+          "signed_difference": -3.529523844416141e-10,
+          "error": 7.007025216323424e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7092628970225457,
+          "measured": 0.707683322795061,
+          "signed_difference": -0.0015795742274847813,
+          "error": 0.0015795742274847813,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.08499314494947047,
+          "measured": 0.078233286220933,
+          "signed_difference": -0.006759858728537474,
+          "error": 0.006759858728537474,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7092628970225523,
+          "measured": 0.707685650504967,
+          "signed_difference": -0.0015772465175852846,
+          "error": 0.0015772465175852846,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_018_heavy_load",
+      "status": "completed",
+      "category": "heavy_load",
+      "source_row_id": "r00013039",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 24.062623059498996,
+        "GBW_min": 68606584.19828965,
+        "CL_pF": 5.0,
+        "Power_max": 0.00046660121763049715
+      },
+      "expected": {
+        "dc_gain_dB": 28.50229236043383,
+        "gbw_Hz": 99029025.46674138,
+        "phase_margin_deg": 88.85410774529531,
+        "power_W": 0.00045229484367370604,
+        "vout_dc_V": 0.7133792897159499,
+        "vtail_dc_V": 0.09987821477855537,
+        "vmirror_dc_V": 0.7133792897159458
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_018_heavy_load",
+        "status": "completed",
+        "dc_gain_dB": 28.6241109892608,
+        "bw_3db_Hz": 3589003.67665313,
+        "gbw_Hz": 96401460.510296,
+        "phase_at_gbw_deg": -92.0527882632919,
+        "phase_margin_deg": 87.9472117367081,
+        "vout_dc_V": 0.709932053218846,
+        "vtail_dc_V": 0.0871181789065817,
+        "vmirror_dc_V": 0.709954533453182,
+        "vdd_current_A": -0.00037691229984184,
+        "power_W": 0.000452294759810208
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 28.50229236043383,
+          "measured": 28.6241109892608,
+          "signed_difference": 0.12181862882696848,
+          "error": 0.12181862882696848,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 99029025.46674138,
+          "measured": 96401460.510296,
+          "signed_difference": -2627564.956445381,
+          "error": 0.026533280965466446,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 88.85410774529531,
+          "measured": 87.9472117367081,
+          "signed_difference": -0.9068960085872106,
+          "error": 0.9068960085872106,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.00045229484367370604,
+          "measured": 0.000452294759810208,
+          "signed_difference": -8.386349801452544e-11,
+          "error": 1.8541776274377813e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7133792897159499,
+          "measured": 0.709932053218846,
+          "signed_difference": -0.0034472364971038782,
+          "error": 0.0034472364971038782,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.09987821477855537,
+          "measured": 0.0871181789065817,
+          "signed_difference": -0.012760035871973663,
+          "error": 0.012760035871973663,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7133792897159458,
+          "measured": 0.709954533453182,
+          "signed_difference": -0.0034247562627637285,
+          "error": 0.0034247562627637285,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_019_heavy_load",
+      "status": "completed",
+      "category": "heavy_load",
+      "source_row_id": "r00021345",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 27.75668139869613,
+        "GBW_min": 73647028.10995401,
+        "CL_pF": 5.0,
+        "Power_max": 0.00040170694317209744
+      },
+      "expected": {
+        "dc_gain_dB": 29.646745970563437,
+        "gbw_Hz": 98130036.35953885,
+        "phase_margin_deg": 87.75693098189724,
+        "power_W": 0.000391796391248703,
+        "vout_dc_V": 0.7091699166606756,
+        "vtail_dc_V": 0.13670365281060864,
+        "vmirror_dc_V": 0.7091699166606761
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_019_heavy_load",
+        "status": "completed",
+        "dc_gain_dB": 29.823594114303,
+        "bw_3db_Hz": 3126212.58787624,
+        "gbw_Hz": 96033504.936074,
+        "phase_at_gbw_deg": -93.4397175680381,
+        "phase_margin_deg": 86.5602824319619,
+        "vout_dc_V": 0.706176597957266,
+        "vtail_dc_V": 0.124733794735322,
+        "vmirror_dc_V": 0.706177305788053,
+        "vdd_current_A": -0.000326496884551475,
+        "power_W": 0.000391796261461771
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 29.646745970563437,
+          "measured": 29.823594114303,
+          "signed_difference": 0.17684814373956215,
+          "error": 0.17684814373956215,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 98130036.35953885,
+          "measured": 96033504.936074,
+          "signed_difference": -2096531.4234648496,
+          "error": 0.02136482876438936,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 87.75693098189724,
+          "measured": 86.5602824319619,
+          "signed_difference": -1.1966485499353468,
+          "error": 1.1966485499353468,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.000391796391248703,
+          "measured": 0.000391796261461771,
+          "signed_difference": -1.2978693201539868e-10,
+          "error": 3.312611726763278e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7091699166606756,
+          "measured": 0.706176597957266,
+          "signed_difference": -0.0029933187034096864,
+          "error": 0.0029933187034096864,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.13670365281060864,
+          "measured": 0.124733794735322,
+          "signed_difference": -0.011969858075286638,
+          "error": 0.011969858075286638,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7091699166606761,
+          "measured": 0.706177305788053,
+          "signed_difference": -0.002992610872623036,
+          "error": 0.002992610872623036,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_020_heavy_load",
+      "status": "completed",
+      "category": "heavy_load",
+      "source_row_id": "r00030229",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 32.07790783152479,
+        "GBW_min": 75760028.12542722,
+        "CL_pF": 5.0,
+        "Power_max": 0.0005449100808553592
+      },
+      "expected": {
+        "dc_gain_dB": 32.71957886192402,
+        "gbw_Hz": 95063624.21918178,
+        "phase_margin_deg": 83.38583058463064,
+        "power_W": 0.0005147421841621399,
+        "vout_dc_V": 0.5546427351602652,
+        "vtail_dc_V": 0.0846675495764065,
+        "vmirror_dc_V": 0.554642735160256
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_020_heavy_load",
+        "status": "completed",
+        "dc_gain_dB": 32.9592474775851,
+        "bw_3db_Hz": 2172834.33988901,
+        "gbw_Hz": 93467285.0125364,
+        "phase_at_gbw_deg": -97.5343367726587,
+        "phase_margin_deg": 82.4656632273413,
+        "vout_dc_V": 0.551973865975082,
+        "vtail_dc_V": 0.0797108494829493,
+        "vmirror_dc_V": 0.552174021310292,
+        "vdd_current_A": -0.000428951281971863,
+        "power_W": 0.000514741538366236
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 32.71957886192402,
+          "measured": 32.9592474775851,
+          "signed_difference": 0.23966861566108122,
+          "error": 0.23966861566108122,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 95063624.21918178,
+          "measured": 93467285.0125364,
+          "signed_difference": -1596339.2066453695,
+          "error": 0.01679232429603986,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 83.38583058463064,
+          "measured": 82.4656632273413,
+          "signed_difference": -0.9201673572893441,
+          "error": 0.9201673572893441,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0005147421841621399,
+          "measured": 0.000514741538366236,
+          "signed_difference": -6.45795903840736e-10,
+          "error": 1.2546006985845078e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5546427351602652,
+          "measured": 0.551973865975082,
+          "signed_difference": -0.0026688691851831647,
+          "error": 0.0026688691851831647,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.0846675495764065,
+          "measured": 0.0797108494829493,
+          "signed_difference": -0.004956700093457195,
+          "error": 0.004956700093457195,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.554642735160256,
+          "measured": 0.552174021310292,
+          "signed_difference": -0.002468713849963944,
+          "error": 0.002468713849963944,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_021_boundary",
+      "status": "completed",
+      "category": "boundary",
+      "source_row_id": "r00003484",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 18.28929159270481,
+        "GBW_min": 618919310.3928254,
+        "CL_pF": 0.2,
+        "Power_max": 0.0003069473458652602
+      },
+      "expected": {
+        "dc_gain_dB": 25.565789213371865,
+        "gbw_Hz": 998518865.2050244,
+        "phase_margin_deg": 78.60280443342229,
+        "power_W": 0.0002950438088178634,
+        "vout_dc_V": 0.7246534266280832,
+        "vtail_dc_V": 0.08900998048652639,
+        "vmirror_dc_V": 0.7246534266280806
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_021_boundary",
+        "status": "completed",
+        "dc_gain_dB": 25.6957855018047,
+        "bw_3db_Hz": 50156970.8541423,
+        "gbw_Hz": 835880586.78202,
+        "phase_at_gbw_deg": -102.92991776884,
+        "phase_margin_deg": 77.0700822311597,
+        "vout_dc_V": 0.7211689011352,
+        "vtail_dc_V": 0.0735601363434184,
+        "vmirror_dc_V": 0.721200726240147,
+        "vdd_current_A": -0.000245869819152448,
+        "power_W": 0.000295043782982938
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 25.565789213371865,
+          "measured": 25.6957855018047,
+          "signed_difference": 0.12999628843283517,
+          "error": 0.12999628843283517,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 998518865.2050244,
+          "measured": 835880586.78202,
+          "signed_difference": -162638278.4230044,
+          "error": 0.16287952495480404,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 78.60280443342229,
+          "measured": 77.0700822311597,
+          "signed_difference": -1.5327222022625904,
+          "error": 1.5327222022625904,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0002950438088178634,
+          "measured": 0.000295043782982938,
+          "signed_difference": -2.583492539906876e-11,
+          "error": 8.756301480305654e-08,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7246534266280832,
+          "measured": 0.7211689011352,
+          "signed_difference": -0.0034845254928831393,
+          "error": 0.0034845254928831393,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.08900998048652639,
+          "measured": 0.0735601363434184,
+          "signed_difference": -0.015449844143107988,
+          "error": 0.015449844143107988,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7246534266280806,
+          "measured": 0.721200726240147,
+          "signed_difference": -0.0034527003879336604,
+          "error": 0.0034527003879336604,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_022_boundary",
+      "status": "completed",
+      "category": "boundary",
+      "source_row_id": "r00024220",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 29.453020946025774,
+        "GBW_min": 79605202.31506108,
+        "CL_pF": 0.2,
+        "Power_max": 5.8331100449198155e-05
+      },
+      "expected": {
+        "dc_gain_dB": 31.184444337324177,
+        "gbw_Hz": 112146804.37359299,
+        "phase_margin_deg": 79.12316294537582,
+        "power_W": 5.774004220962524e-05,
+        "vout_dc_V": 0.7814561818256186,
+        "vtail_dc_V": 0.0955078774157337,
+        "vmirror_dc_V": 0.7814561818256176
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_022_boundary",
+        "status": "completed",
+        "dc_gain_dB": 31.4134547660568,
+        "bw_3db_Hz": 4186482.32362179,
+        "gbw_Hz": 96608005.2911977,
+        "phase_at_gbw_deg": -100.16982065486,
+        "phase_margin_deg": 79.8301793451399,
+        "vout_dc_V": 0.779819284097233,
+        "vtail_dc_V": 0.0896892014274795,
+        "vmirror_dc_V": 0.779856946675336,
+        "vdd_current_A": -4.81166655094428e-05,
+        "power_W": 5.77399986113313e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 31.184444337324177,
+          "measured": 31.4134547660568,
+          "signed_difference": 0.22901042873262512,
+          "error": 0.22901042873262512,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 112146804.37359299,
+          "measured": 96608005.2911977,
+          "signed_difference": -15538799.082395285,
+          "error": 0.13855766260294955,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 79.12316294537582,
+          "measured": 79.8301793451399,
+          "signed_difference": 0.7070163997640719,
+          "error": 0.7070163997640719,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 5.774004220962524e-05,
+          "measured": 5.77399986113313e-05,
+          "signed_difference": -4.3598293940729557e-11,
+          "error": 7.55079010549489e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7814561818256186,
+          "measured": 0.779819284097233,
+          "signed_difference": -0.0016368977283856,
+          "error": 0.0016368977283856,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.0955078774157337,
+          "measured": 0.0896892014274795,
+          "signed_difference": -0.005818675988254196,
+          "error": 0.005818675988254196,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7814561818256176,
+          "measured": 0.779856946675336,
+          "signed_difference": -0.0015992351502815971,
+          "error": 0.0015992351502815971,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_023_boundary",
+      "status": "completed",
+      "category": "boundary",
+      "source_row_id": "r00023854",
+      "pipeline_status": "local_refinement_verified",
+      "request": {
+        "Gain_min": 34.038004329336154,
+        "GBW_min": 213520789.27082875,
+        "CL_pF": 1.0,
+        "Power_max": 0.0003485414878366746
+      },
+      "expected": {
+        "dc_gain_dB": 34.03800925905795,
+        "gbw_Hz": 268195947.4189214,
+        "phase_margin_deg": 76.03217889749509,
+        "power_W": 0.0003318112063585469,
+        "vout_dc_V": 0.5047408556004305,
+        "vtail_dc_V": 0.10232605458537827,
+        "vmirror_dc_V": 0.5047408556004113
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_023_boundary",
+        "status": "completed",
+        "dc_gain_dB": 34.2467808545923,
+        "bw_3db_Hz": 5686544.56493855,
+        "gbw_Hz": 251482070.502253,
+        "phase_at_gbw_deg": -106.680394683742,
+        "phase_margin_deg": 73.3196053162584,
+        "vout_dc_V": 0.502034844302118,
+        "vtail_dc_V": 0.100110867120487,
+        "vmirror_dc_V": 0.502036294740495,
+        "vdd_current_A": -0.000276508288624531,
+        "power_W": 0.000331809946349437
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 34.03800925905795,
+          "measured": 34.2467808545923,
+          "signed_difference": 0.2087715955343512,
+          "error": 0.2087715955343512,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 268195947.4189214,
+          "measured": 251482070.502253,
+          "signed_difference": -16713876.916668415,
+          "error": 0.06231964754695335,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": true
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 76.03217889749509,
+          "measured": 73.3196053162584,
+          "signed_difference": -2.7125735812366827,
+          "error": 2.7125735812366827,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0003318112063585469,
+          "measured": 0.000331809946349437,
+          "signed_difference": -1.2600091099071627e-09,
+          "error": 3.7973675564942445e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5047408556004305,
+          "measured": 0.502034844302118,
+          "signed_difference": -0.002706011298312494,
+          "error": 0.002706011298312494,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.10232605458537827,
+          "measured": 0.100110867120487,
+          "signed_difference": -0.0022151874648912717,
+          "error": 0.0022151874648912717,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5047408556004113,
+          "measured": 0.502036294740495,
+          "signed_difference": -0.0027045608599162163,
+          "error": 0.0027045608599162163,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": true,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_024_boundary",
+      "status": "completed",
+      "category": "boundary",
+      "source_row_id": "r00012511",
+      "pipeline_status": "verified",
+      "request": {
+        "Gain_min": 28.075571036222634,
+        "GBW_min": 210241910.2037624,
+        "CL_pF": 0.2,
+        "Power_max": 7.658898137654462e-05
+      },
+      "expected": {
+        "dc_gain_dB": 30.155763299422006,
+        "gbw_Hz": 304545691.63549066,
+        "phase_margin_deg": 74.62361781995322,
+        "power_W": 7.409361451864242e-05,
+        "vout_dc_V": 0.7429864404425424,
+        "vtail_dc_V": 0.13201504607900763,
+        "vmirror_dc_V": 0.7429864404425418
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_024_boundary",
+        "status": "completed",
+        "dc_gain_dB": 30.3485777022453,
+        "bw_3db_Hz": 10498451.8071814,
+        "gbw_Hz": 271544404.325941,
+        "phase_at_gbw_deg": -106.951630629881,
+        "phase_margin_deg": 73.0483693701193,
+        "vout_dc_V": 0.740643837077319,
+        "vtail_dc_V": 0.122613841655293,
+        "vmirror_dc_V": 0.740652614275341,
+        "vdd_current_A": -6.17446504776519e-05,
+        "power_W": 7.40935805731822e-05
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 30.155763299422006,
+          "measured": 30.3485777022453,
+          "signed_difference": 0.19281440282329498,
+          "error": 0.19281440282329498,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 304545691.63549066,
+          "measured": 271544404.325941,
+          "signed_difference": -33001287.30954963,
+          "error": 0.108362351581216,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 74.62361781995322,
+          "measured": 73.0483693701193,
+          "signed_difference": -1.5752484498339214,
+          "error": 1.5752484498339214,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 7.409361451864242e-05,
+          "measured": 7.40935805731822e-05,
+          "signed_difference": -3.39454602122681e-11,
+          "error": 4.581428566118503e-07,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.7429864404425424,
+          "measured": 0.740643837077319,
+          "signed_difference": -0.0023426033652234057,
+          "error": 0.0023426033652234057,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.13201504607900763,
+          "measured": 0.122613841655293,
+          "signed_difference": -0.00940120442371463,
+          "error": 0.00940120442371463,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.7429864404425418,
+          "measured": 0.740652614275341,
+          "signed_difference": -0.002333826167200792,
+          "error": 0.002333826167200792,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    },
+    {
+      "case_id": "gbv2_025_boundary",
+      "status": "completed",
+      "category": "boundary",
+      "source_row_id": "r00031204",
+      "pipeline_status": "verified_best_of_k",
+      "request": {
+        "Gain_min": 31.93767351782677,
+        "GBW_min": 632498011.6984321,
+        "CL_pF": 0.2,
+        "Power_max": 0.00029457374816116823
+      },
+      "expected": {
+        "dc_gain_dB": 32.92072523081545,
+        "gbw_Hz": 826905869.0653421,
+        "phase_margin_deg": 73.29066451044162,
+        "power_W": 0.0002840635575056076,
+        "vout_dc_V": 0.5414188665647246,
+        "vtail_dc_V": 0.08879493250018328,
+        "vmirror_dc_V": 0.5414188665643953
+      },
+      "spectre": {
+        "schema_version": 1,
+        "case_id": "gbv2_025_boundary",
+        "status": "completed",
+        "dc_gain_dB": 33.1400242675947,
+        "bw_3db_Hz": 21236590.7040186,
+        "gbw_Hz": 719234921.670024,
+        "phase_at_gbw_deg": -111.242257283983,
+        "phase_margin_deg": 68.7577427160169,
+        "vout_dc_V": 0.538545124563462,
+        "vtail_dc_V": 0.0858970958454152,
+        "vmirror_dc_V": 0.538545757876569,
+        "vdd_current_A": -0.000236719004534378,
+        "power_W": 0.000284062805441254
+      },
+      "metrics": {
+        "dc_gain_dB": {
+          "available": true,
+          "expected": 32.92072523081545,
+          "measured": 33.1400242675947,
+          "signed_difference": 0.21929903677924756,
+          "error": 0.21929903677924756,
+          "error_kind": "absolute",
+          "tolerance": 1.0,
+          "unit": "dB",
+          "passed": true
+        },
+        "gbw_Hz": {
+          "available": true,
+          "expected": 826905869.0653421,
+          "measured": 719234921.670024,
+          "signed_difference": -107670947.39531803,
+          "error": 0.1302094366762922,
+          "error_kind": "relative",
+          "tolerance": 0.1,
+          "unit": "%",
+          "passed": false
+        },
+        "phase_margin_deg": {
+          "available": true,
+          "expected": 73.29066451044162,
+          "measured": 68.7577427160169,
+          "signed_difference": -4.532921794424709,
+          "error": 4.532921794424709,
+          "error_kind": "absolute",
+          "tolerance": 5.0,
+          "unit": "deg",
+          "passed": true
+        },
+        "power_W": {
+          "available": true,
+          "expected": 0.0002840635575056076,
+          "measured": 0.000284062805441254,
+          "signed_difference": -7.520643535556017e-10,
+          "error": 2.6475214214718674e-06,
+          "error_kind": "relative",
+          "tolerance": 0.05,
+          "unit": "%",
+          "passed": true
+        },
+        "vout_dc_V": {
+          "available": true,
+          "expected": 0.5414188665647246,
+          "measured": 0.538545124563462,
+          "signed_difference": -0.002873742001262558,
+          "error": 0.002873742001262558,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vtail_dc_V": {
+          "available": true,
+          "expected": 0.08879493250018328,
+          "measured": 0.0858970958454152,
+          "signed_difference": -0.002897836654768074,
+          "error": 0.002897836654768074,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        },
+        "vmirror_dc_V": {
+          "available": true,
+          "expected": 0.5414188665643953,
+          "measured": 0.538545757876569,
+          "signed_difference": -0.002873108687826309,
+          "error": 0.002873108687826309,
+          "error_kind": "absolute",
+          "tolerance": 0.03,
+          "unit": "V",
+          "passed": true
+        }
+      },
+      "correlation_passed": false,
+      "spectre_constraints": {
+        "checks": {
+          "Gain_min": true,
+          "GBW_min": true,
+          "Power_max": true,
+          "PM_min": true
+        },
+        "verdict": true
+      },
+      "false_proxy_pass": false
+    }
+  ]
+}

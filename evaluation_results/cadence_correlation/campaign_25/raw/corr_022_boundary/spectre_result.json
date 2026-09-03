@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "corr_022_boundary",
+  "status": "completed",
+  "dc_gain_dB": 34.2765063825842,
+  "bw_3db_Hz": 11216046.9426794,
+  "gbw_Hz": 340091324.014032,
+  "phase_at_gbw_deg": -105.251920023035,
+  "phase_margin_deg": 74.7480799769645,
+  "vout_dc_V": 0.599192790718764,
+  "vtail_dc_V": 0.0729918335114436,
+  "vmirror_dc_V": 0.599196727919078,
+  "vdd_current_A": -0.000141594157943969,
+  "power_W": 0.000169912989532763
+}

@@ -61,6 +61,24 @@ A design **passes** iff every residual ≤ 0 (residual convention in
 An invalid design (no consistent operating point, out-of-domain parameter,
 unverifiable GBW) **fails by definition**.
 
+## Nominal-Cadence deployment guard (provisional v1)
+
+The oracle contract above remains unchanged for dataset/model reproducibility.
+The deployment-facing ideal-tail sizing API adds a separate, versioned safety
+layer derived from the first 25-case `tt_lib` correlation campaign:
+
+```text
+user GBW contract:     GBW >= user_GBW_min
+internal LUT contract: GBW >= 1.25 * user_GBW_min
+```
+
+`analog_ai.sizing.size_ideal_tail_ota` sends the protected target through the
+proposal, local-refinement, and global-fallback stages. It records and checks
+both contracts and never mutates the caller's request. Policy
+`tt-ideal-tail-gbw-v1` applies only to the nominal 1.2 V, 0.6 V common-mode,
+ideal-tail, typical-corner scope. It is provisional until a new disjoint blind
+Cadence campaign passes the zero-false-pass gate.
+
 ## Target sampling ranges (training only)
 
 `Gain 20–45 dB, GBW 50–300 MHz, CL 0.1–5 pF, Power 50–400 µW` — sampled

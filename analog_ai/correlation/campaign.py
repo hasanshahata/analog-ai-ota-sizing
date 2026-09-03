@@ -37,13 +37,16 @@ def _spread_pick(rows: list[dict], score, n: int,
     return picked
 
 
-def select_campaign_requests(requests: list[dict], n_each: int = 5) -> list[dict]:
+def select_campaign_requests(requests: list[dict], n_each: int = 5,
+                             excluded_ids: set[str] | None = None) -> list[dict]:
     """Deterministically select disjoint held-out requests in five regimes."""
+    excluded_ids = set(excluded_ids or ())
     positives = [r for r in requests if r.get("split") == "test"
                  and r.get("label") in ("feasible", "near_boundary")
-                 and bool(r.get("verdict"))]
+                 and bool(r.get("verdict"))
+                 and r["row_id"] not in excluded_ids]
     boundary = [r for r in positives if r["label"] == "near_boundary"]
-    used: set[str] = set()
+    used: set[str] = set(excluded_ids)
     specs = (
         ("low_power", positives, lambda r: -float(r["req_Power_max"])),
         ("high_gain", positives, lambda r: float(r["req_Gain_min"])),
@@ -71,6 +74,22 @@ def canonical_specs(row: dict) -> dict:
 
 
 def expected_from_perf(perf: dict) -> dict:
+    return {
+        "dc_gain_dB": float(perf["DC_Gain_dB"]),
+        "gbw_Hz": float(perf["GBW"]),
+        "phase_margin_deg": float(perf["PM"]),
+        "power_W": float(perf["Power"]),
+        "vout_dc_V": float(perf["Vout"]),
+        "vtail_dc_V": float(perf["Vtail"]),
+        "vmirror_dc_V": float(perf["Vmirror"]),
+    }
+
+
+def expected_from_sizing(record: dict) -> dict:
+    """Convert a guarded sizing record into the private correlation schema."""
+    perf = record["lut_metrics"]
+    if perf is None:
+        raise ValueError("sizing record has no LUT metrics")
     return {
         "dc_gain_dB": float(perf["DC_Gain_dB"]),
         "gbw_Hz": float(perf["GBW"]),

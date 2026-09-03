@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ideal-Tail 5T OTA Sizing</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Ideal-Tail 5T OTA Sizing</h1>
+    <p class="sub">Verified nominal-TT sizing for the matched NMOS-input /
+    PMOS-mirror operational transconductance amplifier with an ideal tail
+    current source (TSMC 65&nbsp;nm LUT models, VDD&nbsp;=&nbsp;1.2&nbsp;V,
+    V<sub>incm</sub>&nbsp;=&nbsp;0.6&nbsp;V).</p>
+  </header>
+
+  <section id="engine-status" class="statusline" aria-live="polite">
+    <span id="engine-dot" class="dot dot-loading" aria-hidden="true"></span>
+    <span id="engine-text">checking engine…</span>
+  </section>
+
+  <form id="size-form" novalidate>
+    <h2>Specifications</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="gain">Minimum DC gain</label>
+        <div class="inputrow">
+          <input id="gain" name="Gain_min_dB" type="number" inputmode="decimal"
+                 min="20" max="45" step="0.1" value="35" required>
+          <span class="unit">dB</span>
+        </div>
+        <p class="hint">allowed 20–45 dB</p>
+      </div>
+
+      <div class="field">
+        <label for="gbw">Minimum GBW</label>
+        <div class="inputrow">
+          <input id="gbw" name="GBW_min_MHz" type="number" inputmode="decimal"
+                 min="50" max="300" step="0.1" value="100" required>
+          <span class="unit">MHz</span>
+        </div>
+        <p class="hint">allowed 50–300 MHz</p>
+      </div>
+
+      <div class="field">
+        <label for="cl">Load capacitance</label>
+        <div class="inputrow">
+          <input id="cl" name="CL_pF" type="number" inputmode="decimal"
+                 min="0.1" max="5" step="0.01" value="1" required>
+          <span class="unit">pF</span>
+        </div>
+        <p class="hint">allowed 0.1–5 pF</p>
+      </div>
+
+      <div class="field">
+        <label for="power">Maximum power</label>
+        <div class="inputrow">
+          <input id="power" name="Power_max_uW" type="number" inputmode="decimal"
+                 min="50" max="400" step="0.1" value="200" required>
+          <span class="unit">µW</span>
+        </div>
+        <p class="hint">allowed 50–400 µW</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="submit" type="submit">Size amplifier</button>
+      <span id="progress" class="progress" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="progress-text">working… 0 s</span>
+      </span>
+    </div>
+    <p class="hint">Out-of-range values are rejected, never clipped.
+    A direct verified proposal returns in seconds; requests that need local
+    refinement or global fallback can take one to a few minutes.</p>
+  </form>
+
+  <section id="result" aria-live="polite" aria-busy="false"></section>
+
+  <footer>
+    <p>Phase margin ≥ 45° and device domain limits are enforced by the
+    hard-constraint verifier with frozen defaults and are not editable
+    here. The 25% internal GBW guard (policy
+    <code>tt-ideal-tail-gbw-v1</code>) was validated on one disjoint
+    25-case nominal Cadence campaign (25/25 user-spec passes); it is not a
+    universal guarantee.</p>
+  </footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

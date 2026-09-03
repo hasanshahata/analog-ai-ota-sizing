@@ -4,6 +4,7 @@ import json
 
 from analog_ai.correlation.campaign import (compare_measurements,
                                              collect_campaign,
+                                             expected_from_sizing,
                                              select_campaign_requests,
                                              write_summary)
 from scripts.stage_cadence_campaign import PUBLIC_FILES, stage
@@ -46,6 +47,15 @@ def test_selection_is_deterministic_stratified_and_disjoint():
                 "heavy_load": 5, "boundary": 5}
 
 
+def test_selection_excludes_calibration_source_rows():
+    first = select_campaign_requests(_requests())
+    excluded = {x["row"]["row_id"] for x in first}
+    second = select_campaign_requests(_requests(), excluded_ids=excluded)
+    second_ids = {x["row"]["row_id"] for x in second}
+    assert len(second_ids) == 25
+    assert excluded.isdisjoint(second_ids)
+
+
 def test_comparison_applies_absolute_and_relative_tolerances():
     expected = _metrics()
     measured = {**expected, "dc_gain_dB": 30.9,
@@ -54,6 +64,13 @@ def test_comparison_applies_absolute_and_relative_tolerances():
     assert result["correlation_passed"]
     measured["gbw_Hz"] = 89e6
     assert not compare_measurements(expected, measured)["correlation_passed"]
+
+
+def test_guarded_sizing_metrics_convert_to_private_expected_schema():
+    record = {"lut_metrics": {
+        "DC_Gain_dB": 30.0, "GBW": 100e6, "PM": 80.0,
+        "Power": 60e-6, "Vout": 0.6, "Vtail": 0.2, "Vmirror": 0.6}}
+    assert expected_from_sizing(record) == _metrics()
 
 
 def test_stage_excludes_private_evidence(tmp_path):

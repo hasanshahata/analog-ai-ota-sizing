@@ -1,0 +1,20 @@
+{
+  "n": 25,
+  "spectre_over_lut_ratio": {
+    "minimum": 0.8325521315719435,
+    "p05": 0.8416889272566317,
+    "median": 0.9651553642866838,
+    "mean": 0.9394550748105899,
+    "maximum": 0.9991187217443638
+  },
+  "required_lut_uplift": {
+    "maximum_observed": 0.2011259860831751,
+    "rounded_to_step": 0.25,
+    "rounding_step": 0.05
+  },
+  "frozen_policy": {
+    "version": "tt-ideal-tail-gbw-v1",
+    "gbw_guard_band": 0.25,
+    "internal_target_formula": "user_GBW_min * (1 + guard_band)"
+  }
+}
