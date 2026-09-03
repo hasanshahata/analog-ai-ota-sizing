@@ -63,26 +63,30 @@ py -3.11 -m venv .venv          # or: uv venv --python 3.11 .venv
 zips and checkpoints ARE in git. If `tech_luts/*.pkl` are missing, everything
 still runs on the synthetic-LUT test suite — only real-data runs skip/fail.
 
-## 4. In flight — nothing; next up is Phase 5
+## 4. In flight — nothing; Phase 5 PoC complete (2026-09-03)
 
-Done since the move: DE solved-op-point baseline (**5/5 PASS**, 2026-09-02)
-and **Phase 3** — the feasibility-labeled dataset builder plus a pilot
-(2026-09-03): `data/pilot/` holds 24,588 design rows and 33,150 verified
-request rows (11 k feasible / 11 k near-boundary / 11 k derived-infeasible /
-4 optimizer-certified infeasible), region-split train/val/test 70/10/20,
-with manifest. See the 2026-09-03 entry in `CORRECTION_LOG.md`.
+Done since the move: DE solved-op-point baseline (**5/5 PASS**), **Phase 3**
+pilot dataset (`data/pilot/`, splits v2 — zero design-ID leakage), and the
+**Phase 5 PoC**: a best-of-5 proposal net + OOD risk head
+(`analog_ai/surrogate/`, checkpoints in `models/surrogate/poc/`, champion
+seed2). Held-out results (1,500 verified requests): raw 67.9% / best-of-K
+**85.3%** / after fallback 85.7%; NN baseline 57.7%; constant 0%; five
+regression cases **5/5**; risk head 99.97% accurate; ~5 oracle evals per
+request vs ~1,732 for DE. Gates: G4 pass, G6 honored, G3's 95% held-out bar
+not yet met (honest gap). Full table:
+`evaluation_results/canonical/surrogate_poc_summary.md` and the 2026-09-03
+entry in `CORRECTION_LOG.md`.
 
-Dataset build command (resumable; ~4 h single-core at pilot size):
+Reproduce:
 
 ```bash
-.venv/Scripts/python scripts/build_dataset.py --stage all \
-    --n-sobol 8192 --n-polish 8 --n-certify 4 --seed 0 --out-dir data/pilot
+.venv/Scripts/python scripts/train_surrogate.py --data data/pilot     --out models/surrogate/poc --k 5 --seeds 0,1,2
+.venv/Scripts/python scripts/evaluate_surrogate.py --stage all --n-eval 1500
 ```
 
-Next planned work: **Phase 5** — supervised amortized inverse design
-(best-of-K or MDN) trained on `data/pilot`. If it proves data-hungry, scale
-the build up (parallelize the builder first — sweep is single-core now;
-GPU does not help this workload).
+Next planned work (in order): finite-M5 solved mode (physical gate), then
+closing the 85.7% -> 95% gap (wider fallback coverage, parallelized builder,
+scaled dataset).
 
 ## 5. Command reference
 
@@ -120,11 +124,13 @@ Run everything from the repo root so `tech_luts/` resolves.
 2. ~~Phase 3 — feasibility-labeled dataset~~ **Done 2026-09-03** — builder in
    `analog_ai/dataset/` + `scripts/build_dataset.py`; pilot in `data/pilot/`
    (33,150 verified request rows). See `CORRECTION_LOG.md`.
-3. **Phase 5** — supervised amortized inverse design (best-of-K heads or MDN)
-   trained on that dataset; keep the one-step PPO env (`one_shot=True`) only
-   as an ablation.
+3. ~~Phase 5 PoC — supervised amortized inverse design~~ **Done 2026-09-03**
+   (best-of-K + risk head; 85.3% held-out best-of-K, 5/5 regression cases).
+   PPO one-step env stays a demoted ablation.
+4. **Phase 5 continuation** — close 85.7% -> 95%: wider DE-fallback coverage,
+   parallelized builder + scaled dataset, MDN if heads under-cover.
+5. **Phase 6** — held-out evaluation at scale (thousands of targets, seeds),
+   goal-sensitivity test, report raw vs post-verification pass rates.
 4. **Phase 6** — held-out evaluation at scale (thousands of targets, seeds),
    goal-sensitivity test, report raw vs post-verification pass rates.
-5. Optional: LUT checksums in `configs/`, SHA-256 manifest (dataset manifest
-   exists; LUTs still unchecked); finite-M5 support in solved mode
-   (currently imposed-only); parallelized dataset builder for scaled runs.
+6. Optional: LUT checksums now exist in `configs/lut_manifest.json`; remaining: finite-M5 support in solved mode (currently imposed-only); parallelized dataset builder for scaled runs.
