@@ -113,8 +113,9 @@ def stage_test(ota, args):
         out = seval.eval_request(ota, model, specs, lo, hi)
         nn_row, nn_dist = seval.nn_lookup(specs, train_rows, lo, hi)
         if nn_row is not None:
+            nn_design = designs[nn_row["design_row_id"]]
             nn_verify = seval._verify(ota,
-                                      [nn_row[t] for t in DESIGN_NAMES],
+                                      [nn_design[t] for t in DESIGN_NAMES],
                                       specs)
             nn_status = "verified" if nn_verify["verdict"] else "unresolved"
             nn_viol = nn_verify["worst_violation"]

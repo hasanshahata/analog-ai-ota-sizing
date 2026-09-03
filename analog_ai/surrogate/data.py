@@ -72,9 +72,26 @@ def denormalize_designs(n: np.ndarray) -> np.ndarray:
 
 
 def load_dataset(data_dir: str):
-    """(request_rows, {design_row_id: design_row}) from consolidated parquet."""
-    requests = rows_of(data_dir, "request")
-    designs = {r["row_id"]: r for r in rows_of(data_dir, "design")}
+    """(request_rows, {design_row_id: design_row}).
+
+    Prefers the consolidated parquet files (requests carry their assigned
+    split there; shards keep split=None by design) and falls back to shards.
+    """
+    import os
+
+    import pyarrow.parquet as pq
+
+    requests_path = os.path.join(data_dir, "requests.parquet")
+    designs_path = os.path.join(data_dir, "designs.parquet")
+    if os.path.exists(requests_path):
+        requests = pq.read_table(requests_path).to_pylist()
+    else:
+        requests = rows_of(data_dir, "request")
+    if os.path.exists(designs_path):
+        design_rows = pq.read_table(designs_path).to_pylist()
+    else:
+        design_rows = rows_of(data_dir, "design")
+    designs = {r["row_id"]: r for r in design_rows}
     return requests, designs
 
 
