@@ -130,3 +130,21 @@ failure, correction, and decision.
 - Remaining known items: interactive visual pass on real devices;
   authentication/rate-limiting before any non-localhost exposure;
   concurrency beyond one worker requires proving engine thread-safety.
+
+## 2026-09-03 — UI revision: clean-and-simple + length unit fix (user feedback)
+
+- User asked "is L 1.4 nm?" — the display showed `1,408.8 nm` (a thousands
+  separator, i.e. 1.409 µm, a valid long-channel device inside the
+  60 nm–1.5 µm domain, chosen for gain). Treated as a display failure:
+  `_presentation` now emits `l_um` (µm, 3 dp) instead of `l_nm`, matching
+  the width column; schema test updated.
+- Simplified the UI per user request: removed the long subtitle, per-field
+  hint paragraphs, verbose section titles, matched-pair annotations, the
+  large footer, and the node-voltage rows (still in the API JSON);
+  compressed banners to one line + short meta; guard provenance condensed
+  to one line; scope warning kept (one short line) on every result;
+  unresolved keeps its one-line honesty note (budget evidence, not
+  infeasibility proof).
+- `node --check` clean; 32 web tests green; server restarted; live
+  end-to-end check: same request as the user's screenshot renders
+  `L 1.409 µm` with a bit-identical design (W 147.082 µm, 157.932 µA).

@@ -165,9 +165,9 @@ def _presentation(record: dict) -> dict:
 
     return {
         "m1_m2": {"w_um": r(pd.get("W1") * 1e6, 3) if pd.get("W1") else None,
-                  "l_nm": r(pd.get("L1") * 1e9, 1) if pd.get("L1") else None},
+                  "l_um": r(pd.get("L1") * 1e6, 3) if pd.get("L1") else None},
         "m3_m4": {"w_um": r(pd.get("W3") * 1e6, 3) if pd.get("W3") else None,
-                  "l_nm": r(pd.get("L3") * 1e9, 1) if pd.get("L3") else None},
+                  "l_um": r(pd.get("L3") * 1e6, 3) if pd.get("L3") else None},
         "itail_uA": r(pd.get("Itail") * 1e6, 3) if pd.get("Itail") else None,
         "metrics": {
             "gain_dB": r(lm.get("DC_Gain_dB"), 2),

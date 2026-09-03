@@ -186,7 +186,7 @@ def test_json_safe_numpy_and_non_finite():
 def test_presentation_rounding_units():
     p = S._presentation(_record())
     assert p["m1_m2"] == {"w_um": pytest.approx(20.0, abs=1e-6),
-                          "l_nm": pytest.approx(500.0, abs=1e-6)}
+                          "l_um": pytest.approx(0.5, abs=1e-6)}
     assert p["itail_uA"] == pytest.approx(75.0, abs=1e-6)
     assert p["metrics"]["gbw_MHz"] == pytest.approx(126.4, abs=1e-6)
     assert p["metrics"]["power_uW"] == pytest.approx(90.0, abs=1e-6)
