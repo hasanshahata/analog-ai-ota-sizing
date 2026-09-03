@@ -182,6 +182,55 @@ inconsistencies (audited).
   builder is the identified 3× lever for scaled-up runs (GPU is not: the
   arrays are tiny and the code is sequential numpy).
 
+## 2026-09-03 — Phase 5 PoC: supervised amortized inverse design (first working model)
+
+**Pre-training repairs from the external review** (verified before training):
+split leakage eliminated (splitter rewritten to assign whole design groups;
+pilot re-finalized: 7,740/1,104/2,214 groups, zero overlap vs 4,436 shared
+train-test designs before); negative labels renamed to evidence-based
+`beyond_sample_envelope` / `unresolved_by_optimizer` (label schema v2);
+pyarrow declared; LUT SHA-256s pinned into `configs/lut_manifest.json` +
+dataset manifest; fresh git history (`main`, tag `oracle-v0.1.0+dataset-pilot`);
+5-parameter ideal-tail scope decision recorded in DESIGN_CONTRACT.md.
+
+**Model** (`analog_ai/surrogate/`): best-of-K proposal net (K=5, sigmoid
+outputs mapped exactly onto DESIGN_BOUNDS) trained on positive rows only;
+OOD/risk head on all rows; feature ranges fit on train split only, frozen
+into checkpoints. 3 seeds trained (~4 min each); champion (seed 2) selected
+by LUT-verified pass rate on 200 val requests (90.0% vs 87.5/86.5%).
+
+**Held-out results** (1,500 test requests, verified against the canonical
+oracle, solved mode; `surrogate_poc_summary.md`):
+
+| Metric | Value |
+|---|---|
+| Raw head-0 pass | 67.9% |
+| Best-of-5 pass | **85.3%** |
+| After DE fallback (5 failures refined, all PASS) | 85.7% |
+| Nearest-neighbor baseline | 57.7% |
+| Constant-median baseline | 0% |
+| DE on same requests (n=10) | 100%, ~1,732 evals / 212 s each |
+| Model oracle cost | 5 evals / request (~350x cheaper than DE) |
+| Risk head (n=3,712) | neg precision 1.000, recall 0.9995, acc 0.9997 |
+| Five regression cases | **5/5** (3 raw, 1 best-of-K, 1 after fallback) |
+| Worst normalized violation | 0.78 (95th pct 0.11) |
+| Median power regret vs source design | -0.55 uW (model often draws less) |
+
+**Gates:** G4 goal sensitivity PASSES (every request dimension moves the
+design; constant baseline decisively beaten, 85.3% vs 0%). G6 honored
+(statuses verified / verified_best_of_k / fallback_verified / unresolved,
+never bare success). G3 regression criterion met (5/5); the >=95%
+held-out-feasible bar is **not yet met** (85.7%) - honest gap.
+
+**Known limitations:** failures concentrate at the target-space edges (the
+same corners the optimizer also failed: 14.7% unresolved, worst violation
+0.78); fallback coverage was budget-limited to 5 of ~220 failures, so the
+85.7% number understates what full fallback would achieve; goal-sensitivity
+sweeps verify mostly in mid-range (endpoints sit at extreme/unfeasible
+requests). Scaling the dataset, parallelizing the builder, and widening
+fallback coverage are the identified levers; finite-M5 and G1 correlation
+remain the physical gates before any of that counts as 5T-OTA sizing.
+
 ## Still open (in plan order)
 
 1. **G1** — SPICE correlation of the proxy, including SR/swing validation

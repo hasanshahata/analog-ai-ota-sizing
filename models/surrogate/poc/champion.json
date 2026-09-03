@@ -1,0 +1,17 @@
+{
+  "champion": "models\\surrogate\\poc\\seed2.pt",
+  "results": {
+    "models\\surrogate\\poc\\seed0.pt": {
+      "pass_rate": 0.875,
+      "n": 200
+    },
+    "models\\surrogate\\poc\\seed1.pt": {
+      "pass_rate": 0.865,
+      "n": 200
+    },
+    "models\\surrogate\\poc\\seed2.pt": {
+      "pass_rate": 0.9,
+      "n": 200
+    }
+  }
+}
