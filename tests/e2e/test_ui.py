@@ -166,12 +166,14 @@ def test_e2_verified_run(page, server):
     assert "Ideal Tail Current Sink" in rows.nth(2).inner_text()
     body = page.locator("#geometry-body").inner_text()
     assert "147.082" in body and "1.409" in body
-    assert "78.966 µA / leg" in body             # Itail / 2
+    assert "78.966 µA" in body                   # Itail / 2
     assert "Sat. margin ≈ 420 mV" in body        # from the verifier
     assert "Saturation Checked" in body
-    # multiplier + relative-scale columns are removed from the table
+    # multiplier, relative-scale and aspect-ratio columns are removed
     assert "1×" not in body and "Multiplier" not in body
     assert "Relative Scale" not in page.locator("table").inner_text()
+    assert "Aspect Ratio" not in page.locator("table").inner_text()
+    assert "/ leg" not in body
     assert not page.locator("#export-btn").is_disabled()
     assert not page.locator("#status-banner").is_visible()
 

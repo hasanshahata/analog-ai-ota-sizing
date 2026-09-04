@@ -89,9 +89,6 @@ function renderSuccess(b) {
   $("m-pwr-sub").innerHTML = kpiChip("−" + fmt(pwrPct, 1) + "% Budget");
 
   const g1 = p.m1_m2, g3 = p.m3_m4;
-  // full-precision W/L for aspect ratio (display µm are rounded)
-  const a1 = current.design.m1_m2.w_m / current.design.m1_m2.l_m;
-  const a3 = current.design.m3_m4.w_m / current.design.m3_m4.l_m;
   const sat = satMarginMV(b);
   const satCell = (label) =>
     '<div class="font-semibold text-slate-900">Sat. margin ≈ ' +
@@ -107,7 +104,6 @@ function renderSuccess(b) {
     '<div class="text-slate-500 text-xs mt-0.5 font-sans">Differential Input Pair</div></td>' +
     '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(g1.w_um, 3) + "</td>" +
     '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(g1.l_um, 3) + "</td>" +
-    '<td class="py-4 px-6 text-right font-bold text-sky-700 text-sm tabular-numbers">' + fmt(a1, 2) + "</td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>" +
     '<tr class="cold-table-row">' +
     '<td class="py-4 px-6"><div class="font-bold text-slate-900 text-sm flex items-center gap-2">' +
@@ -116,19 +112,18 @@ function renderSuccess(b) {
     '<div class="text-slate-500 text-xs mt-0.5 font-sans">Active Current Mirror Load</div></td>' +
     '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(g3.w_um, 3) + "</td>" +
     '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(g3.l_um, 3) + "</td>" +
-    '<td class="py-4 px-6 text-right font-bold text-sky-700 text-sm tabular-numbers">' + fmt(a3, 2) + "</td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>" +
     '<tr class="cold-table-row bg-sky-50/40">' +
     '<td class="py-4 px-6"><div class="font-bold text-slate-900 text-sm flex items-center gap-2">' +
     "<span>I<sub>tail</sub></span>" +
     '<span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">Bias</span></div>' +
     '<div class="text-slate-500 text-xs mt-0.5 font-sans">Ideal Tail Current Sink</div></td>' +
-    '<td class="py-4 px-6 text-center" colspan="2"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
+    '<td class="py-4 px-6 text-center"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
     '<span class="text-slate-500 text-[11px]">Total Tail Current:</span>' +
     '<span class="font-bold text-sky-700 text-sm tabular-numbers">' + fmt(p.itail_uA, 3) + " µA</span></div></td>" +
     '<td class="py-4 px-6 text-center"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
     '<span class="text-slate-500 text-[11px]">Branch Bias:</span>' +
-    '<span class="font-bold text-slate-800 text-sm tabular-numbers">' + fmt(p.itail_uA / 2, 3) + " µA / leg</span></div></td>" +
+    '<span class="font-bold text-slate-800 text-sm tabular-numbers">' + fmt(p.itail_uA / 2, 3) + " µA</span></div></td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>";
 
   $("results-area").classList.remove("hidden");

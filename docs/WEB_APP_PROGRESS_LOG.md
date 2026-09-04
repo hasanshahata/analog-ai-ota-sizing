@@ -270,3 +270,9 @@ failure, correction, and decision.
   table; the tail row's colspan layout re-balanced to the 5-column grid.
   Assets bumped to ?v=6; E2E updated to assert the columns stay absent.
 - 38 pytest + 10 Playwright green.
+
+## 2026-09-04 — Removed Aspect Ratio column + "/ leg" suffix (user request)
+
+- Circuit Parameters table is now 4 columns: Device / Role, Width, Length,
+  Operating Point / Bias. Branch Bias shows "78.966 µA" without "/ leg".
+  Assets bumped to ?v=7; E2E asserts both stay absent. Tests green.
