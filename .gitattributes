@@ -1,0 +1,7 @@
+# Preserve simulator evidence and the VM shared-folder snapshot byte-for-byte.
+cadence_shared_snapshot/** -text
+evaluation_results/cadence_correlation/**/raw/** -text
+
+# Scripts executed inside the Debian Cadence guest must retain LF endings.
+scripts/cadence_guest/*.sh text eol=lf
+cadence_shared_snapshot/runner/*.sh -text

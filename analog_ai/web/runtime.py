@@ -88,8 +88,12 @@ class SizingRuntime:
             self.champion = champion_name
             self.state = "ready"
             self.detail = None
-            log.info("web runtime: ready (policy %s, guard band %.2f)",
-                     POLICY_VERSION, GBW_GUARD_BAND)
+            active_policy = (V2_POLICY_VERSION if self.tiered_band
+                             else POLICY_VERSION)
+            active_band = ("tiered (0.18 in-domain / 0.25 beyond)"
+                           if self.tiered_band else f"{GBW_GUARD_BAND:.2f}")
+            log.info("web runtime: ready (policy %s, guard band %s)",
+                     active_policy, active_band)
         except Exception as exc:                      # noqa: BLE001
             self.state = "failed"
             self.detail = _public_load_error(exc)

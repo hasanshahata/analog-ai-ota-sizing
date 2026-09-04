@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "manual_reference_001",
+  "status": "completed",
+  "dc_gain_dB": 30.9195463142967,
+  "bw_3db_Hz": 2858841.97399085,
+  "gbw_Hz": 97504205.7369844,
+  "phase_at_gbw_deg": -97.5921821434716,
+  "phase_margin_deg": 82.4078178565284,
+  "vout_dc_V": 0.589146357387049,
+  "vtail_dc_V": 0.181508928128718,
+  "vmirror_dc_V": 0.589199471397257,
+  "vdd_current_A": -5.6685451171916e-05,
+  "power_W": 6.80225414062992e-05
+}

@@ -1,0 +1,48 @@
+*WARNING* file /home/cadence/CDS.log File is already locked by some other process.
+COPYRIGHT © 1992-2015  CADENCE DESIGN SYSTEMS INC.  ALL RIGHTS RESERVED.
+          © 1992-2015  UNIX SYSTEMS Laboratories INC.,
+                         Reproduced with permission.
+
+This Cadence Design Systems program and online documentation are
+proprietary/confidential information and may be disclosed/used only
+as authorized in a license agreement controlling such use and disclosure.
+
+          RESTRICTED RIGHTS NOTICE (SHORT FORM)
+Use/reproduction/disclosure is subject to restriction
+set forth at FAR 1252.227-19 or its equivalent.
+*WARNING* envSetVal: Can't set the value of variable 'font',
+	in tool[.partition] 'viva.rectGraph' - it has not been registered.
+Loading geView.cxt 
+Loading menuBuilder.cxt 
+Loading schView.cxt 
+Loading selectSv.cxt 
+Loading wireEdit.cxt 
+Loading pte2.cxt 
+Loading xlUI.cxt 
+Loading auCore.cxt 
+Loading vhdl.cxt 
+Loading seismic.cxt 
+Loading ci.cxt 
+Loading ams.cxt 
+Virtuoso Framework License (111) was checked out successfully. Total checkout time was 0.01s.
+Loading dal.cxt 
+Loading awv.cxt 
+Loading oasis.cxt 
+Loading analog.cxt 
+Loading asimenv.cxt 
+Loading spectrei.cxt 
+Loading devCheck.cxt 
+Loading relXpert.cxt 
+Loading viva.cxt 
+ANALOG_AI_RESULTS_BEGIN
+(model instance output designParamVals primitives subckts dc ac "dcCorrInfo-info")
+ANALOG_AI_RESULTS_END
+ANALOG_AI_AC_OUTPUTS_BEGIN
+("Vout" "net02" "net04" "vdd!" "Vin+" "Vin-" "net8" "Vin" "V4:p" "V5:p" "V8:p")
+ANALOG_AI_AC_OUTPUTS_END
+ANALOG_AI_DC_OUTPUTS_BEGIN
+("Vout" "net02" "net04" "vdd!" "Vin+" "Vin-" "net8" "Vin" "V4:p" "V5:p" "V8:p")
+ANALOG_AI_DC_OUTPUTS_END
+ANALOG_AI_METRICS 34.8250345051847 6763857.99679677 226370355.159313 -106.740864987469 73.2591350125311 0.530810746007175 0.0780165389061428 0.530846901746266 -0.000386231652476178 0.000463477982971414
+
+Loading lce.cxt 

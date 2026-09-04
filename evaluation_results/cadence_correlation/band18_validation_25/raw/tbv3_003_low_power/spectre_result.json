@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "tbv3_003_low_power",
+  "status": "completed",
+  "dc_gain_dB": 30.5687212672835,
+  "bw_3db_Hz": 385851.028310129,
+  "gbw_Hz": 12567176.2968471,
+  "phase_at_gbw_deg": -97.1285823498074,
+  "phase_margin_deg": 82.8714176501926,
+  "vout_dc_V": 0.762525835857347,
+  "vtail_dc_V": 0.0376117862607511,
+  "vmirror_dc_V": 0.762533707381112,
+  "vdd_current_A": -6.81031212604192e-05,
+  "power_W": 8.1723745512503e-05
+}

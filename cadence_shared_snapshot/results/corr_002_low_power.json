@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "corr_002_low_power",
+  "status": "completed",
+  "dc_gain_dB": 32.7876501156262,
+  "bw_3db_Hz": 2478337.96125958,
+  "gbw_Hz": 91863451.6050381,
+  "phase_at_gbw_deg": -105.653065758064,
+  "phase_margin_deg": 74.3469342419363,
+  "vout_dc_V": 0.619302617734104,
+  "vtail_dc_V": 0.157223789986079,
+  "vmirror_dc_V": 0.619379534909194,
+  "vdd_current_A": -1.37451210300336e-05,
+  "power_W": 1.64941452360403e-05
+}

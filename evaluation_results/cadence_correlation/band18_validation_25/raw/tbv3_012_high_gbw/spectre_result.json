@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "tbv3_012_high_gbw",
+  "status": "completed",
+  "dc_gain_dB": 33.5391679593212,
+  "bw_3db_Hz": 3848725.02211013,
+  "gbw_Hz": 176028958.715421,
+  "phase_at_gbw_deg": -99.3684605571864,
+  "phase_margin_deg": 80.6315394428136,
+  "vout_dc_V": 0.54576113135557,
+  "vtail_dc_V": 0.117925379149049,
+  "vmirror_dc_V": 0.545761649626641,
+  "vdd_current_A": -0.000152059209455515,
+  "power_W": 0.000182471051346619
+}

@@ -30,9 +30,8 @@ def size_ideal_tail_ota(ota, model, user_specs: dict, feat_lo, feat_hi,
     fallback all optimize the stronger internal request. Both verdicts and
     the calibration provenance are returned explicitly.
 
-    ``tiered_band=True`` selects the v2 policy: the band depends on the
-    request frequency (18% inside the 300 MHz app domain, 25% beyond) and
-    is marked provisional pending the third validation campaign.
+    ``tiered_band=True`` selects the validated v2 policy: the band depends
+    on the request frequency (18% inside the 300 MHz app domain, 25% beyond).
     """
     missing = [name for name in SPEC_KEYS if name not in user_specs]
     if missing:

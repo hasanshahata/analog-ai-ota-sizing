@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "tbv3_024_boundary",
+  "status": "completed",
+  "dc_gain_dB": 31.6579424998609,
+  "bw_3db_Hz": 6954261.42602696,
+  "gbw_Hz": 211770393.211706,
+  "phase_at_gbw_deg": -107.780524424938,
+  "phase_margin_deg": 72.2194755750619,
+  "vout_dc_V": 0.57379755689205,
+  "vtail_dc_V": 0.160291992808372,
+  "vmirror_dc_V": 0.573800255537164,
+  "vdd_current_A": -3.46466064905102e-05,
+  "power_W": 4.15759277886122e-05
+}

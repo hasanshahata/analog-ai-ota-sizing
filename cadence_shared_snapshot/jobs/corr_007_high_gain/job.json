@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "case_id": "corr_007_high_gain",
+  "status": "pending",
+  "netlist": "input.scs",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "template_sha256": "9e2014300171939e8ccc77781bb42a63b28b468d043bd2ec90890ab116a1351c",
+  "netlist_sha256": "cd9ef37597c76cf685264526099dd91dd9dbd7c6c4ccc86acc4a84bcec793063",
+  "package_version": "0.1.0",
+  "oracle_version": "analog_ai-0.1.0-proxy",
+  "simulator": "spectre",
+  "corner": "tt_lib",
+  "category": "high_gain",
+  "category_rank": 2,
+  "source_row_id": "r00021619",
+  "pipeline_status": "verified_best_of_k",
+  "pipeline_oracle_evals": 5
+}

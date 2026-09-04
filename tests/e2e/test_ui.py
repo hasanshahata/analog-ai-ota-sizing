@@ -25,9 +25,10 @@ SUCCESS = {
     "topology": "5t_ota_ideal_tail", "corner": "tt_lib",
     "user_specs": {"Gain_min": 35.0, "GBW_min": 1e8, "CL_pF": 1.0,
                    "Power_max": 2e-4},
-    "internal_specs": {"Gain_min": 35.0, "GBW_min": 1.25e8, "CL_pF": 1.0,
+    "internal_specs": {"Gain_min": 35.0, "GBW_min": 1.18e8, "CL_pF": 1.0,
                        "Power_max": 2e-4},
-    "calibration": {"version": "tt-ideal-tail-gbw-v1", "gbw_guard_band": 0.25},
+    "calibration": {"version": "tt-ideal-tail-gbw-v2-tiered",
+                    "gbw_guard_band": 0.18},
     "status": "local_refinement_verified", "n_oracle_evals": 306,
     "pipeline": {"stages": []},
     "design_variables": {"L1": 0.5e-6, "gmid1": 12.0, "L3": 0.6e-6,
@@ -87,12 +88,12 @@ def _fake_size(ota, model, specs, lo, hi, **kwargs):
     if gain >= 44.0:
         return dict(UNRESOLVED,
                     user_specs=dict(specs),
-                    internal_specs={**specs, "GBW_min": specs["GBW_min"] * 1.25})
+                    internal_specs={**specs, "GBW_min": specs["GBW_min"] * 1.18})
     if gain == 33.0:
         time.sleep(1.0)   # E9: keep the button disabled long enough to race it
     return dict(SUCCESS,
                 user_specs=dict(specs),
-                internal_specs={**specs, "GBW_min": specs["GBW_min"] * 1.25})
+                internal_specs={**specs, "GBW_min": specs["GBW_min"] * 1.18})
 
 
 @pytest.fixture(scope="module")

@@ -1,5 +1,11 @@
 # Opus 5 Execution Plan — Verified 5T-OTA Inverse Design
 
+> **Status note (2026-09-04):** Phases A-C and E are complete; nominal
+> ideal-tail Cadence correlation and the tiered v2 deployment guard are
+> validated; the web app is implemented. Historical baseline numbers below
+> describe the starting point. Current execution continues with Phase F; see
+> `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md` and `docs/HANDOFF.md`.
+
 ## Mission
 
 Continue the project from the current supervised proof of concept and turn it into a physically complete, independently validated 5T-OTA sizing system.

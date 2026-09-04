@@ -1,6 +1,9 @@
 # Web App Test Plan — UI, API, Runtime, and Pipeline
 
-**Created:** 2026-09-04 · **Status:** L0–L4 implemented and green (38 pytest + 11 Playwright); L5 scripted (`scripts/run_web_e2e_checks.py`, PASS 2026-09-04).
+**Created:** 2026-09-04 · **Status:** L0–L4 implemented (39 focused
+non-browser tests plus 10 Playwright scenarios after offline-asset hardening);
+L5 scripted
+(`scripts/run_web_e2e_checks.py`, PASS 2026-09-04).
 
 Covers everything from the browser form down to the verified-sizing oracle:
 `web_app/static/*` → `analog_ai/web/{schemas,runtime,app}.py` →
@@ -23,11 +26,11 @@ Covers everything from the browser form down to the verified-sizing oracle:
 
 | Layer | Target | Tooling | LUTs | Status |
 |---|---|---|---|---|
-| **L0** static consistency | `index.html` ↔ `app.js` ↔ `style.css` | plain pytest (regex cross-refs) | no | ✅ `tests/test_web_static.py` (4 tests) |
+| **L0** static consistency | `index.html` ↔ `app.js` ↔ local CSS | plain pytest (regex cross-refs) | no | ✅ `tests/test_web_static.py` (5 tests) |
 | **L1** contract units | `schemas.py`: validation, units, frozen display rule | pytest + pydantic | no | ✅ `test_web_schemas.py` (14) |
 | **L2** runtime logic | `runtime.py`: forwarding, locking, error hygiene | pytest + fakes + monkeypatch | no | ✅ `test_web_runtime.py` (9) |
 | **L3** HTTP API | `app.py`: status codes, error format, netlist export | pytest + FastAPI TestClient | no | ✅ `test_web_api.py` (11) |
-| **L4** browser E2E | rendered UI behavior | Playwright (stubbed backend) | no | ✅ `tests/e2e/test_ui.py` (11) |
+| **L4** browser E2E | rendered UI behavior | Playwright (stubbed backend) | no | ✅ `tests/e2e/test_ui.py` (10) |
 | **L5** real-LUT E2E | full stack parity + latency | `scripts/run_web_e2e_checks.py` | yes | ✅ PASS 2026-09-04 (`l5_checks_20260904.json`) |
 
 ## 2. Test matrix
@@ -72,8 +75,8 @@ golden template + analyses lines, 422 on bad geometry.
 | ID | Scenario | Steps | Expected |
 |---|---|---|---|
 | E1 | idle state | load `/` | idle banner visible; export disabled; engine pill shows state |
-| E2 | verified run | fill 35/100/1/200, click Size | button disabled + "Synthesizing… Ns"; within timeout: emerald banner, VERIFIED CANDIDATE badge, 4 metric cards populated, 3 geometry rows, 8 constraint rows, checks badge "8 / 8", export enabled, Internal Target = 125.000 MHz |
-| E3 | overshoot hint live | type GBW 80 | hint reads "Overshoot target: 100.000 MHz (1.25×)" |
+| E2 | verified run | fill 35/100/1/200, click Size | button disabled + "Synthesizing… Ns"; within timeout: verified result, 4 metric cards, 3 geometry rows, checks, export enabled, and v2 policy provenance |
+| E3 | guard provenance | inspect returned result | internal target and tier come from the backend's validated v2 policy; the browser does not hard-code a multiplier |
 | E4 | out-of-range input | set GBW 900, submit | red banner, code validation_error, no results rendered |
 | E5 | unresolved path | submit a known-hard request (stub returns unresolved) | amber banner UNRESOLVED, zero geometry rows visible, guidance shown |
 | E6 | error path | stub returns 500 | red banner with sanitised message; no stack trace text |

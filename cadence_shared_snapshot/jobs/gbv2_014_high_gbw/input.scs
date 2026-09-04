@@ -1,0 +1,85 @@
+// Generated for: spectre
+// Generated on: Sep  3 06:34:58 2026
+// Design library name: master_research
+// Design cell name: nmos_ota_opt
+// Design view name: schematic
+simulator lang=spectre
+global 0 vdd!
+parameters VDD=1.2 Vincm=0.6 cL=2e-13 L34=3.03257431984e-07 W34=0.000113546571633 L12=3.26107213497e-07 W12=6.26736900086e-05 Itail=0.0002810788095
+include "/home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/tsmcN65/../models/spectre/toplevel.scs" section=tt_lib
+
+// Library name: analogLib
+// Cell name: ideal_balun
+// View name: schematic
+subckt ideal_balun d c p n
+    K0 (d 0 p c) transformer n1=2
+    K1 (d 0 c n) transformer n1=2
+ends ideal_balun
+// End of subcircuit definition.
+
+// Library name: master_research
+// Cell name: nmos_ota_opt
+// View name: schematic
+V4 (vdd! 0) vsource dc=VDD type=dc
+V5 (net8 0) vsource dc=Vincm type=dc
+V8 (Vin 0) vsource mag=1 type=dc
+I16 (Vin net8 Vin\+ Vin\-) ideal_balun
+C0 (Vout 0) capacitor c=cL
+M1 (net04 net04 vdd! vdd!) pch l=L34 w=W34*1 m=1 nf=1 sd=200n \
+        ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W34 \
+        as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0))*W34 \
+        pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W34)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+1*W34) \
+        ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W34)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0)*2+(1+2)*W34) \
+        nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W34)+(1+1-int((1+1)/2)*2)*(1e-07/1/W34) \
+        nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W34)+(1+1-int((1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W34) \
+        sa=1/(0.0+1.0/(1.75e-07+(0.5*L34)+0*(2e-07+L34)))-(0.5*L34) \
+        sb=1/(0.0+1.0/(1.75e-07+(0.5*L34)+0*(2e-07+L34)))-(0.5*L34) sca=0 \
+        scb=0 scc=0
+M0 (Vout net04 vdd! vdd!) pch l=L34 w=W34*1 m=1 nf=1 sd=200n \
+        ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W34 \
+        as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0))*W34 \
+        pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W34)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+1*W34) \
+        ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W34)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0)*2+(1+2)*W34) \
+        nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W34)+(1+1-int((1+1)/2)*2)*(1e-07/1/W34) \
+        nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W34)+(1+1-int((1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W34) \
+        sa=1/(0.0+1.0/(1.75e-07+(0.5*L34)+0*(2e-07+L34)))-(0.5*L34) \
+        sb=1/(0.0+1.0/(1.75e-07+(0.5*L34)+0*(2e-07+L34)))-(0.5*L34) sca=0 \
+        scb=0 scc=0
+M9 (net04 Vin\+ net02 0) nch l=L12 w=W12*1 m=1 nf=1 sd=200n \
+        ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W12 \
+        as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0))*W12 \
+        pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W12)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+1*W12) \
+        ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W12)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0)*2+(1+2)*W12) \
+        nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W12)+(1+1-int((1+1)/2)*2)*(1e-07/1/W12) \
+        nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W12)+(1+1-int((1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W12) \
+        sa=1/(0.0+1.0/(1.75e-07+(0.5*L12)+0*(2e-07+L12)))-(0.5*L12) \
+        sb=1/(0.0+1.0/(1.75e-07+(0.5*L12)+0*(2e-07+L12)))-(0.5*L12) sca=0 \
+        scb=0 scc=0
+M8 (Vout Vin\- net02 0) nch l=L12 w=W12*1 m=1 nf=1 sd=200n \
+        ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W12 \
+        as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0))*W12 \
+        pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W12)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+1*W12) \
+        ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*W12)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0)*2+(1+2)*W12) \
+        nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W12)+(1+1-int((1+1)/2)*2)*(1e-07/1/W12) \
+        nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W12)+(1+1-int((1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W12) \
+        sa=1/(0.0+1.0/(1.75e-07+(0.5*L12)+0*(2e-07+L12)))-(0.5*L12) \
+        sb=1/(0.0+1.0/(1.75e-07+(0.5*L12)+0*(2e-07+L12)))-(0.5*L12) sca=0 \
+        scb=0 scc=0
+I26 (net02 0) isource dc=Itail type=dc
+simulatorOptions options reltol=1e-3 vabstol=1e-6 iabstol=1e-12 temp=27 \
+    tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 maxnotes=5 maxwarns=5 \
+    digits=5 cols=80 pivrel=1e-3 sensfile="../psf/sens.output" \
+    checklimitdest=psf 
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub
+// ANALOG_AI_CORRELATION_ANALYSES
+dcCorr dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
+acCorr ac start=1 stop=10G dec=30 annotate=status
+save Vout net02 net04 vdd! Vin\+ Vin\-
+dcCorrInfo info what=oppoint where=rawfile
+// END_ANALOG_AI_CORRELATION_ANALYSES

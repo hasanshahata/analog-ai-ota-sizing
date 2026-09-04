@@ -4,13 +4,16 @@ RL / optimization system for sizing a 5-transistor OTA in TSMC 65 nm against
 target specs (Gain, GBW, CL, Power) using gm/Id lookup tables and a fast
 analytical proxy evaluator.
 
-**Status:** research prototype, mid-correction-plan. The device physics is
+**Status:** nominal ideal-tail research demonstrator with a guarded local web
+application. The device physics is
 Spectre-characterized LUT data, and the canonical evaluator now solves the DC
 operating point from those curves by KCL (`op_point="solved"`) — no imposed
 bias, no simulator in the loop. Canonical evaluation (2026-09): the best RL
 model (V12) passes 1/5 regression tests — identical to a constant-median
-baseline — while a plain differential-evolution baseline with the hard
-verifier passes 5/5. **Moving to another PC? Start with
+baseline — while the supervised proposal plus hard verification and local
+refinement reaches 100% on 1,500 held-out requests with known feasible
+witnesses. The current 18% in-domain GBW guard passed a third disjoint Cadence
+campaign (25/25 user-spec passes, zero false passes). **Moving to another PC? Start with
 `docs/HANDOFF.md`.** Otherwise read `docs/PROJECT_REVIEW.md` (audit) and
 `docs/CORRECTION_LOG.md` (what has been fixed so far). The plan being
 executed is `docs/codex_plan.md`.
@@ -74,6 +77,10 @@ uv pip install --python .venv/Scripts/python.exe -e ".[web]" torch
 Scope and honest limitations: `docs/WEB_APP_USER_GUIDE.md`; implementation
 log: `docs/WEB_APP_PROGRESS_LOG.md`.
 
+The deployed UI is self-contained. Tailwind is compiled into the committed
+`web_app/static/tailwind.css`; frontend development can rebuild it with
+`npm install` followed by `npm run build:web-css`.
+
 ## Key properties of the canonical package
 
 - **The LUTs replace Spectre end to end**: the device data is
@@ -95,9 +102,10 @@ log: `docs/WEB_APP_PROGRESS_LOG.md`.
 
 ## What is still open (correction plan)
 
-1. **Gate G1 — SPICE correlation** of the proxy (needs Spectre/ngspice + PDK).
-2. Feasible/infeasible-labeled dataset from a validated oracle (Phase 3).
-3. Supervised amortized inverse design trained on that dataset (Phase 5).
-4. PVT / Monte Carlo signoff (Phase 6).
+1. **Phase F — finite-M5 solved mode** and corresponding Cadence correlation.
+2. Complete the remaining 17 Phase E boundary certifications (optional).
+3. PVT / Monte Carlo / mismatch and post-layout validation.
+4. Seven-parameter dataset regeneration and surrogate retraining after the
+   finite-M5 oracle is validated.
 
 See `docs/codex_plan.md` for the full gated plan.

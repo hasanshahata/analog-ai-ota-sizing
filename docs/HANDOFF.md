@@ -122,7 +122,8 @@ that the LUT engine is free.
 A local web application around `analog_ai/sizing.py` now exists:
 `analog_ai/web/` (FastAPI backend: frozen schemas, single-worker runtime,
 versioned `/api/v1/health` + `/api/v1/size`), `web_app/static/`
-(dependency-free UI), and `scripts/run_web_app.py` (launch). Four inputs
+(static UI; now served with locally compiled CSS), and
+`scripts/run_web_app.py` (launch). Four inputs
 (gain dB, GBW MHz, CL pF, power uW, TARGET_RANGES-bounded, never clipped);
 results are hard-verified candidates or an explicit unresolved with no
 geometry; every response carries the scope warning and the
@@ -196,3 +197,20 @@ Run everything from the repo root so `tech_luts/` resolves.
 5. **Phase E** (risk evidence) and **Phase 6** (evaluation at scale, PVT/
    Monte Carlo per execution plan Phase I) — see §4 for the order.
 6. Optional: LUT checksums now exist in `configs/lut_manifest.json`; remaining: finite-M5 support in solved mode (currently imposed-only); parallelized dataset builder for scaled runs.
+
+## 2026-09-04 — offline web hardening and Phase F start
+
+The web UI no longer requires Tailwind CDN or Google Fonts at runtime. Its
+Tailwind utilities are prebuilt into `web_app/static/tailwind.css`; rebuild
+after frontend class changes with `npm install` and `npm run build:web-css`.
+The regression gate is green: 139/139 non-real-LUT tests and 3/3 real-LUT
+integration tests. The third 18% guard campaign now has all 75 raw result/log
+artifacts archived under its `raw/` tree and matched against the structured
+report. The previous server on port 8017 was stopped to release LUT memory for
+the integration test. A fresh server was then started on the documented
+`http://127.0.0.1:8000/`; its final health was `ready`, v2-tiered, and idle.
+
+The next major engineering phase is finite-M5 solved mode. F0 architecture and
+bias-contract decisions are recorded in
+`docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`; production implementation begins at
+F1. The current web app remains ideal-tail only.

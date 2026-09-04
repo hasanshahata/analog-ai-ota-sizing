@@ -1,5 +1,5 @@
 /* OTA Sizing Explorer - wiring for the stitch_UI v3 design.
- * The server validates, guards (25% internal GBW), and verifies; this file
+ * The server applies the versioned tiered GBW guard and verifies; this file
  * renders real data only. Unresolved/error states show no geometry. */
 "use strict";
 

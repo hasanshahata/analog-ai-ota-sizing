@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv2_018_heavy_load",
+  "status": "pending",
+  "netlist": "input.scs",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "template_sha256": "9e2014300171939e8ccc77781bb42a63b28b468d043bd2ec90890ab116a1351c",
+  "netlist_sha256": "f8cd03b3d1966238dba4ebb69f5143035510116a4d9b6abae35407287ac65d38",
+  "package_version": "0.1.0",
+  "oracle_version": "analog_ai-0.1.0-proxy",
+  "simulator": "spectre",
+  "corner": "tt_lib",
+  "category": "heavy_load",
+  "category_rank": 3,
+  "source_row_id": "r00013039",
+  "pipeline_status": "verified",
+  "pipeline_oracle_evals": 5,
+  "calibration_policy": "tt-ideal-tail-gbw-v1",
+  "gbw_guard_band": 0.25
+}

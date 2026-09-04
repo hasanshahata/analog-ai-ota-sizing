@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "tbv3_020_heavy_load",
+  "status": "completed",
+  "dc_gain_dB": 29.2252353896929,
+  "bw_3db_Hz": 1853788.3688444,
+  "gbw_Hz": 52723531.7141454,
+  "phase_at_gbw_deg": -94.501175750796,
+  "phase_margin_deg": 85.498824249204,
+  "vout_dc_V": 0.73668084640171,
+  "vtail_dc_V": 0.0498979868375586,
+  "vmirror_dc_V": 0.736682740842439,
+  "vdd_current_A": -0.000256454295714246,
+  "power_W": 0.000307745154857095
+}

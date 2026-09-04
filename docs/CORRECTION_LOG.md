@@ -303,18 +303,15 @@ proof of physical infeasibility. Phase E's exit gate is met because synthetic
 OOD and optimizer-tested boundary evidence are separated and calibration,
 threshold, coverage, and difficulty evidence are reported explicitly.
 
-## Still open (in plan order)
+## Still open (updated 2026-09-04)
 
-1. **Gate G / Spectre correlation — IN PROGRESS**: golden Cadence netlist
-   audited, blind job pipeline operational end-to-end, manual reference case
-   passes all tolerances (see `docs/CADENCE_CORRELATION_LOG.md`); Step 4
-   25-case stratified campaign is built but not yet staged/run. SR/swing
-   validation still open after the nominal campaign.
-2. **Finite-M5 solved mode** (Phase F) — prerequisite for any dataset
-   scale-up or production claim.
-3. **Phase E follow-up** — 17 boundary requests awaiting certification
-   (raise the global-DE cap and re-run the same command).
-4. **Phase D (optional)** — K/diversity ablations; heads show no collapse,
-   low expected gain.
-5. **Phase H** — 7-parameter dataset retrain, only after finite-M5 and the
-   correlation gate land.
+1. **Finite-M5 solved mode (Phase F)** — the next major physical gate and a
+   prerequisite for a complete five-transistor sizing claim.
+2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
+   v2 guard are complete; M5 and later PVT/signoff evidence are not.
+3. **Phase E follow-up** — 17 boundary requests await certification under a
+   raised global-DE cap; the declared Phase E exit gate is already met.
+4. **Phase D (optional)** — K/diversity ablations; existing evidence shows no
+   head collapse and therefore low expected gain.
+5. **Phase H** — regenerate the seven-parameter dataset and retrain only after
+   the finite-M5 oracle and correlation gates pass.

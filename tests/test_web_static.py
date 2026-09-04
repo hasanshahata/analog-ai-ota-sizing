@@ -36,6 +36,8 @@ def test_no_duplicate_ids_in_html():
 
 def test_assets_are_versioned_for_cache_busting():
     html = _html()
+    assert re.search(r'href="tailwind\.css\?v=\d+"', html), \
+        "compiled tailwind.css must carry a ?v= cache-busting version"
     assert re.search(r'href="style\.css\?v=\d+"', html), \
         "style.css must carry a ?v= cache-busting version"
     assert re.search(r'src="app\.js\?v=\d+"', html), \
@@ -54,3 +56,14 @@ def test_dynamic_ids_used_by_renderers_exist():
     # every runtime .innerHTML target must exist statically
     for m in re.finditer(r'\$\("([A-Za-z0-9_-]+)"\)\.innerHTML', js):
         assert f'id="{m.group(1)}"' in html, m.group(1)
+
+
+def test_ui_has_no_runtime_cdn_dependencies():
+    """The local app must retain layout/visibility without internet access."""
+    html = _html().lower()
+    assert "cdn.tailwindcss.com" not in html
+    assert "fonts.googleapis.com" not in html
+    assert "fonts.gstatic.com" not in html
+    css = STATIC / "tailwind.css"
+    assert css.exists() and css.stat().st_size > 10_000
+    assert ".hidden" in css.read_text(encoding="utf-8")

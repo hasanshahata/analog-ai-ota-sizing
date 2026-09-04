@@ -376,3 +376,43 @@ failure, correction, and decision.
 - Note: as with v1, the band sits close to the observed worst case
   (17.6% vs 18%); any future evidence of a worse tail should bump the
   in-domain tier, with the same disjoint-campaign discipline.
+
+## 2026-09-04 — recommendation remediation: offline UI, evidence, and gates
+
+- Reproduced the full test state: 134 passed / 4 failed. All failures were
+  Playwright visibility assertions because `.hidden` came only from the
+  Tailwind CDN and the CDN was unavailable; backend-focused web tests were
+  38/38 green.
+- Replaced the runtime Tailwind CDN with a pinned build-time toolchain
+  (`package.json`, `tailwind.config.js`, `web_app/src/tailwind.css`) and
+  committed local compiled `web_app/static/tailwind.css`. Removed Google Fonts
+  network links. Added a static regression test forbidding runtime CDN
+  dependencies and requiring the local `.hidden` utility.
+- Offline web verification: 15/15 static + Playwright tests pass. Full
+  non-real-LUT suite: 139/139 pass. After stopping the idle 5.5 GB web runtime,
+  the real-LUT integration suite also passed 3/3.
+- Archived the third campaign's raw evidence from `E:/Cadence_AI_Share`:
+  25 result JSONs + 25 OCEAN logs + 25 Spectre stdout logs. Audit: 75 files,
+  zero empty, zero mismatches across the structured-report fields.
+- Synchronized the official v2 policy wording, runtime ready log, README,
+  implementation/test plans, design contract, user guide, and open-phase list.
+- Began Phase F with an implementation audit and frozen external-bias contract
+  in `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`. No finite-M5 production code
+  or web behavior was changed in this remediation step.
+- Restarted the real web service on its documented default
+  `http://127.0.0.1:8000/` after testing. Final health: `ready`, v2-tiered
+  policy, not busy.
+
+## 2026-09-04 — private GitHub packaging
+
+- Stopped the local web server before packaging.
+- Audited the workspace and `E:/Cadence_AI_Share` for size and common secret
+  patterns. No credential/private-key material was detected; shared artifacts
+  total 1,523 files / 38,799,458 bytes and contain PDK include paths but no PDK
+  model files.
+- Copied the complete shared folder into `cadence_shared_snapshot/` and
+  verified every source/copy pair by SHA-256 (zero mismatches).
+- Added `docs/GITHUB_UPLOAD_MANIFEST.md` to make included and excluded material
+  explicit. The two 2.76 GB LUTs cannot be stored unchanged in GitHub
+  Free/Pro LFS (2 GiB per-file limit) and remain a documented upload/license
+  decision rather than being silently omitted.

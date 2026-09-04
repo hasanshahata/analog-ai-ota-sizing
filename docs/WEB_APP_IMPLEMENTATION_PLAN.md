@@ -1,7 +1,7 @@
 # Ideal-Tail 5T-OTA Web App Implementation Plan
 
 **Created:** 2026-09-03  
-**Status:** proposed; implementation not started  
+**Status:** implemented (W0-W5 complete); offline asset hardening completed 2026-09-04
 **Target:** a simple local web application around the verified nominal-TT sizing pipeline
 
 ## 1. Goal
@@ -25,7 +25,8 @@ The first release supports only:
 - `VDD = 1.2 V`;
 - `Vincm = 0.6 V`;
 - solved LUT operating point;
-- the versioned 25% GBW deployment guard, `tt-ideal-tail-gbw-v1`.
+- the validated tiered GBW deployment guard,
+  `tt-ideal-tail-gbw-v2-tiered` (18% inside the <=300 MHz app domain).
 
 The UI must label results as **nominal LUT-based sizing candidates**, not
 post-layout or PVT signoff. Cadence remains the final authority. The guard was
@@ -260,10 +261,10 @@ The first web-app release is complete when:
 - the limitations and 25-case Cadence evidence are visible and documented;
 - all implementation progress is recorded in the project docs.
 
-## 10. Recommended execution order
+## 10. Executed order
 
-Start with W0 and W1. Do not begin visual styling until the schema and runtime
-tests establish that the browser cannot bypass the guarded sizing contract.
-After W2 is tested, W3 can remain intentionally small; correctness and honest
-failure reporting matter more than visual complexity for the first release.
-
+W0 through W5 were executed in order. The UI was subsequently redesigned and
+the v2 policy was validated by a third disjoint Cadence campaign. On
+2026-09-04 the Tailwind CDN and Google Fonts runtime dependencies were removed;
+the required Tailwind utilities are now compiled at build time and committed as
+`web_app/static/tailwind.css` for deterministic offline operation.

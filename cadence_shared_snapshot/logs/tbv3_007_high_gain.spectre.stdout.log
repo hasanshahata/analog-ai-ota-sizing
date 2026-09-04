@@ -1,0 +1,444 @@
+
+Cadence (R) Virtuoso (R) Spectre (R) Circuit Simulator
+Version 14.1.0.138 64bit -- 28 Sep 2014
+Copyright (C) 1989-2014 Cadence Design Systems, Inc. All rights reserved
+        worldwide. Cadence, Virtuoso and Spectre are registered trademarks of
+        Cadence Design Systems, Inc. All others are the property of their
+        respective holders.
+
+Includes RSA BSAFE(R) Cryptographic or Security Protocol Software from RSA
+        Security, Inc.
+
+User: cadence   Host: berkeley   HostID: 7F0100   PID: 33681
+Memory  available: 7.0727 GB  physical: 12.6169 GB
+CPU Type: Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz
+          Processor PhysicalID CoreID Frequency Load
+              0         0        0     2712.0     1.6
+              1         0        1     2712.0     1.5
+
+
+Simulating `input.scs' on berkeley at 2:35:45 PM, Fri Sep 4, 2026 (process id:
+        33681).
+Current working directory: /mnt/hgfs/Cadence_AI_Share/jobs/tbv3_007_high_gain
+Command line:
+    /usr/local/cadence/MMSIM141/tools/bin/spectre -64 input.scs -raw  \
+        ./psf +log ./spectre.log
+Reading file:  /mnt/hgfs/Cadence_AI_Share/jobs/tbv3_007_high_gain/input.scs
+Reading file: 
+        /usr/local/cadence/MMSIM141/tools.lnx86/spectre/etc/configs/spectre.cfg
+Reading file:  /usr/include/stdc-predef.h
+Reading file: 
+        /home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/models/spectre/toplevel.scs
+Reading file: 
+        /home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/models/spectre/crn65lp_2d5_lk_v1d7.scs
+Time for NDB Parsing: CPU = 1.236 s, elapsed = 1.23998 s.
+Time accumulated: CPU = 1.248 s, elapsed = 1.24001 s.
+Peak resident memory used = 129 Mbytes.
+
+Reading link: 
+        /usr/local/cadence/MMSIM141/tools.lnx86/spectre/etc/ahdl/discipline.h
+Reading file: 
+        /usr/local/cadence/MMSIM141/tools.lnx86/spectre/etc/ahdl/disciplines.vams
+Reading link: 
+        /usr/local/cadence/MMSIM141/tools.lnx86/spectre/etc/ahdl/constants.h
+Reading file: 
+        /usr/local/cadence/MMSIM141/tools.lnx86/spectre/etc/ahdl/constants.vams
+Time for Elaboration: CPU = 48 ms, elapsed = 44.7588 ms.
+Time accumulated: CPU = 1.296 s, elapsed = 1.28575 s.
+Peak resident memory used = 135 Mbytes.
+
+Time for EDB Visiting: CPU = 0 s, elapsed = 584.841 us.
+Time accumulated: CPU = 1.296 s, elapsed = 1.28649 s.
+Peak resident memory used = 136 Mbytes.
+
+
+Global user options:
+             reltol = 0.001
+            vabstol = 1e-06
+            iabstol = 1e-12
+               temp = 27
+               tnom = 27
+             scalem = 1
+              scale = 1
+               gmin = 1e-12
+             rforce = 1
+           maxnotes = 5
+           maxwarns = 5
+             digits = 5
+               cols = 80
+             pivrel = 0.001
+           sensfile = ../psf/sens.output
+     checklimitdest = psf
+               save = allpub
+               tnom = 27
+             scalem = 1
+              scale = 1
+
+Circuit inventory:
+              nodes 8
+              bsim4 4     
+          capacitor 1     
+            isource 1     
+        transformer 2     
+            vsource 3     
+
+Analysis and control statement inventory:
+                 ac 1     
+                 dc 1     
+               info 7     
+
+Output statements:
+             .probe 0     
+           .measure 0     
+               save 1     
+
+Time for parsing: CPU = 4 ms, elapsed = 6.35505 ms.
+Time accumulated: CPU = 1.3 s, elapsed = 1.29297 s.
+Peak resident memory used = 137 Mbytes.
+
+~~~~~~~~~~~~~~~~~~~~~~
+Pre-Simulation Summary
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+modelParameter: writing model parameter values to rawfile.
+element: writing instance parameter values to rawfile.
+outputParameter: writing output parameter values to rawfile.
+designParamVals: writing netlist parameters to rawfile.
+primitives: writing primitives to rawfile.
+subckts: writing subcircuits to rawfile.
+
+********************
+DC Analysis `dcCorr'
+********************
+Important parameter values:
+    reltol = 1e-03
+    abstol(V) = 1 uV
+    abstol(I) = 1 pA
+    temp = 27 C
+    tnom = 27 C
+    tempeffects = all
+    gmindc = 1 pS
+Convergence achieved in 16 iterations.
+Total time required for dc analysis `dcCorr': CPU = 4 ms, elapsed = 4.15897
+        ms.
+Time accumulated: CPU = 1.372 s, elapsed = 1.36386 s.
+Peak resident memory used = 138 Mbytes.
+
+
+*********************************************
+AC Analysis `acCorr': freq = (1 Hz -> 10 GHz)
+*********************************************
+
+Notice from spectre during AC analysis `acCorr'.
+    Operating points will not be recomputed: the circuit and conditions were
+        not changed since previous analysis.
+
+    acCorr: freq = 1.848 Hz    (2.67 %), step = 136.5 mHz    (333 m%)
+    acCorr: freq = 1.995 Hz       (3 %), step = 147.4 mHz    (333 m%)
+    acCorr: freq = 2.154 Hz    (3.33 %), step = 159.2 mHz    (333 m%)
+    acCorr: freq = 2.326 Hz    (3.67 %), step = 171.9 mHz    (333 m%)
+    acCorr: freq = 2.512 Hz       (4 %), step = 185.6 mHz    (333 m%)
+    acCorr: freq = 2.712 Hz    (4.33 %), step = 200.4 mHz    (333 m%)
+    acCorr: freq = 2.929 Hz    (4.67 %), step = 216.4 mHz    (333 m%)
+    acCorr: freq = 3.162 Hz       (5 %), step = 233.6 mHz    (333 m%)
+    acCorr: freq = 3.415 Hz    (5.33 %), step = 252.3 mHz    (333 m%)
+    acCorr: freq = 3.687 Hz    (5.67 %), step = 272.4 mHz    (333 m%)
+    acCorr: freq = 3.981 Hz       (6 %), step = 294.1 mHz    (333 m%)
+    acCorr: freq = 4.299 Hz    (6.33 %), step = 317.6 mHz    (333 m%)
+    acCorr: freq = 4.642 Hz    (6.67 %), step = 342.9 mHz    (333 m%)
+    acCorr: freq = 5.012 Hz       (7 %), step = 370.3 mHz    (333 m%)
+    acCorr: freq = 5.412 Hz    (7.33 %), step = 399.8 mHz    (333 m%)
+    acCorr: freq = 5.843 Hz    (7.67 %), step = 431.7 mHz    (333 m%)
+    acCorr: freq = 6.31 Hz        (8 %), step = 466.2 mHz    (333 m%)
+    acCorr: freq = 6.813 Hz    (8.33 %), step = 503.3 mHz    (333 m%)
+    acCorr: freq = 7.356 Hz    (8.67 %), step = 543.5 mHz    (333 m%)
+    acCorr: freq = 7.943 Hz       (9 %), step = 586.9 mHz    (333 m%)
+    acCorr: freq = 8.577 Hz    (9.33 %), step = 633.7 mHz    (333 m%)
+    acCorr: freq = 9.261 Hz    (9.67 %), step = 684.2 mHz    (333 m%)
+    acCorr: freq = 10 Hz         (10 %), step = 738.8 mHz    (333 m%)
+    acCorr: freq = 10.8 Hz     (10.3 %), step = 797.8 mHz    (333 m%)
+    acCorr: freq = 11.66 Hz    (10.7 %), step = 861.4 mHz    (333 m%)
+    acCorr: freq = 12.59 Hz      (11 %), step = 930.1 mHz    (333 m%)
+    acCorr: freq = 13.59 Hz    (11.3 %), step = 1.004 Hz     (333 m%)
+    acCorr: freq = 14.68 Hz    (11.7 %), step = 1.084 Hz     (333 m%)
+    acCorr: freq = 15.85 Hz      (12 %), step = 1.171 Hz     (333 m%)
+    acCorr: freq = 17.11 Hz    (12.3 %), step = 1.264 Hz     (333 m%)
+    acCorr: freq = 18.48 Hz    (12.7 %), step = 1.365 Hz     (333 m%)
+    acCorr: freq = 19.95 Hz      (13 %), step = 1.474 Hz     (333 m%)
+    acCorr: freq = 21.54 Hz    (13.3 %), step = 1.592 Hz     (333 m%)
+    acCorr: freq = 23.26 Hz    (13.7 %), step = 1.719 Hz     (333 m%)
+    acCorr: freq = 25.12 Hz      (14 %), step = 1.856 Hz     (333 m%)
+    acCorr: freq = 27.12 Hz    (14.3 %), step = 2.004 Hz     (333 m%)
+    acCorr: freq = 29.29 Hz    (14.7 %), step = 2.164 Hz     (333 m%)
+    acCorr: freq = 31.62 Hz      (15 %), step = 2.336 Hz     (333 m%)
+    acCorr: freq = 34.15 Hz    (15.3 %), step = 2.523 Hz     (333 m%)
+    acCorr: freq = 36.87 Hz    (15.7 %), step = 2.724 Hz     (333 m%)
+    acCorr: freq = 39.81 Hz      (16 %), step = 2.941 Hz     (333 m%)
+    acCorr: freq = 42.99 Hz    (16.3 %), step = 3.176 Hz     (333 m%)
+    acCorr: freq = 46.42 Hz    (16.7 %), step = 3.429 Hz     (333 m%)
+    acCorr: freq = 50.12 Hz      (17 %), step = 3.703 Hz     (333 m%)
+    acCorr: freq = 54.12 Hz    (17.3 %), step = 3.998 Hz     (333 m%)
+    acCorr: freq = 58.43 Hz    (17.7 %), step = 4.317 Hz     (333 m%)
+    acCorr: freq = 63.1 Hz       (18 %), step = 4.662 Hz     (333 m%)
+    acCorr: freq = 68.13 Hz    (18.3 %), step = 5.033 Hz     (333 m%)
+    acCorr: freq = 73.56 Hz    (18.7 %), step = 5.435 Hz     (333 m%)
+    acCorr: freq = 79.43 Hz      (19 %), step = 5.869 Hz     (333 m%)
+    acCorr: freq = 85.77 Hz    (19.3 %), step = 6.337 Hz     (333 m%)
+    acCorr: freq = 92.61 Hz    (19.7 %), step = 6.842 Hz     (333 m%)
+    acCorr: freq = 100 Hz        (20 %), step = 7.388 Hz     (333 m%)
+    acCorr: freq = 108 Hz      (20.3 %), step = 7.978 Hz     (333 m%)
+    acCorr: freq = 116.6 Hz    (20.7 %), step = 8.614 Hz     (333 m%)
+    acCorr: freq = 125.9 Hz      (21 %), step = 9.301 Hz     (333 m%)
+    acCorr: freq = 135.9 Hz    (21.3 %), step = 10.04 Hz     (333 m%)
+    acCorr: freq = 146.8 Hz    (21.7 %), step = 10.84 Hz     (333 m%)
+    acCorr: freq = 158.5 Hz      (22 %), step = 11.71 Hz     (333 m%)
+    acCorr: freq = 171.1 Hz    (22.3 %), step = 12.64 Hz     (333 m%)
+    acCorr: freq = 184.8 Hz    (22.7 %), step = 13.65 Hz     (333 m%)
+    acCorr: freq = 199.5 Hz      (23 %), step = 14.74 Hz     (333 m%)
+    acCorr: freq = 215.4 Hz    (23.3 %), step = 15.92 Hz     (333 m%)
+    acCorr: freq = 232.6 Hz    (23.7 %), step = 17.19 Hz     (333 m%)
+    acCorr: freq = 251.2 Hz      (24 %), step = 18.56 Hz     (333 m%)
+    acCorr: freq = 271.2 Hz    (24.3 %), step = 20.04 Hz     (333 m%)
+    acCorr: freq = 292.9 Hz    (24.7 %), step = 21.64 Hz     (333 m%)
+    acCorr: freq = 316.2 Hz      (25 %), step = 23.36 Hz     (333 m%)
+    acCorr: freq = 341.5 Hz    (25.3 %), step = 25.23 Hz     (333 m%)
+    acCorr: freq = 368.7 Hz    (25.7 %), step = 27.24 Hz     (333 m%)
+    acCorr: freq = 398.1 Hz      (26 %), step = 29.41 Hz     (333 m%)
+    acCorr: freq = 429.9 Hz    (26.3 %), step = 31.76 Hz     (333 m%)
+    acCorr: freq = 464.2 Hz    (26.7 %), step = 34.29 Hz     (333 m%)
+    acCorr: freq = 501.2 Hz      (27 %), step = 37.03 Hz     (333 m%)
+    acCorr: freq = 541.2 Hz    (27.3 %), step = 39.98 Hz     (333 m%)
+    acCorr: freq = 584.3 Hz    (27.7 %), step = 43.17 Hz     (333 m%)
+    acCorr: freq = 631 Hz        (28 %), step = 46.62 Hz     (333 m%)
+    acCorr: freq = 681.3 Hz    (28.3 %), step = 50.33 Hz     (333 m%)
+    acCorr: freq = 735.6 Hz    (28.7 %), step = 54.35 Hz     (333 m%)
+    acCorr: freq = 794.3 Hz      (29 %), step = 58.69 Hz     (333 m%)
+    acCorr: freq = 857.7 Hz    (29.3 %), step = 63.37 Hz     (333 m%)
+    acCorr: freq = 926.1 Hz    (29.7 %), step = 68.42 Hz     (333 m%)
+    acCorr: freq = 1 kHz         (30 %), step = 73.88 Hz     (333 m%)
+    acCorr: freq = 1.08 kHz    (30.3 %), step = 79.78 Hz     (333 m%)
+    acCorr: freq = 1.166 kHz   (30.7 %), step = 86.14 Hz     (333 m%)
+    acCorr: freq = 1.259 kHz     (31 %), step = 93.01 Hz     (333 m%)
+    acCorr: freq = 1.359 kHz   (31.3 %), step = 100.4 Hz     (333 m%)
+    acCorr: freq = 1.468 kHz   (31.7 %), step = 108.4 Hz     (333 m%)
+    acCorr: freq = 1.585 kHz     (32 %), step = 117.1 Hz     (333 m%)
+    acCorr: freq = 1.711 kHz   (32.3 %), step = 126.4 Hz     (333 m%)
+    acCorr: freq = 1.848 kHz   (32.7 %), step = 136.5 Hz     (333 m%)
+    acCorr: freq = 1.995 kHz     (33 %), step = 147.4 Hz     (333 m%)
+    acCorr: freq = 2.154 kHz   (33.3 %), step = 159.2 Hz     (333 m%)
+    acCorr: freq = 2.326 kHz   (33.7 %), step = 171.9 Hz     (333 m%)
+    acCorr: freq = 2.512 kHz     (34 %), step = 185.6 Hz     (333 m%)
+    acCorr: freq = 2.712 kHz   (34.3 %), step = 200.4 Hz     (333 m%)
+    acCorr: freq = 2.929 kHz   (34.7 %), step = 216.4 Hz     (333 m%)
+    acCorr: freq = 3.162 kHz     (35 %), step = 233.6 Hz     (333 m%)
+    acCorr: freq = 3.415 kHz   (35.3 %), step = 252.3 Hz     (333 m%)
+    acCorr: freq = 3.687 kHz   (35.7 %), step = 272.4 Hz     (333 m%)
+    acCorr: freq = 3.981 kHz     (36 %), step = 294.1 Hz     (333 m%)
+    acCorr: freq = 4.299 kHz   (36.3 %), step = 317.6 Hz     (333 m%)
+    acCorr: freq = 4.642 kHz   (36.7 %), step = 342.9 Hz     (333 m%)
+    acCorr: freq = 5.012 kHz     (37 %), step = 370.3 Hz     (333 m%)
+    acCorr: freq = 5.412 kHz   (37.3 %), step = 399.8 Hz     (333 m%)
+    acCorr: freq = 5.843 kHz   (37.7 %), step = 431.7 Hz     (333 m%)
+    acCorr: freq = 6.31 kHz      (38 %), step = 466.2 Hz     (333 m%)
+    acCorr: freq = 6.813 kHz   (38.3 %), step = 503.3 Hz     (333 m%)
+    acCorr: freq = 7.356 kHz   (38.7 %), step = 543.5 Hz     (333 m%)
+    acCorr: freq = 7.943 kHz     (39 %), step = 586.9 Hz     (333 m%)
+    acCorr: freq = 8.577 kHz   (39.3 %), step = 633.7 Hz     (333 m%)
+    acCorr: freq = 9.261 kHz   (39.7 %), step = 684.2 Hz     (333 m%)
+    acCorr: freq = 10 kHz        (40 %), step = 738.8 Hz     (333 m%)
+    acCorr: freq = 10.8 kHz    (40.3 %), step = 797.8 Hz     (333 m%)
+    acCorr: freq = 11.66 kHz   (40.7 %), step = 861.4 Hz     (333 m%)
+    acCorr: freq = 12.59 kHz     (41 %), step = 930.1 Hz     (333 m%)
+    acCorr: freq = 13.59 kHz   (41.3 %), step = 1.004 kHz    (333 m%)
+    acCorr: freq = 14.68 kHz   (41.7 %), step = 1.084 kHz    (333 m%)
+    acCorr: freq = 15.85 kHz     (42 %), step = 1.171 kHz    (333 m%)
+    acCorr: freq = 17.11 kHz   (42.3 %), step = 1.264 kHz    (333 m%)
+    acCorr: freq = 18.48 kHz   (42.7 %), step = 1.365 kHz    (333 m%)
+    acCorr: freq = 19.95 kHz     (43 %), step = 1.474 kHz    (333 m%)
+    acCorr: freq = 21.54 kHz   (43.3 %), step = 1.592 kHz    (333 m%)
+    acCorr: freq = 23.26 kHz   (43.7 %), step = 1.719 kHz    (333 m%)
+    acCorr: freq = 25.12 kHz     (44 %), step = 1.856 kHz    (333 m%)
+    acCorr: freq = 27.12 kHz   (44.3 %), step = 2.004 kHz    (333 m%)
+    acCorr: freq = 29.29 kHz   (44.7 %), step = 2.164 kHz    (333 m%)
+    acCorr: freq = 31.62 kHz     (45 %), step = 2.336 kHz    (333 m%)
+    acCorr: freq = 34.15 kHz   (45.3 %), step = 2.523 kHz    (333 m%)
+    acCorr: freq = 36.87 kHz   (45.7 %), step = 2.724 kHz    (333 m%)
+    acCorr: freq = 39.81 kHz     (46 %), step = 2.941 kHz    (333 m%)
+    acCorr: freq = 42.99 kHz   (46.3 %), step = 3.176 kHz    (333 m%)
+    acCorr: freq = 46.42 kHz   (46.7 %), step = 3.429 kHz    (333 m%)
+    acCorr: freq = 50.12 kHz     (47 %), step = 3.703 kHz    (333 m%)
+    acCorr: freq = 54.12 kHz   (47.3 %), step = 3.998 kHz    (333 m%)
+    acCorr: freq = 58.43 kHz   (47.7 %), step = 4.317 kHz    (333 m%)
+    acCorr: freq = 63.1 kHz      (48 %), step = 4.662 kHz    (333 m%)
+    acCorr: freq = 68.13 kHz   (48.3 %), step = 5.033 kHz    (333 m%)
+    acCorr: freq = 73.56 kHz   (48.7 %), step = 5.435 kHz    (333 m%)
+    acCorr: freq = 79.43 kHz     (49 %), step = 5.869 kHz    (333 m%)
+    acCorr: freq = 85.77 kHz   (49.3 %), step = 6.337 kHz    (333 m%)
+    acCorr: freq = 92.61 kHz   (49.7 %), step = 6.842 kHz    (333 m%)
+    acCorr: freq = 100 kHz       (50 %), step = 7.388 kHz    (333 m%)
+    acCorr: freq = 108 kHz     (50.3 %), step = 7.978 kHz    (333 m%)
+    acCorr: freq = 116.6 kHz   (50.7 %), step = 8.614 kHz    (333 m%)
+    acCorr: freq = 125.9 kHz     (51 %), step = 9.301 kHz    (333 m%)
+    acCorr: freq = 135.9 kHz   (51.3 %), step = 10.04 kHz    (333 m%)
+    acCorr: freq = 146.8 kHz   (51.7 %), step = 10.84 kHz    (333 m%)
+    acCorr: freq = 158.5 kHz     (52 %), step = 11.71 kHz    (333 m%)
+    acCorr: freq = 171.1 kHz   (52.3 %), step = 12.64 kHz    (333 m%)
+    acCorr: freq = 184.8 kHz   (52.7 %), step = 13.65 kHz    (333 m%)
+    acCorr: freq = 199.5 kHz     (53 %), step = 14.74 kHz    (333 m%)
+    acCorr: freq = 215.4 kHz   (53.3 %), step = 15.92 kHz    (333 m%)
+    acCorr: freq = 232.6 kHz   (53.7 %), step = 17.19 kHz    (333 m%)
+    acCorr: freq = 251.2 kHz     (54 %), step = 18.56 kHz    (333 m%)
+    acCorr: freq = 271.2 kHz   (54.3 %), step = 20.04 kHz    (333 m%)
+    acCorr: freq = 292.9 kHz   (54.7 %), step = 21.64 kHz    (333 m%)
+    acCorr: freq = 316.2 kHz     (55 %), step = 23.36 kHz    (333 m%)
+    acCorr: freq = 341.5 kHz   (55.3 %), step = 25.23 kHz    (333 m%)
+    acCorr: freq = 368.7 kHz   (55.7 %), step = 27.24 kHz    (333 m%)
+    acCorr: freq = 398.1 kHz     (56 %), step = 29.41 kHz    (333 m%)
+    acCorr: freq = 429.9 kHz   (56.3 %), step = 31.76 kHz    (333 m%)
+    acCorr: freq = 464.2 kHz   (56.7 %), step = 34.29 kHz    (333 m%)
+    acCorr: freq = 501.2 kHz     (57 %), step = 37.03 kHz    (333 m%)
+    acCorr: freq = 541.2 kHz   (57.3 %), step = 39.98 kHz    (333 m%)
+    acCorr: freq = 584.3 kHz   (57.7 %), step = 43.17 kHz    (333 m%)
+    acCorr: freq = 631 kHz       (58 %), step = 46.62 kHz    (333 m%)
+    acCorr: freq = 681.3 kHz   (58.3 %), step = 50.33 kHz    (333 m%)
+    acCorr: freq = 735.6 kHz   (58.7 %), step = 54.35 kHz    (333 m%)
+    acCorr: freq = 794.3 kHz     (59 %), step = 58.69 kHz    (333 m%)
+    acCorr: freq = 857.7 kHz   (59.3 %), step = 63.37 kHz    (333 m%)
+    acCorr: freq = 926.1 kHz   (59.7 %), step = 68.42 kHz    (333 m%)
+    acCorr: freq = 1 MHz         (60 %), step = 73.88 kHz    (333 m%)
+    acCorr: freq = 1.08 MHz    (60.3 %), step = 79.78 kHz    (333 m%)
+    acCorr: freq = 1.166 MHz   (60.7 %), step = 86.14 kHz    (333 m%)
+    acCorr: freq = 1.259 MHz     (61 %), step = 93.01 kHz    (333 m%)
+    acCorr: freq = 1.359 MHz   (61.3 %), step = 100.4 kHz    (333 m%)
+    acCorr: freq = 1.468 MHz   (61.7 %), step = 108.4 kHz    (333 m%)
+    acCorr: freq = 1.585 MHz     (62 %), step = 117.1 kHz    (333 m%)
+    acCorr: freq = 1.711 MHz   (62.3 %), step = 126.4 kHz    (333 m%)
+    acCorr: freq = 1.848 MHz   (62.7 %), step = 136.5 kHz    (333 m%)
+    acCorr: freq = 1.995 MHz     (63 %), step = 147.4 kHz    (333 m%)
+    acCorr: freq = 2.154 MHz   (63.3 %), step = 159.2 kHz    (333 m%)
+    acCorr: freq = 2.326 MHz   (63.7 %), step = 171.9 kHz    (333 m%)
+    acCorr: freq = 2.512 MHz     (64 %), step = 185.6 kHz    (333 m%)
+    acCorr: freq = 2.712 MHz   (64.3 %), step = 200.4 kHz    (333 m%)
+    acCorr: freq = 2.929 MHz   (64.7 %), step = 216.4 kHz    (333 m%)
+    acCorr: freq = 3.162 MHz     (65 %), step = 233.6 kHz    (333 m%)
+    acCorr: freq = 3.415 MHz   (65.3 %), step = 252.3 kHz    (333 m%)
+    acCorr: freq = 3.687 MHz   (65.7 %), step = 272.4 kHz    (333 m%)
+    acCorr: freq = 3.981 MHz     (66 %), step = 294.1 kHz    (333 m%)
+    acCorr: freq = 4.299 MHz   (66.3 %), step = 317.6 kHz    (333 m%)
+    acCorr: freq = 4.642 MHz   (66.7 %), step = 342.9 kHz    (333 m%)
+    acCorr: freq = 5.012 MHz     (67 %), step = 370.3 kHz    (333 m%)
+    acCorr: freq = 5.412 MHz   (67.3 %), step = 399.8 kHz    (333 m%)
+    acCorr: freq = 5.843 MHz   (67.7 %), step = 431.7 kHz    (333 m%)
+    acCorr: freq = 6.31 MHz      (68 %), step = 466.2 kHz    (333 m%)
+    acCorr: freq = 6.813 MHz   (68.3 %), step = 503.3 kHz    (333 m%)
+    acCorr: freq = 7.356 MHz   (68.7 %), step = 543.5 kHz    (333 m%)
+    acCorr: freq = 7.943 MHz     (69 %), step = 586.9 kHz    (333 m%)
+    acCorr: freq = 8.577 MHz   (69.3 %), step = 633.7 kHz    (333 m%)
+    acCorr: freq = 9.261 MHz   (69.7 %), step = 684.2 kHz    (333 m%)
+    acCorr: freq = 10 MHz        (70 %), step = 738.8 kHz    (333 m%)
+    acCorr: freq = 10.8 MHz    (70.3 %), step = 797.8 kHz    (333 m%)
+    acCorr: freq = 11.66 MHz   (70.7 %), step = 861.4 kHz    (333 m%)
+    acCorr: freq = 12.59 MHz     (71 %), step = 930.1 kHz    (333 m%)
+    acCorr: freq = 13.59 MHz   (71.3 %), step = 1.004 MHz    (333 m%)
+    acCorr: freq = 14.68 MHz   (71.7 %), step = 1.084 MHz    (333 m%)
+    acCorr: freq = 15.85 MHz     (72 %), step = 1.171 MHz    (333 m%)
+    acCorr: freq = 17.11 MHz   (72.3 %), step = 1.264 MHz    (333 m%)
+    acCorr: freq = 18.48 MHz   (72.7 %), step = 1.365 MHz    (333 m%)
+    acCorr: freq = 19.95 MHz     (73 %), step = 1.474 MHz    (333 m%)
+    acCorr: freq = 21.54 MHz   (73.3 %), step = 1.592 MHz    (333 m%)
+    acCorr: freq = 23.26 MHz   (73.7 %), step = 1.719 MHz    (333 m%)
+    acCorr: freq = 25.12 MHz     (74 %), step = 1.856 MHz    (333 m%)
+    acCorr: freq = 27.12 MHz   (74.3 %), step = 2.004 MHz    (333 m%)
+    acCorr: freq = 29.29 MHz   (74.7 %), step = 2.164 MHz    (333 m%)
+    acCorr: freq = 31.62 MHz     (75 %), step = 2.336 MHz    (333 m%)
+    acCorr: freq = 34.15 MHz   (75.3 %), step = 2.523 MHz    (333 m%)
+    acCorr: freq = 36.87 MHz   (75.7 %), step = 2.724 MHz    (333 m%)
+    acCorr: freq = 39.81 MHz     (76 %), step = 2.941 MHz    (333 m%)
+    acCorr: freq = 42.99 MHz   (76.3 %), step = 3.176 MHz    (333 m%)
+    acCorr: freq = 46.42 MHz   (76.7 %), step = 3.429 MHz    (333 m%)
+    acCorr: freq = 50.12 MHz     (77 %), step = 3.703 MHz    (333 m%)
+    acCorr: freq = 54.12 MHz   (77.3 %), step = 3.998 MHz    (333 m%)
+    acCorr: freq = 58.43 MHz   (77.7 %), step = 4.317 MHz    (333 m%)
+    acCorr: freq = 63.1 MHz      (78 %), step = 4.662 MHz    (333 m%)
+    acCorr: freq = 68.13 MHz   (78.3 %), step = 5.033 MHz    (333 m%)
+    acCorr: freq = 73.56 MHz   (78.7 %), step = 5.435 MHz    (333 m%)
+    acCorr: freq = 79.43 MHz     (79 %), step = 5.869 MHz    (333 m%)
+    acCorr: freq = 85.77 MHz   (79.3 %), step = 6.337 MHz    (333 m%)
+    acCorr: freq = 92.61 MHz   (79.7 %), step = 6.842 MHz    (333 m%)
+    acCorr: freq = 100 MHz       (80 %), step = 7.388 MHz    (333 m%)
+    acCorr: freq = 108 MHz     (80.3 %), step = 7.978 MHz    (333 m%)
+    acCorr: freq = 116.6 MHz   (80.7 %), step = 8.614 MHz    (333 m%)
+    acCorr: freq = 125.9 MHz     (81 %), step = 9.301 MHz    (333 m%)
+    acCorr: freq = 135.9 MHz   (81.3 %), step = 10.04 MHz    (333 m%)
+    acCorr: freq = 146.8 MHz   (81.7 %), step = 10.84 MHz    (333 m%)
+    acCorr: freq = 158.5 MHz     (82 %), step = 11.71 MHz    (333 m%)
+    acCorr: freq = 171.1 MHz   (82.3 %), step = 12.64 MHz    (333 m%)
+    acCorr: freq = 184.8 MHz   (82.7 %), step = 13.65 MHz    (333 m%)
+    acCorr: freq = 199.5 MHz     (83 %), step = 14.74 MHz    (333 m%)
+    acCorr: freq = 215.4 MHz   (83.3 %), step = 15.92 MHz    (333 m%)
+    acCorr: freq = 232.6 MHz   (83.7 %), step = 17.19 MHz    (333 m%)
+    acCorr: freq = 251.2 MHz     (84 %), step = 18.56 MHz    (333 m%)
+    acCorr: freq = 271.2 MHz   (84.3 %), step = 20.04 MHz    (333 m%)
+    acCorr: freq = 292.9 MHz   (84.7 %), step = 21.64 MHz    (333 m%)
+    acCorr: freq = 316.2 MHz     (85 %), step = 23.36 MHz    (333 m%)
+    acCorr: freq = 341.5 MHz   (85.3 %), step = 25.23 MHz    (333 m%)
+    acCorr: freq = 368.7 MHz   (85.7 %), step = 27.24 MHz    (333 m%)
+    acCorr: freq = 398.1 MHz     (86 %), step = 29.41 MHz    (333 m%)
+    acCorr: freq = 429.9 MHz   (86.3 %), step = 31.76 MHz    (333 m%)
+    acCorr: freq = 464.2 MHz   (86.7 %), step = 34.29 MHz    (333 m%)
+    acCorr: freq = 501.2 MHz     (87 %), step = 37.03 MHz    (333 m%)
+    acCorr: freq = 541.2 MHz   (87.3 %), step = 39.98 MHz    (333 m%)
+    acCorr: freq = 584.3 MHz   (87.7 %), step = 43.17 MHz    (333 m%)
+    acCorr: freq = 631 MHz       (88 %), step = 46.62 MHz    (333 m%)
+    acCorr: freq = 681.3 MHz   (88.3 %), step = 50.33 MHz    (333 m%)
+    acCorr: freq = 735.6 MHz   (88.7 %), step = 54.35 MHz    (333 m%)
+    acCorr: freq = 794.3 MHz     (89 %), step = 58.69 MHz    (333 m%)
+    acCorr: freq = 857.7 MHz   (89.3 %), step = 63.37 MHz    (333 m%)
+    acCorr: freq = 926.1 MHz   (89.7 %), step = 68.42 MHz    (333 m%)
+    acCorr: freq = 1 GHz         (90 %), step = 73.88 MHz    (333 m%)
+    acCorr: freq = 1.08 GHz    (90.3 %), step = 79.78 MHz    (333 m%)
+    acCorr: freq = 1.166 GHz   (90.7 %), step = 86.14 MHz    (333 m%)
+    acCorr: freq = 1.259 GHz     (91 %), step = 93.01 MHz    (333 m%)
+    acCorr: freq = 1.359 GHz   (91.3 %), step = 100.4 MHz    (333 m%)
+    acCorr: freq = 1.468 GHz   (91.7 %), step = 108.4 MHz    (333 m%)
+    acCorr: freq = 1.585 GHz     (92 %), step = 117.1 MHz    (333 m%)
+    acCorr: freq = 1.711 GHz   (92.3 %), step = 126.4 MHz    (333 m%)
+    acCorr: freq = 1.848 GHz   (92.7 %), step = 136.5 MHz    (333 m%)
+    acCorr: freq = 1.995 GHz     (93 %), step = 147.4 MHz    (333 m%)
+    acCorr: freq = 2.154 GHz   (93.3 %), step = 159.2 MHz    (333 m%)
+    acCorr: freq = 2.326 GHz   (93.7 %), step = 171.9 MHz    (333 m%)
+    acCorr: freq = 2.512 GHz     (94 %), step = 185.6 MHz    (333 m%)
+    acCorr: freq = 2.712 GHz   (94.3 %), step = 200.4 MHz    (333 m%)
+    acCorr: freq = 2.929 GHz   (94.7 %), step = 216.4 MHz    (333 m%)
+    acCorr: freq = 3.162 GHz     (95 %), step = 233.6 MHz    (333 m%)
+    acCorr: freq = 3.415 GHz   (95.3 %), step = 252.3 MHz    (333 m%)
+    acCorr: freq = 3.687 GHz   (95.7 %), step = 272.4 MHz    (333 m%)
+    acCorr: freq = 3.981 GHz     (96 %), step = 294.1 MHz    (333 m%)
+    acCorr: freq = 4.299 GHz   (96.3 %), step = 317.6 MHz    (333 m%)
+    acCorr: freq = 4.642 GHz   (96.7 %), step = 342.9 MHz    (333 m%)
+    acCorr: freq = 5.012 GHz     (97 %), step = 370.3 MHz    (333 m%)
+    acCorr: freq = 5.412 GHz   (97.3 %), step = 399.8 MHz    (333 m%)
+    acCorr: freq = 5.843 GHz   (97.7 %), step = 431.7 MHz    (333 m%)
+    acCorr: freq = 6.31 GHz      (98 %), step = 466.2 MHz    (333 m%)
+    acCorr: freq = 6.813 GHz   (98.3 %), step = 503.3 MHz    (333 m%)
+    acCorr: freq = 7.356 GHz   (98.7 %), step = 543.5 MHz    (333 m%)
+    acCorr: freq = 7.943 GHz     (99 %), step = 586.9 MHz    (333 m%)
+    acCorr: freq = 8.577 GHz   (99.3 %), step = 633.7 MHz    (333 m%)
+    acCorr: freq = 9.261 GHz   (99.7 %), step = 684.2 MHz    (333 m%)
+    acCorr: freq = 10 GHz       (100 %), step = 738.8 MHz    (333 m%)
+Accumulated DC solution time = 0 s.
+Intrinsic ac analysis time =              0 s.
+Total time required for ac analysis `acCorr': CPU = 48 ms, elapsed = 46.5379
+        ms.
+Time accumulated: CPU = 1.424 s, elapsed = 1.41371 s.
+Peak resident memory used = 139 Mbytes.
+
+dcCorrInfo: writing operating point information to rawfile.
+
+Aggregate audit (2:35:46 PM, Fri Sep 4, 2026):
+Time used: CPU = 1.55 s, elapsed = 1.55 s, util. = 100%.
+Time spent in licensing: elapsed = 112 ms, percentage of total = 7.23%.
+Peak memory used = 139 Mbytes.
+Simulation started at: 2:35:45 PM, Fri Sep 4, 2026, ended at: 2:35:46 PM, Fri
+        Sep 4, 2026, with elapsed time (wall clock): 1.55 s.
+spectre completes with 0 errors, 0 warnings, and 1 notice.

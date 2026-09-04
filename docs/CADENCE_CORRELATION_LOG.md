@@ -606,7 +606,7 @@ zero-false-pass validation gate passed.** Detailed analysis is in
 Motivated by observed overdesign (a 100 MHz request measuring 120.6 MHz
 UGF in the user's own ADE session, +20.6% over spec), the guard was
 tiered: 18% inside the 300 MHz app domain, 25% beyond
-(`tt-ideal-tail-gbw-v2-tiered`, provisional pending validation).
+(`tt-ideal-tail-gbw-v2-tiered`, initially provisional; validation result below).
 
 Domain-restricted third disjoint campaign
 (`ideal_tail_tt_band18_validation_25`, flat 18% tier, requests 7-252 MHz,

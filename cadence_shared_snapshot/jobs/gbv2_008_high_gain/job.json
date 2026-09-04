@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "case_id": "gbv2_008_high_gain",
+  "status": "pending",
+  "netlist": "input.scs",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "template_sha256": "9e2014300171939e8ccc77781bb42a63b28b468d043bd2ec90890ab116a1351c",
+  "netlist_sha256": "5d798d338d93e0b57c32b8bf5feae48c006afb96c3ea062e486dbad51f1a3a3d",
+  "package_version": "0.1.0",
+  "oracle_version": "analog_ai-0.1.0-proxy",
+  "simulator": "spectre",
+  "corner": "tt_lib",
+  "category": "high_gain",
+  "category_rank": 3,
+  "source_row_id": "r00012066",
+  "pipeline_status": "verified_best_of_k",
+  "pipeline_oracle_evals": 5,
+  "calibration_policy": "tt-ideal-tail-gbw-v1",
+  "gbw_guard_band": 0.25
+}

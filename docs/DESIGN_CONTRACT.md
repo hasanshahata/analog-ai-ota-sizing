@@ -61,7 +61,7 @@ A design **passes** iff every residual ≤ 0 (residual convention in
 An invalid design (no consistent operating point, out-of-domain parameter,
 unverifiable GBW) **fails by definition**.
 
-## Nominal-Cadence deployment guard (provisional v1)
+## Nominal-Cadence deployment guard (v1 history and validated v2)
 
 The oracle contract above remains unchanged for dataset/model reproducibility.
 The deployment-facing ideal-tail sizing API adds a separate, versioned safety
@@ -79,7 +79,7 @@ both contracts and never mutates the caller's request. Policy
 ideal-tail, typical-corner scope. It is provisional until a new disjoint blind
 Cadence campaign passes the zero-false-pass gate.
 
-**Deployment update 2026-09-04 (v2 tiered, provisional):** the sizing
+**Deployment update 2026-09-04 (v2 tiered, validated):** the sizing
 service now defaults to the tiered policy `tt-ideal-tail-gbw-v2-tiered`:
 `internal GBW = user_GBW_min * 1.18` inside the request domain
 (GBW <= 300 MHz) and `* 1.25` beyond it. Rationale: measured in-domain

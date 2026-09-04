@@ -1,0 +1,11 @@
+{
+  "name": "analog-ai-web-assets",
+  "private": true,
+  "scripts": {
+    "build:web-css": "tailwindcss -c tailwind.config.js -i web_app/src/tailwind.css -o web_app/static/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "0.5.10",
+    "tailwindcss": "3.4.17"
+  }
+}

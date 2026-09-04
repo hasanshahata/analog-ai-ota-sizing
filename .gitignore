@@ -11,11 +11,14 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+node_modules/
 
 # --- Experiment outputs (regenerable / voluminous) ---
 runs/
 *.tfevents.*
 *.log
+!evaluation_results/cadence_correlation/band18_validation_25/raw/**/*.log
+!cadence_shared_snapshot/**/*.log
 
 # --- OS / editor ---
 Thumbs.db

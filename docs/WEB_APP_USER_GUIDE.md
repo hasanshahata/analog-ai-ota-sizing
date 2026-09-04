@@ -34,6 +34,10 @@ uv pip install --python .venv/Scripts/python.exe -e ".[web]" torch
 The LUT files `tech_luts/TSMC_fast_65nm_nch.pkl` and `..._pch.pkl`
 (~2.76 GB each) must be present; they are excluded from git.
 
+The deployed browser assets are fully local and require no CDN. Only frontend
+developers rebuilding the committed stylesheet need Node.js: run `npm install`
+and `npm run build:web-css` after changing Tailwind utility classes.
+
 ## 3. Launch
 
 ```bash
