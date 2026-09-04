@@ -212,5 +212,7 @@ the integration test. A fresh server was then started on the documented
 
 The next major engineering phase is finite-M5 solved mode. F0 architecture and
 bias-contract decisions are recorded in
-`docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`; production implementation begins at
-F1. The current web app remains ideal-tail only.
+`docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`. The revised plan now requires Opus 5
+to complete an F0.5 technical review in that same file and stop for discussion;
+F1 production implementation is not authorized until the decision record is
+explicitly approved. The current web app remains ideal-tail only.

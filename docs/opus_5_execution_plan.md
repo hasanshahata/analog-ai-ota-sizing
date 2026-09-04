@@ -368,18 +368,19 @@ validate request
 
 The API must never return an unconditional `success` field for an unverified proposal.
 
-## Immediate work package for Opus 5
+## Immediate work package for Opus 5 (updated 2026-09-04)
 
-Unless new evidence changes the priority, execute the following next:
+Phases A-C and E, the ideal-tail Cadence campaigns, and the web remediation are
+complete. The next work package is Phase F, governed by
+`docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`.
 
-1. Complete Phase A integrity/reproduction checks.
-2. Build the Phase B failure-analysis report for all 220 unresolved requests.
-3. Implement Phase C neural warm-start local refinement.
-4. Benchmark it on a stratified subset, then all failures.
-5. Update canonical evaluation outputs and documentation.
-6. Stop and report results before scaling the dataset or changing the network architecture.
+Opus 5 must first complete the F0.5 pre-implementation review inside that file,
+discuss its solver and physical-model findings with Hassan/Codex, and stop.
+Production implementation starts only after the Phase F decision record says
+`Implementation authorization: APPROVED`. Do not resume the historical A-C
+task list below or regenerate a dataset.
 
-## Definition of done for the next iteration
+## Historical definition of done for the A-C iteration
 
 The next iteration is complete only when it produces:
 

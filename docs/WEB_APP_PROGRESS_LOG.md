@@ -423,3 +423,16 @@ failure, correction, and decision.
   `https://github.com/hasanshahata/analog-ai-ota-sizing`, pushed `main`, and
   configured the local branch to track `origin/main`. Initial uploaded commit:
   `976d3dc`.
+
+## 2026-09-04 - Phase F planning handoff for Opus 5
+
+- Re-audited the finite-M5 code boundary: the seven-parameter config and
+  imposed-mode device exist, but solved mode is deliberately blocked; the
+  evaluator remains five-parameter and finite netlist bias is incomplete.
+- Rewrote `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md` as a staged engineering
+  handoff with explicit equations, gates, tests, evidence paths, stop
+  conditions, and compatibility rules.
+- Added a mandatory F0.5 discussion gate. Opus 5 must write its technical
+  review into that same plan and wait for approval before editing production
+  code.
+- No Phase F production implementation was performed in this planning step.
