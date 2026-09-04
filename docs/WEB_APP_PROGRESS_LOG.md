@@ -315,3 +315,10 @@ failure, correction, and decision.
   nowrap on both lines). Live check: 147.080 / 1.410 / 100.580 / 1.355 /
   158 µA / 79 µA, sat margin on one line. Assets v9; E2E asserts the
   snapped values. All web tests green.
+
+## 2026-09-04 — Removed grid note; fixed µm casing in table headers (user request)
+
+- Header chip back to "All dimensions in µm" (grid note removed).
+- Table headers use CSS uppercase, which rendered "µm" as "µM"; the units
+  are now wrapped in normal-case spans so they read "µm" like the power
+  card's "µW". Verified live; all web tests green.
