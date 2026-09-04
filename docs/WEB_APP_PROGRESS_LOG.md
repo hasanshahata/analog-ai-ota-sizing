@@ -303,3 +303,15 @@ failure, correction, and decision.
   difference between sub-second direct hits and refinement runs is visible
   on every result. Assets bumped to ?v=8; E2E asserts the chip content.
 - 4 static + 10 Playwright tests green.
+
+## 2026-09-04 — 5 nm / 1 µA display grid + bias-column wrap fix (user request)
+
+- Display values now snap to a manufacturable grid: W and L to the nearest
+  5 nm (0.005 µm), tail/branch currents to the nearest 1 µA. Display only -
+  verdicts and the exported netlist always use the full-precision verified
+  design (147.082 µm verified shows as 147.080). Header chip states the
+  grid: "All dimensions in µm · 5 nm grid · currents 1 µA grid".
+- Operating Point / Bias column no longer wraps mid-value (whitespace-
+  nowrap on both lines). Live check: 147.080 / 1.410 / 100.580 / 1.355 /
+  158 µA / 79 µA, sat margin on one line. Assets v9; E2E asserts the
+  snapped values. All web tests green.

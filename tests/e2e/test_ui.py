@@ -165,8 +165,10 @@ def test_e2_verified_run(page, server):
     assert "Active Current Mirror Load" in rows.nth(1).inner_text()
     assert "Ideal Tail Current Sink" in rows.nth(2).inner_text()
     body = page.locator("#geometry-body").inner_text()
-    assert "147.082" in body and "1.409" in body
-    assert "78.966 µA" in body                   # Itail / 2
+    # display values snapped: W/L to the 5 nm grid, currents to 1 µA
+    assert "147.080" in body and "1.410" in body
+    assert "158 µA" in body                      # snapped tail current
+    assert "79 µA" in body                       # snapped branch (Itail / 2)
     assert "Sat. margin ≈ 420 mV" in body        # from the verifier
     assert "Saturation Checked" in body
     # multiplier, relative-scale and aspect-ratio columns are removed

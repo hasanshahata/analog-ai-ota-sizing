@@ -24,6 +24,15 @@ function esc(s) {
     ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 }
 
+/* display snapping: W/L to the 5 nm process grid, currents to 1 µA
+ * (display only - verdicts always use the full-precision verified values) */
+const DIM_STEP_UM = 0.005;   // 5 nm
+const CUR_STEP_UA = 1;       // 1 µA
+
+function snap(v, step) {
+  return Math.round(v / step) * step;
+}
+
 const CHECK_ICON = '<svg class="w-3 h-3" fill="none" stroke="currentColor" ' +
   'viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" ' +
   'stroke-linejoin="round" stroke-width="2.5"></path></svg>';
@@ -95,10 +104,11 @@ function renderSuccess(b) {
   const g1 = p.m1_m2, g3 = p.m3_m4;
   const sat = satMarginMV(b);
   const satCell = (label) =>
-    '<div class="font-semibold text-slate-900">Sat. margin ≈ ' +
+    '<div class="text-right">' +
+    '<div class="font-semibold text-slate-900 whitespace-nowrap">Sat. margin ≈ ' +
     fmt(sat, 0) + " mV</div>" +
-    '<div class="text-[11px] text-emerald-600 font-bold flex items-center justify-end gap-1 mt-0.5">' +
-    CHECK_ICON + label + "</div>";
+    '<div class="text-[11px] text-emerald-600 font-bold flex items-center justify-end gap-1 mt-0.5 whitespace-nowrap">' +
+    CHECK_ICON + label + "</div></div>";
 
   $("geometry-body").innerHTML =
     '<tr class="cold-table-row">' +
@@ -106,16 +116,16 @@ function renderSuccess(b) {
     '<span>M1 = M2</span>' +
     '<span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold border border-sky-200">NMOS</span></div>' +
     '<div class="text-slate-500 text-xs mt-0.5 font-sans">Differential Input Pair</div></td>' +
-    '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(g1.w_um, 3) + "</td>" +
-    '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(g1.l_um, 3) + "</td>" +
+    '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(snap(g1.w_um, DIM_STEP_UM), 3) + "</td>" +
+    '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(snap(g1.l_um, DIM_STEP_UM), 3) + "</td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>" +
     '<tr class="cold-table-row">' +
     '<td class="py-4 px-6"><div class="font-bold text-slate-900 text-sm flex items-center gap-2">' +
     '<span>M3 = M4</span>' +
     '<span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">PMOS</span></div>' +
     '<div class="text-slate-500 text-xs mt-0.5 font-sans">Active Current Mirror Load</div></td>' +
-    '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(g3.w_um, 3) + "</td>" +
-    '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(g3.l_um, 3) + "</td>" +
+    '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(snap(g3.w_um, DIM_STEP_UM), 3) + "</td>" +
+    '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(snap(g3.l_um, DIM_STEP_UM), 3) + "</td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>" +
     '<tr class="cold-table-row bg-sky-50/40">' +
     '<td class="py-4 px-6"><div class="font-bold text-slate-900 text-sm flex items-center gap-2">' +
@@ -124,10 +134,10 @@ function renderSuccess(b) {
     '<div class="text-slate-500 text-xs mt-0.5 font-sans">Ideal Tail Current Sink</div></td>' +
     '<td class="py-4 px-6 text-center"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
     '<span class="text-slate-500 text-[11px]">Total Tail Current:</span>' +
-    '<span class="font-bold text-sky-700 text-sm tabular-numbers">' + fmt(p.itail_uA, 3) + " µA</span></div></td>" +
+    '<span class="font-bold text-sky-700 text-sm tabular-numbers">' + fmt(snap(p.itail_uA, CUR_STEP_UA), 0) + " µA</span></div></td>" +
     '<td class="py-4 px-6 text-center"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
     '<span class="text-slate-500 text-[11px]">Branch Bias:</span>' +
-    '<span class="font-bold text-slate-800 text-sm tabular-numbers">' + fmt(p.itail_uA / 2, 3) + " µA</span></div></td>" +
+    '<span class="font-bold text-slate-800 text-sm tabular-numbers">' + fmt(snap(p.itail_uA / 2, CUR_STEP_UA), 0) + " µA</span></div></td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>";
 
   $("results-area").classList.remove("hidden");
