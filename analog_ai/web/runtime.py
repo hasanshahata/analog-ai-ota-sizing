@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 import threading
+import time
 from pathlib import Path
 
 import numpy as np
@@ -50,6 +51,7 @@ class SizingRuntime:
         self.feat_lo: np.ndarray | None = None
         self.feat_hi: np.ndarray | None = None
         self.champion: str | None = None
+        self.current_request: dict | None = None
         self._size_lock = threading.Lock()
 
     # ---------------------------------------------------------------- load --
@@ -88,7 +90,8 @@ class SizingRuntime:
             log.exception("web runtime: load failed")
 
     # ---------------------------------------------------------------- size --
-    def size(self, canonical_specs: dict, seed: int = 0) -> dict:
+    def size(self, canonical_specs: dict, seed: int = 0,
+             request_id: str | None = None) -> dict:
         """Run one guarded sizing. The input dict is never mutated.
 
         Raises RuntimeNotReady / SizingFailure; returns a JSON-safe record.
@@ -97,6 +100,9 @@ class SizingRuntime:
             if self.state != "ready":
                 raise RuntimeNotReady(
                     "sizing engine is not ready (state: %s)" % self.state)
+            self.current_request = {
+                "request_id": request_id, "started": time.time()}
+            log.info("size %s start", request_id)
             from ..sizing import size_ideal_tail_ota
             work = dict(canonical_specs)
             snapshot = dict(canonical_specs)
@@ -107,6 +113,8 @@ class SizingRuntime:
             except Exception as exc:                  # noqa: BLE001
                 log.exception("sizing failed for specs %s", snapshot)
                 raise SizingFailure(_public_size_error(exc)) from None
+            finally:
+                self.current_request = None
             if work != snapshot:
                 raise SizingFailure("internal error: request was mutated")
             return json_safe(record)
@@ -114,12 +122,16 @@ class SizingRuntime:
     # -------------------------------------------------------------- health --
     def health(self) -> dict:
         """Cheap readiness snapshot; never triggers a new engine load."""
+        cur = self.current_request
         return {
             "state": self.state,
             "detail": self.detail if self.state == "failed" else None,
             "policy_version": POLICY_VERSION,
             "scope": ("ideal-tail 5T OTA, TSMC 65nm tt_lib, VDD 1.2 V, "
                       "Vincm 0.6 V, solved LUT operating point"),
+            "busy": cur is not None,
+            "current_request_elapsed_s": (
+                round(time.time() - cur["started"], 1) if cur else None),
         }
 
     def load_async(self) -> threading.Thread:

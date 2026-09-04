@@ -47,6 +47,8 @@ class _NoCacheStaticFiles(StaticFiles):
         response = super().file_response(*args, **kwargs)
         response.headers["Cache-Control"] = "no-cache"
         return response
+
+
 _NETLIST_TEMPLATE = (Path(__file__).resolve().parents[2]
                      / "5T_OTA_netlist_cadence.txt")
 
@@ -104,7 +106,7 @@ def create_app(runtime: SizingRuntime | None = None,
         canonical = req.to_canonical()
         t0 = time.perf_counter()
         try:
-            record = rt.size(canonical, seed=0)
+            record = rt.size(canonical, seed=0, request_id=request_id)
         except RuntimeNotReady as exc:
             return JSONResponse(status_code=503, content=build_error_response(
                 "not_ready", str(exc)))

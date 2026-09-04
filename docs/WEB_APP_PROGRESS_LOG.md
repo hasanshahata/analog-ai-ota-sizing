@@ -276,3 +276,21 @@ failure, correction, and decision.
 - Circuit Parameters table is now 4 columns: Device / Role, Width, Length,
   Operating Point / Bias. Branch Bias shows "78.966 µA" without "/ leg".
   Assets bumped to ?v=7; E2E asserts both stay absent. Tests green.
+
+## 2026-09-04 — Hang diagnosis + watchdog logging; logo and attribution
+
+- User-reported hang ("same specs took 25 s, now nothing"): the long-lived
+  server process (up ~12 h) lost its sizing worker - py-spy showed no
+  thread inside the sizing path, so queued requests waited on the worker
+  lock forever. Not caused by any UI/backend code change. Killed and
+  restarted the server; the previously-hanging specs returned in 29.4 s
+  with the bit-identical design (306 evals).
+- Watchdog/observability added so the next hang is diagnosable:
+  runtime.size logs "size <id> start" when the worker picks a request and
+  tracks current_request; /api/v1/health now reports busy + elapsed for
+  the in-flight request.
+- Branding (user request): stitch_UI/Logo.png copied to web_app/static;
+  header 5T badge replaced with the personal logo; footer added with
+  "Eng. Hassan Shehata · Analog IC Design" and a LinkedIn link
+  (linkedin.com/in/hshehata). Screenshot ui_v3_logo.png verified.
+- 4 static + 10 Playwright tests green.
