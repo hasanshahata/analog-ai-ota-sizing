@@ -89,23 +89,15 @@ function renderSuccess(b) {
   $("m-pwr-sub").innerHTML = kpiChip("−" + fmt(pwrPct, 1) + "% Budget");
 
   const g1 = p.m1_m2, g3 = p.m3_m4;
-  // full-precision W/L for aspect + relative scale (display µm are rounded)
+  // full-precision W/L for aspect ratio (display µm are rounded)
   const a1 = current.design.m1_m2.w_m / current.design.m1_m2.l_m;
   const a3 = current.design.m3_m4.w_m / current.design.m3_m4.l_m;
-  const scale3 = current.design.m3_m4.w_m / current.design.m1_m2.w_m * 100;
   const sat = satMarginMV(b);
   const satCell = (label) =>
     '<div class="font-semibold text-slate-900">Sat. margin ≈ ' +
     fmt(sat, 0) + " mV</div>" +
     '<div class="text-[11px] text-emerald-600 font-bold flex items-center justify-end gap-1 mt-0.5">' +
     CHECK_ICON + label + "</div>";
-  const scaleCell = (pct, color) =>
-    '<div class="flex items-center gap-2">' +
-    '<div class="flex-1 bg-sky-100 rounded-full h-2 overflow-hidden">' +
-    '<div class="' + color + ' h-full rounded-full" style="width: ' + pct + '%"></div></div>' +
-    '<span class="text-[11px] font-bold text-slate-600">' + fmt(pct, 1) + "%</span></div>";
-  const multChip = '<span class="inline-block px-2.5 py-1 rounded bg-slate-100 ' +
-    'font-bold text-slate-800 border border-slate-200/70">1×</span>';
 
   $("geometry-body").innerHTML =
     '<tr class="cold-table-row">' +
@@ -116,8 +108,6 @@ function renderSuccess(b) {
     '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(g1.w_um, 3) + "</td>" +
     '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(g1.l_um, 3) + "</td>" +
     '<td class="py-4 px-6 text-right font-bold text-sky-700 text-sm tabular-numbers">' + fmt(a1, 2) + "</td>" +
-    '<td class="py-4 px-6 text-center">' + multChip + "</td>" +
-    '<td class="py-4 px-6 min-w-[140px]">' + scaleCell(100, "bg-sky-500") + "</td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>" +
     '<tr class="cold-table-row">' +
     '<td class="py-4 px-6"><div class="font-bold text-slate-900 text-sm flex items-center gap-2">' +
@@ -127,8 +117,6 @@ function renderSuccess(b) {
     '<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">' + fmt(g3.w_um, 3) + "</td>" +
     '<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">' + fmt(g3.l_um, 3) + "</td>" +
     '<td class="py-4 px-6 text-right font-bold text-sky-700 text-sm tabular-numbers">' + fmt(a3, 2) + "</td>" +
-    '<td class="py-4 px-6 text-center">' + multChip + "</td>" +
-    '<td class="py-4 px-6 min-w-[140px]">' + scaleCell(scale3, "bg-cyan-500") + "</td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>" +
     '<tr class="cold-table-row bg-sky-50/40">' +
     '<td class="py-4 px-6"><div class="font-bold text-slate-900 text-sm flex items-center gap-2">' +
@@ -138,7 +126,7 @@ function renderSuccess(b) {
     '<td class="py-4 px-6 text-center" colspan="2"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
     '<span class="text-slate-500 text-[11px]">Total Tail Current:</span>' +
     '<span class="font-bold text-sky-700 text-sm tabular-numbers">' + fmt(p.itail_uA, 3) + " µA</span></div></td>" +
-    '<td class="py-4 px-6 text-center" colspan="2"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
+    '<td class="py-4 px-6 text-center"><div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">' +
     '<span class="text-slate-500 text-[11px]">Branch Bias:</span>' +
     '<span class="font-bold text-slate-800 text-sm tabular-numbers">' + fmt(p.itail_uA / 2, 3) + " µA / leg</span></div></td>" +
     '<td class="py-4 px-6 text-right">' + satCell("Saturation Checked") + "</td></tr>";

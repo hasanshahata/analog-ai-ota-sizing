@@ -263,3 +263,10 @@ failure, correction, and decision.
 - Verified: 38 pytest + 10 Playwright green; screenshot comparison vs
   screen.png at 1629px (ui_v3_screenshot.png stub, ui_v3_live_real.png
   real engine) - layout and styling match the mock; real data shown.
+
+## 2026-09-04 — Removed Multiplier + Relative Scale columns (user request)
+
+- Dropped both columns (headers and cells) from the Circuit Parameters
+  table; the tail row's colspan layout re-balanced to the 5-column grid.
+  Assets bumped to ?v=6; E2E updated to assert the columns stay absent.
+- 38 pytest + 10 Playwright green.
