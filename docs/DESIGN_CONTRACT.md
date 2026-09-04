@@ -85,10 +85,12 @@ service now defaults to the tiered policy `tt-ideal-tail-gbw-v2-tiered`:
 (GBW <= 300 MHz) and `* 1.25` beyond it. Rationale: measured in-domain
 Spectre/LUT ratios need at most 16.1% uplift (n = 25 across both
 campaigns), so the flat 25% over-designed in-domain requests. The 18%
-tier is provisional until a third disjoint blind Cadence campaign
-(restricted to the app domain, disjoint from both prior campaigns) passes
-the zero-false-pass gate. The validated v1 flat 25% remains the fallback
-configuration.
+tier was validated by that third disjoint blind campaign
+(`ideal_tail_tt_band18_validation_25`, 2026-09-04): 25/25 designs met the
+user GBW in Spectre, 0 false proxy passes, worst observed uplift 17.6%
+(median Spectre margin +16.3%). `tt-ideal-tail-gbw-v2-tiered` is now the
+official deployment policy; the v1 flat 25% remains available as a
+conservative fallback.
 
 ## Target sampling ranges (training only)
 

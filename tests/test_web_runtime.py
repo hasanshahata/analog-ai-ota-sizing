@@ -82,7 +82,7 @@ def test_size_uses_tiered_v2_policy(monkeypatch):
     # the runtime requests the v2 tiered policy; sizing.py picks the band
     assert captured["specs"]["GBW_min"] == 1e8
     assert captured["kwargs"]["tiered_band"] is True
-    assert rt.health()["policy_version"] ==         "tt-ideal-tail-gbw-v2-tiered (provisional)"
+    assert rt.health()["policy_version"] == "tt-ideal-tail-gbw-v2-tiered"
 
 
 def test_unresolved_result_has_no_geometry(monkeypatch):
@@ -131,7 +131,7 @@ def test_health_does_not_touch_engine():
     rt = SizingRuntime(project_root=Path(__file__).resolve().parents[1])
     h = rt.health()          # state loading; no engine attributes touched
     assert h["state"] == "loading"
-    assert h["policy_version"] == "tt-ideal-tail-gbw-v2-tiered (provisional)"
+    assert h["policy_version"] == "tt-ideal-tail-gbw-v2-tiered"
     rt.state = "failed"
     rt.detail = "required LUT or checkpoint files are missing (see server logs)"
     assert "missing" in rt.health()["detail"]

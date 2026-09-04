@@ -14,8 +14,8 @@ Supported — exactly this, nothing else:
 - VDD = 1.2 V, Vincm = 0.6 V, solved LUT operating point;
 - deployment guard policy `tt-ideal-tail-gbw-v2-tiered` (internal GBW
   target is 1.18 × your requested GBW minimum for requests up to 300 MHz;
-  provisional — validated configuration was the flat 1.25 × policy, and a
-  third blind Cadence campaign for the 1.18 tier is in preparation).
+  validated 2026-09-04 on a third disjoint blind Cadence campaign:
+  25/25 user-spec passes, 0 false proxy passes).
 
 **Not** supported: finite M5, other corners / PVT / Monte Carlo, other
 supplies or common-mode points, other technologies, post-layout parasitics.

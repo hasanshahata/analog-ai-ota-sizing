@@ -46,9 +46,9 @@ class SizingRuntime:
         self.ckpt_dir = (Path(ckpt_dir) if ckpt_dir
                          else self.root / DEFAULT_CKPT_SUBPATH)
         self.lut_dir = self.root / DEFAULT_LUT_DIRNAME
-        # v2 tiered policy (18% in-domain / 25% beyond) - provisional until
-        # the third disjoint validation campaign passes (owner decision
-        # 2026-09-04, reducing overdesign vs the validated flat 25%).
+        # v2 tiered policy (18% in-domain / 25% beyond) - validated by the
+        # third disjoint blind campaign (25/25 user-spec passes, 0 false
+        # proxy passes, 2026-09-04; worst observed uplift 17.6%).
         self.tiered_band = tiered_band
         self.state = "loading"           # loading | ready | failed
         self.detail: str | None = None
@@ -132,7 +132,7 @@ class SizingRuntime:
         return {
             "state": self.state,
             "detail": self.detail if self.state == "failed" else None,
-            "policy_version": (f"{V2_POLICY_VERSION} (provisional)"
+            "policy_version": (V2_POLICY_VERSION
                                if self.tiered_band else POLICY_VERSION),
             "scope": ("ideal-tail 5T OTA, TSMC 65nm tt_lib, VDD 1.2 V, "
                       "Vincm 0.6 V, solved LUT operating point"),

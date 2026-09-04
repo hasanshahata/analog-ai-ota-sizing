@@ -54,8 +54,8 @@ def test_tiered_band_v2_policy():
     assert rec["version"] == V2_POLICY_VERSION == "tt-ideal-tail-gbw-v2-tiered"
     assert rec["gbw_guard_band"] == 0.18
     assert rec["tier"] == "in_domain"
-    assert rec["provisional"] is True
-    assert "pending" in rec["validation"]
+    assert rec["provisional"] is False
+    assert "PASSED" in rec["validation"]
     with pytest.raises(ValueError):
         tiered_guard_band(0.0)
     with pytest.raises(ValueError):

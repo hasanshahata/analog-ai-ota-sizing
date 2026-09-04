@@ -9,7 +9,7 @@ import numpy as np
 GBW_GUARD_BAND = 0.25
 POLICY_VERSION = "tt-ideal-tail-gbw-v1"
 
-# ---- v2 tiered policy (PROVISIONAL - pending third disjoint validation) ----
+# ---- v2 tiered policy (VALIDATED: third disjoint campaign, 25/25) ----
 # Measured Spectre/LUT GBW ratios, split by whether the request sits inside
 # the app domain (<= 300 MHz): worst uplift needed in-domain 16.1% (n=25
 # across both campaigns), out-of-domain 24.6%. The v1 25% flat band covered
@@ -39,9 +39,10 @@ def tiered_policy_record(user_gbw_hz: float) -> dict:
         "tier": ("in_domain" if user_gbw_hz <= DOMAIN_MAX_GBW_HZ
                  else "out_of_domain"),
         "domain_max_gbw_hz": DOMAIN_MAX_GBW_HZ,
-        "provisional": True,
-        "validation": ("pending third disjoint blind Cadence campaign "
-                       "(18% tier)"),
+        "provisional": False,
+        "validation": ("PASSED: third disjoint blind Cadence campaign, "
+                       "25/25 user-spec passes, 0 false proxy passes "
+                       "(2026-09-04); worst observed uplift 17.6%"),
         "scope": "5t_ota_ideal_tail_tt_lib_nominal",
     }
 

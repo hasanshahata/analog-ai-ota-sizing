@@ -358,3 +358,21 @@ failure, correction, and decision.
   8 local_refinement, 0 global fallback.
 - Staged to E:/Cadence_AI_Share (25 tbv3_* jobs, zero private files,
   zero missing public files). Awaiting Debian execution.
+
+## 2026-09-04 — v2 tiered policy VALIDATED (user ran the 25 blind cases)
+
+- 25/25 tbv3_* simulations collected. **Zero-false-pass gate PASSED**:
+  every design met the user's GBW in Spectre; Spectre-side constraints
+  (incl. PM_min) all pass.
+- GBW correlation improved vs v1: worst ratio 0.8506 (worst uplift 17.6%,
+  inside the 18% tier with 0.4pp reserve), median ratio 0.9598. Median
+  Spectre margin over user spec +16.3% (vs +22.5% under the flat 25%) —
+  the overdesign reduction worked as intended. Correlation tolerances
+  22/25 (vs 15/25 under v1): the in-domain LUT proxy is more accurate.
+- Worst margin case tbv3_001: 147 MHz request -> 155.3 MHz measured (+5.9%).
+- Policy `tt-ideal-tail-gbw-v2-tiered` promoted to official (provisional
+  flag removed in code, DESIGN_CONTRACT + user guide updated). Evidence:
+  evaluation_results/cadence_correlation/band18_validation_25/.
+- Note: as with v1, the band sits close to the observed worst case
+  (17.6% vs 18%); any future evidence of a worse tail should bump the
+  in-domain tier, with the same disjoint-campaign discipline.
