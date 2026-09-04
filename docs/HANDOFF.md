@@ -131,6 +131,20 @@ non-LUT suite green. Real-LUT parity smoke vs a direct API call: PASS
 (`evaluation_results/web_app/parity_smoke_001.json`). Docs:
 `docs/WEB_APP_USER_GUIDE.md`, `docs/WEB_APP_PROGRESS_LOG.md`.
 
+**Update 2026-09-04: web app redesigned (stitch_UI v3) + GBW policy v2
+validated.** The UI is now the stitch studio design (Tailwind CDN, KPI
+cards, Circuit Parameters table, Spectre netlist export via
+`/api/v1/netlist`); 38 pytest + 10 Playwright tests; Playwright specs in
+`tests/e2e/`. The sizing guard is now **`tt-ideal-tail-gbw-v2-tiered`**
+(18% internal GBW uplift for requests <= 300 MHz, 25% beyond), validated
+by a third disjoint blind Cadence campaign: 25/25 user-spec passes,
+0 false proxy passes, worst uplift 17.6%; median Spectre margin over user
+spec +16.3% (vs +22.5% under v1 flat 25%). Each result also shows its
+sizing path, oracle evals, wall time, and expected Spectre UGF. Full
+story: `docs/CADENCE_CORRELATION_LOG.md`; evidence:
+`evaluation_results/cadence_correlation/band18_validation_25/`. Test plan:
+`docs/WEB_APP_TEST_PLAN.md`.
+
 ## 5. Command reference
 
 ```bash

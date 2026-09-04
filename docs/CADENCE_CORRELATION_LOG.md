@@ -600,3 +600,32 @@ until a third disjoint campaign validates it.
 Status: **Steps 4 and 5 complete. Fixed 25% policy retained; nominal disjoint
 zero-false-pass validation gate passed.** Detailed analysis is in
 `evaluation_results/cadence_correlation/guardband_validation_25_v2/validation_analysis.md`.
+
+## 2026-09-04 — GBW correction validated: v2 tiered policy (18% in-domain)
+
+Motivated by observed overdesign (a 100 MHz request measuring 120.6 MHz
+UGF in the user's own ADE session, +20.6% over spec), the guard was
+tiered: 18% inside the 300 MHz app domain, 25% beyond
+(`tt-ideal-tail-gbw-v2-tiered`, provisional pending validation).
+
+Domain-restricted third disjoint campaign
+(`ideal_tail_tt_band18_validation_25`, flat 18% tier, requests 7-252 MHz,
+source rows disjoint from both prior campaigns, 5 regimes x 5):
+
+- 25/25 completed; **zero false proxy passes** (every design met the
+  user's GBW in Spectre); all Spectre-side constraints pass;
+- worst Spectre/LUT ratio 0.8506 -> worst uplift 17.6%, inside the 18%
+  tier (0.4pp reserve); median ratio 0.9598;
+- median Spectre margin over user spec +16.3% (vs +22.5% under v1 flat
+  25%) - overdesign roughly halved;
+- correlation tolerances 22/25 (vs 15/25 under v1): the in-domain proxy
+  is more accurate than the full-range numbers suggested.
+
+Verdict: `tt-ideal-tail-gbw-v2-tiered` promoted to the official
+deployment policy (provisional flag removed). v1 flat 25% retained as a
+conservative fallback. Caveat: as with v1, the band sits near the
+observed worst case (17.6% vs 18%); a worse future tail requires bumping
+the tier with the same disjoint-campaign discipline. The result chip in
+the app now also shows the expected Spectre UGF (LUT x 0.94).
+
+Evidence: `evaluation_results/cadence_correlation/band18_validation_25/`.
