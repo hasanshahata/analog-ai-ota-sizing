@@ -4,6 +4,10 @@
 
 **Intended visibility:** private
 
+**Uploaded repository:** `https://github.com/hasanshahata/analog-ai-ota-sizing`
+
+**Initial uploaded commit:** `976d3dc`
+
 ## Included in the repository
 
 - canonical source, scripts, tests, configuration, and documentation;
@@ -56,3 +60,12 @@ reconstruction script.
 - real-LUT integration tests: 3 passed;
 - focused web suite: 49 passed;
 - third Cadence raw archive: 75 files, zero empty, zero report mismatches.
+
+## Upload result
+
+- repository created under the authenticated `hasanshahata` account;
+- GitHub reported the repository as private at creation;
+- local `main` was pushed successfully and configured to track
+  `origin/main`;
+- the two ignored LUT binaries were not uploaded, following the selected
+  first-choice policy above.

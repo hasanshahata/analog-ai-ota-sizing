@@ -416,3 +416,10 @@ failure, correction, and decision.
   explicit. The two 2.76 GB LUTs cannot be stored unchanged in GitHub
   Free/Pro LFS (2 GiB per-file limit) and remain a documented upload/license
   decision rather than being silently omitted.
+- User selected the recommended first-choice upload policy: keep the two
+  PDK-derived LUT binaries local while preserving their names, exact sizes,
+  and SHA-256 hashes in the repository.
+- Created private repository
+  `https://github.com/hasanshahata/analog-ai-ota-sizing`, pushed `main`, and
+  configured the local branch to track `origin/main`. Initial uploaded commit:
+  `976d3dc`.
