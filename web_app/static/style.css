@@ -1,52 +1,62 @@
-/* Custom pieces on top of the Tailwind CDN design (stitch_UI, v2 mock). */
+/* Custom pieces on top of the Tailwind CDN design (stitch_UI v3 mock). */
 .tabular-numbers { font-variant-numeric: tabular-nums; }
-.frost-border { border-color: #E2E8F0; }
 
-.cold-gradient-btn {
-  background: linear-gradient(135deg, #0284C7 0%, #0369A1 50%, #0F172A 100%);
-  background-size: 200% 200%;
-  animation: gradient-shift 6s ease infinite alternate;
+/* Cold Beacon Pulse Animation */
+@keyframes cold-beacon {
+  0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+  70% { box-shadow: 0 0 0 7px rgba(14, 165, 233, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+}
+.pulse-beacon { animation: cold-beacon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* Tactile CTA Button with Cold Shimmer */
+.cold-cta-button {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 60%, #0f172a 100%);
+  position: relative;
+  overflow: hidden;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.cold-gradient-btn:hover {
-  box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.3);
-  transform: translateY(-1px);
+.cold-cta-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  transform: rotate(25deg);
+  transition: all 0.6s ease;
 }
-.cold-gradient-btn:active { transform: translateY(0); }
-.cold-gradient-btn:disabled { opacity: 0.6; cursor: wait; animation: none; }
+.cold-cta-button:hover::after { left: 130%; }
+.cold-cta-button:hover {
+  box-shadow: 0 6px 20px -3px rgba(2, 132, 199, 0.45), 0 0 0 1px rgba(56, 189, 248, 0.4);
+  transform: translateY(-1.5px);
+}
+.cold-cta-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 10px -2px rgba(2, 132, 199, 0.4);
+}
+.cold-cta-button:disabled { opacity: 0.65; cursor: wait; }
 
-/* Electronic trace & IC design keyframe animations */
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+/* Card Micro-interactions */
+.cold-card {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease;
 }
-@keyframes circuit-glow {
-  0%, 100% { stroke-opacity: 0.25; filter: drop-shadow(0 0 0px #0284c7); }
-  50% { stroke-opacity: 0.85; filter: drop-shadow(0 0 4px #38bdf8); }
-}
-@keyframes signal-wave {
-  0% { stroke-dashoffset: 60; }
-  100% { stroke-dashoffset: 0; }
-}
-@keyframes chip-pin-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; filter: drop-shadow(0 0 3px #38bdf8); }
-}
-
-.circuit-pulse-line {
-  stroke-dasharray: 4, 4;
-  animation: signal-wave 4s linear infinite;
-}
-.chip-glow-pulse { animation: chip-pin-pulse 2.8s ease-in-out infinite; }
-.chip-glow-pulse-delayed { animation: chip-pin-pulse 2.8s ease-in-out 1.4s infinite; }
-
-.interactive-card {
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.interactive-card:hover {
+.cold-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(2, 132, 199, 0.25);
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(14, 165, 233, 0.35);
+  border-color: #7dd3fc;
 }
 
-.spin { animation: spin 0.9s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* Table Row hover */
+.cold-table-row {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.cold-table-row:hover { background-color: #f0f9ff; }

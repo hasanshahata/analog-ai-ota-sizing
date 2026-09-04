@@ -2,8 +2,8 @@
 
 Runs the real FastAPI app with a stubbed sizing runtime on a local port and
 drives a headless Chromium through the scenarios defined in
-docs/WEB_APP_TEST_PLAN.md (E1-E12). No LUTs required; the whole module
-skips cleanly when Playwright is not installed.
+docs/WEB_APP_TEST_PLAN.md (E1-E12, v3 design). No LUTs required; the whole
+module skips cleanly when Playwright is not installed.
 
     uv pip install --python .venv/Scripts/python.exe playwright pytest-playwright
     .venv/Scripts/python.exe -m playwright install chromium
@@ -139,39 +139,40 @@ def _size(page, gain="35", gbw="100", cl="1", power="200"):
 # ------------------------------------------------------------- E1 idle --
 def test_e1_idle_state(page, server):
     page.goto(server)
-    expect = page.locator
-    assert "Synthesis engine idle" in expect("#status-banner").inner_text()
-    assert expect("#export-btn").is_disabled()
-    assert "Engine Ready" in expect("#engine-text").inner_text()
+    assert not page.locator("#results-area").is_visible()
+    assert page.locator("#export-btn").is_disabled()
+    assert "Engine Ready" in page.locator("#engine-text").inner_text()
 
 
 # -------------------------------------------------------- E2 verified --
 def test_e2_verified_run(page, server):
     page.goto(server)
     _size(page)
-    page.wait_for_selector("#checks-text:has-text('6 / 6 Checks Passed')",
-                           timeout=15000)
-    assert "VERIFIED CANDIDATE" in page.locator("#status-banner").inner_text()
-    assert "306 evaluations converged" in page.locator("#status-banner").inner_text()
+    page.wait_for_selector("#geometry-body tr", timeout=15000)
     assert page.locator("#geometry-body tr").count() == 3
-    # 8 verifier checks, minus the two internal W-bounds hidden from display
-    assert page.locator("#constraint-body tr").count() == 6
     assert page.locator("#m-gain").inner_text().startswith("35.00")
     assert page.locator("#m-gbw").inner_text().startswith("125.83")
-    assert "GBW = 125.000 MHz" in page.locator("#it-value").inner_text()
-    assert "local_refinement_verified" in page.locator("#pa-value").inner_text()
+    assert page.locator("#m-pm").inner_text().startswith("73.32")
+    assert page.locator("#m-pwr").inner_text().startswith("189.52")
+    # KPI chips (real data)
+    assert "≥ 35.00 Target" in page.locator("#m-gain-sub").inner_text()
+    assert "+25.8% Margin" in page.locator("#m-gbw-sub").inner_text()
+    assert "Stable (> 45°)" in page.locator("#m-pm-sub").inner_text()
+    assert "5.2% Budget" in page.locator("#m-pwr-sub").inner_text()
+    # circuit parameters rows: roles, real multiplier, relative scale, bias
+    rows = page.locator("#geometry-body tr")
+    assert "Differential Input Pair" in rows.nth(0).inner_text()
+    assert "Active Current Mirror Load" in rows.nth(1).inner_text()
+    assert "Ideal Tail Current Sink" in rows.nth(2).inner_text()
+    body = page.locator("#geometry-body").inner_text()
+    assert "147.082" in body and "1.409" in body
+    assert "1×" in body and "16×" not in body
+    assert "68.4%" in body                       # W3 / W1 relative scale
+    assert "78.966 µA / leg" in body             # Itail / 2
+    assert "Sat. margin ≈ 420 mV" in body        # from the verifier
+    assert "Saturation Checked" in body
     assert not page.locator("#export-btn").is_disabled()
-    # real geometry in the table, lengths in µm
-    assert "147.082" in page.locator("#geometry-body tr").first.inner_text()
-    assert "1.409" in page.locator("#geometry-body tr").first.inner_text()
-
-
-# ----------------------------------------------------- E3 overshoot ----
-def test_e3_overshoot_hint_live(page, server):
-    page.goto(server)
-    page.fill("#min-gbw", "80")
-    hint = page.locator("#overshoot-hint").inner_text()
-    assert "100.000 MHz (1.25×)" in hint
+    assert not page.locator("#status-banner").is_visible()
 
 
 # --------------------------------------------------- E4 out of range ---
@@ -181,7 +182,7 @@ def test_e4_out_of_range_rejected(page, server):
     page.wait_for_selector("#status-banner:not(.hidden)")
     text = page.locator("#status-banner").inner_text()
     assert "Request refused" in text
-    assert "validation_error" in text or "less than or equal to 300" in text
+    assert "300" in text                       # field-level bound message
     assert not page.locator("#results-area").is_visible()
 
 
@@ -211,13 +212,14 @@ def test_e6_internal_error_sanitised(page, server):
 def test_e7_reset_defaults(page, server):
     page.goto(server)
     _size(page, gain="30", gbw="150", cl="2", power="300")
-    page.wait_for_selector("#status-banner:not(.hidden)")
+    page.wait_for_selector("#geometry-body tr", timeout=15000)
     page.click("#reset-btn")
     assert page.input_value("#min-gain") == "35"
     assert page.input_value("#min-gbw") == "100"
     assert page.input_value("#load-cap") == "1"
     assert page.input_value("#max-power") == "200"
-    assert "Synthesis engine idle" in page.locator("#status-banner").inner_text()
+    assert not page.locator("#results-area").is_visible()
+    assert not page.locator("#status-banner").is_visible()
     assert page.locator("#export-btn").is_disabled()
 
 
@@ -225,8 +227,7 @@ def test_e7_reset_defaults(page, server):
 def test_e8_netlist_download(page, server):
     page.goto(server)
     _size(page)
-    page.wait_for_selector("#checks-text:has-text('6 / 6 Checks Passed')",
-                           timeout=15000)
+    page.wait_for_selector("#geometry-body tr", timeout=15000)
     with page.expect_download() as dl:
         page.click("#export-btn")
     download = dl.value
@@ -249,8 +250,7 @@ def test_e9_double_submit_guard(page, server):
         page.click("#submit-btn", timeout=2000, force=True)
     except Exception:
         pass  # pointer-events interception is also an acceptable guard
-    page.wait_for_selector("#checks-text:has-text('6 / 6 Checks Passed')",
-                           timeout=15000)
+    page.wait_for_selector("#geometry-body tr", timeout=15000)
     assert len(requests) == 1
 
 
@@ -268,5 +268,4 @@ def test_e12_keyboard_submit(page, server):
     page.goto(server)
     page.focus("#min-gain")
     page.keyboard.press("Enter")     # implicit form submission
-    page.wait_for_selector("#checks-text:has-text('6 / 6 Checks Passed')",
-                           timeout=15000)
+    page.wait_for_selector("#geometry-body tr", timeout=15000)

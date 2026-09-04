@@ -49,7 +49,6 @@ def test_dynamic_ids_used_by_renderers_exist():
     html = _html()
     for anchor, container in [
         ("geometry-body", 'id="geometry-body"'),
-        ("constraint-body", 'id="constraint-body"'),
     ]:
         assert container in html and anchor in js
     # every runtime .innerHTML target must exist statically

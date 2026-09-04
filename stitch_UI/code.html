@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>OTA Sizing Studio — Analog Synthesis Platform</title>
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>OTA Sizing Explorer — Analog Synthesis Platform</title>
 <!-- Tailwind CSS v3 with Forms and Container Queries -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <!-- Tailwind Configuration -->
@@ -16,17 +14,22 @@
             mono: ['JetBrains Mono', 'SF Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
           },
           colors: {
-            slate: {
-              850: '#152033',
-              950: '#090e17',
+            frost: {
+              50: '#f0f7fa',
+              100: '#e1f0f7',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
             },
-            cyan: {
-              450: '#00b4d8',
-              550: '#0096c7',
-            },
-            emerald: {
-              450: '#10b981',
-              550: '#059669',
+            cadnavy: {
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#090d16',
             }
           }
         }
@@ -34,720 +37,480 @@
     }
   </script>
 <!-- Google Fonts: Inter & JetBrains Mono -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <!-- Core Component Styling & Electronic Animations -->
 <style data-purpose="custom-utilities">
     .tabular-numbers {
       font-variant-numeric: tabular-nums;
     }
-    .frost-border {
-      border-color: #E2E8F0;
+    
+    /* Cold Beacon Pulse Animation */
+    @keyframes cold-beacon {
+      0% {
+        box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 7px rgba(14, 165, 233, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+      }
     }
-    .cold-gradient-btn {
-      background: linear-gradient(135deg, #0284C7 0%, #0369A1 50%, #0F172A 100%);
-      background-size: 200% 200%;
-      animation: gradient-shift 6s ease infinite alternate;
+
+    .pulse-beacon {
+      animation: cold-beacon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* Tactile CTA Button with Cold Shimmer */
+    .cold-cta-button {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 60%, #0f172a 100%);
+      position: relative;
+      overflow: hidden;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .cold-gradient-btn:hover {
-      box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.3);
-      transform: translateY(-1px);
-    }
-    .cold-gradient-btn:active {
-      transform: translateY(0);
-    }
-    .active-tab-indicator::after {
+    .cold-cta-button::after {
       content: '';
       position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background-color: #0284C7;
-      border-radius: 9999px;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0) 20%,
+        rgba(255, 255, 255, 0.22) 50%,
+        rgba(255, 255, 255, 0) 80%
+      );
+      transform: rotate(25deg);
+      transition: all 0.6s ease;
+    }
+    .cold-cta-button:hover::after {
+      left: 130%;
+    }
+    .cold-cta-button:hover {
+      box-shadow: 0 6px 20px -3px rgba(2, 132, 199, 0.45), 0 0 0 1px rgba(56, 189, 248, 0.4);
+      transform: translateY(-1.5px);
+    }
+    .cold-cta-button:active {
+      transform: translateY(0px);
+      box-shadow: 0 2px 10px -2px rgba(2, 132, 199, 0.4);
     }
 
-    /* Electronic Trace & IC Design Keyframe Animations */
-    @keyframes gradient-shift {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+    /* Card Micro-interactions */
+    .cold-card {
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
     }
-    @keyframes circuit-glow {
-      0%, 100% { stroke-opacity: 0.25; filter: drop-shadow(0 0 0px #0284c7); }
-      50% { stroke-opacity: 0.85; filter: drop-shadow(0 0 4px #38bdf8); }
-    }
-    @keyframes signal-wave {
-      0% { stroke-dashoffset: 60; }
-      100% { stroke-dashoffset: 0; }
-    }
-    @keyframes chip-pin-pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; filter: drop-shadow(0 0 3px #38bdf8); }
-    }
-    @keyframes subtle-float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-2px); }
-    }
-
-    .circuit-pulse-line {
-      stroke-dasharray: 4, 4;
-      animation: signal-wave 4s linear infinite;
-    }
-    .chip-glow-pulse {
-      animation: chip-pin-pulse 2.8s ease-in-out infinite;
-    }
-    .chip-glow-pulse-delayed {
-      animation: chip-pin-pulse 2.8s ease-in-out 1.4s infinite;
-    }
-    .interactive-card {
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .interactive-card:hover {
+    .cold-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(14, 165, 233, 0.35);
+      border-color: #7dd3fc;
+    }
+
+    /* Table Row hover */
+    .cold-table-row {
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .cold-table-row:hover {
+      background-color: #f0f9ff;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen antialiased flex flex-col selection:bg-cyan-100 selection:text-cyan-900 relative overflow-x-hidden">
-<!-- Circuit Trace Decorative Watermark Corner (Silicon PCB background accents) -->
-<div class="pointer-events-none fixed top-0 right-0 w-[520px] h-[340px] opacity-25 z-0 overflow-hidden">
-<svg class="w-full h-full text-slate-400" fill="none" stroke="currentColor" stroke-width="1.2" viewbox="0 0 520 340">
-<path class="circuit-pulse-line" d="M120 0 v60 h100 l40 40 h120 v80 h90 l50 50"></path>
-<path d="M260 0 v40 h80 l30 30 h150"></path>
-<path class="circuit-pulse-line" d="M40 0 v90 l30 30 h130 l40 40 v80 h160 l40 40 h80"></path>
-<circle class="chip-glow-pulse" cx="220" cy="60" fill="#0284c7" r="3"></circle>
-<circle class="chip-glow-pulse-delayed" cx="380" cy="180" fill="#06b6d4" r="3"></circle>
-<circle class="chip-glow-pulse" cx="240" cy="240" fill="#38bdf8" r="3.5"></circle>
-<circle cx="470" cy="250" fill="#0284c7" r="2.5"></circle>
-<!-- IC Silicon Die Outline Accent -->
-<rect fill="none" height="50" rx="4" stroke="currentColor" stroke-dasharray="2,3" stroke-width="1" width="70" x="360" y="30"></rect>
-<line x1="360" x2="352" y1="40" y2="40"></line>
-<line x1="360" x2="352" y1="50" y2="50"></line>
-<line x1="360" x2="352" y1="60" y2="60"></line>
-<line x1="430" x2="438" y1="40" y2="40"></line>
-<line x1="430" x2="438" y1="50" y2="50"></line>
-<line x1="430" x2="438" y1="60" y2="60"></line>
-</svg>
-</div>
+<body class="bg-[#f0f7fa] text-slate-900 font-sans min-h-screen antialiased flex flex-col selection:bg-cyan-100 selection:text-cyan-900 relative">
 <!-- BEGIN: TopNavigation -->
-<header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-xs" data-purpose="application-header">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex items-center justify-between h-20">
-<!-- Left: Workspace Breadcrumb & Substantially Enhanced Main Title -->
+<header class="bg-white/90 backdrop-blur-md border-b border-sky-100 sticky top-0 z-30 shadow-sm" data-purpose="application-header">
+<div class="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
 <div class="flex items-center gap-4">
-<!-- Silicon Die Microchip Icon Badge with Glow Pins -->
-<div class="relative group">
-<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 flex items-center justify-center text-cyan-400 font-mono font-bold text-sm shadow-md ring-1 ring-slate-800/80 transition-transform duration-200 group-hover:scale-105">
-<svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
-<!-- Microchip silicon die body -->
-<rect height="14" rx="2.5" stroke="currentColor" width="14" x="5" y="5"></rect>
-<!-- Die center transistor core -->
-<path d="M9 9h6v6H9z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2"></path>
-<!-- Silicon package pins -->
-<path d="M2 9h3M2 12h3M2 15h3M19 9h3M19 12h3M19 15h3M9 2v3M12 2v3M15 2v3M9 19v3M12 19v3M15 19v3" stroke-linecap="round"></path>
-</svg>
-<span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-60"></span>
-<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500 border border-white"></span>
-</span>
-</div>
-</div>
+<div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 font-mono font-bold text-lg shadow-sm">
+        5T
+      </div>
 <div>
-<div class="flex items-center gap-2 text-xs font-mono font-medium text-slate-500 tracking-wide">
-<span class="hover:text-cyan-600 cursor-pointer inline-flex items-center gap-1 transition-colors">
-<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-  Analog IC Studio
-</span>
-<span class="text-slate-300">/</span>
-<span class="text-slate-600 font-semibold flex items-center gap-1">
-<svg class="w-3 h-3 text-cyan-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l3 3"></path></svg>
-  Synthesis Engine v2.4
-</span>
-</div>
-<!-- Enhanced Main Title: Substantially larger, bold, crisp, unmistakable -->
-<div class="flex flex-wrap items-center gap-3 mt-1">
-<h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-<span class="bg-clip-text text-transparent bg-gradient-to-r from-slate-950 via-slate-900 to-slate-700">OTA Sizing Explorer</span>
-</h1>
-<!-- Refined Cold-slate / Ice-blue Process Badge with Node Icon -->
-<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-mono font-semibold bg-gradient-to-r from-cyan-50 to-slate-100 text-cyan-900 border border-cyan-200/80 shadow-2xs">
-<svg class="w-3 h-3 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><circle cx="12" cy="12" r="3"></circle></svg>
-  TSMC 65nm · TT Corner
-</span>
+<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-sans">OTA Sizing Explorer</h1>
+<p class="text-xs font-mono font-medium text-slate-500 tracking-wide mt-0.5">65nm CMOS · TT Corner · 1.2V VDD</p>
 </div>
 </div>
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center gap-2.5 text-xs font-mono font-semibold text-slate-700 mr-2 bg-sky-50/80 px-3.5 py-2 rounded-lg border border-sky-200/80">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-beacon"></span>
+<span class="tracking-wide">Engine Ready</span>
 </div>
-<!-- Right: Status, Workspace Actions & Netlist Export -->
-<div class="flex items-center gap-4">
-<!-- Live Engine Status Badge with Wave/Sparkle Animation -->
-<div class="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/90 text-emerald-800 text-xs font-mono font-medium shadow-2xs" data-purpose="live-engine-status">
-<span class="relative flex h-2.5 w-2.5">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-</span>
-<!-- Real-time Signal Mini Pulse Line -->
-<svg class="w-4 h-3.5 text-emerald-600 stroke-current chip-glow-pulse" fill="none" stroke-width="2" viewbox="0 0 20 14">
-<path d="M1 7h3l2.5-5 3.5 10 3-7 2 2h4" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span class="font-semibold tracking-tight text-emerald-900">Engine Ready</span>
-</div>
-<!-- Divider -->
-<div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
-<!-- Action Buttons -->
-<div class="flex items-center gap-2">
-<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all shadow-2xs cursor-pointer active:scale-95" type="button">
-<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span>Reset Defaults</span>
-</button>
-<button class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 transition-all shadow-xs cursor-pointer active:scale-95 hover:shadow-cyan-900/10" type="button">
-<!-- Spectre Netlist / IC schematic icon -->
-<svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M6 6h12v12H6z" stroke-linecap="round"></path>
-<circle cx="12" cy="12" fill="currentColor" r="1.5"></circle>
-</svg>
-<span>Export Spectre .scs</span>
-</button>
-</div>
-</div>
+<button class="px-4 py-2 rounded-lg border border-slate-200 text-xs font-mono font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all cursor-pointer shadow-xs" type="button">
+        Reset Defaults
+      </button>
+<button class="px-4 py-2 rounded-lg border border-sky-200 text-xs font-mono font-semibold text-sky-700 bg-sky-50/60 hover:bg-sky-100 hover:border-sky-300 transition-all cursor-pointer shadow-xs flex items-center gap-1.5" type="button">
+<svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Export Spectre .scs
+      </button>
 </div>
 </div>
 </header>
 <!-- END: TopNavigation -->
 <!-- BEGIN: MainContent -->
-<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7" data-purpose="sizing-workspace">
-<!-- Workspace Metadata Subheader Banner with Op-Amp / Circuit schematic tags -->
-<div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs relative overflow-hidden">
-<!-- Shimmer circuit accent line -->
-<div class="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent"></div>
-<div class="flex flex-wrap items-center gap-2.5">
-<!-- Op-Amp Symbol Mini Icon -->
-<span class="inline-flex items-center justify-center w-6 h-6 rounded bg-slate-100 border border-slate-200 text-slate-700">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M4 4v16l14-8L4 4z"></path>
-<line x1="8" x2="8" y1="8" y2="12"></line>
-<line x1="6" x2="10" y1="10" y2="10"></line>
-<line x1="6" x2="10" y1="14" y2="14"></line>
-<line x1="18" x2="22" y1="12" y2="12"></line>
-</svg>
-</span>
-<span class="text-xs font-bold uppercase tracking-wider text-slate-400">Topology</span>
-<span class="text-sm font-semibold text-slate-800">Ideal-tail 5T OTA</span>
-<span class="text-slate-300">·</span>
-<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">TSMC 65 nm CMOS</span>
-<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">nominal TT Corner</span>
-<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">VDD = 1.2 V</span>
-</div>
-<div class="flex items-center gap-2 text-xs font-mono text-slate-500">
-<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-<span>policy: <strong class="text-slate-700 font-semibold">tt-ideal-tail-gbw-v1</strong></span>
-<span class="text-slate-300">·</span>
-<span class="text-slate-400">EDA Core Signoff</span>
-</div>
-</div>
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" data-purpose="sizing-workspace">
 <!-- Layout Grid: Left Specs Panel (Inputs), Right Performance & Synthesis Dashboard -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-<!-- LEFT COLUMN: Synthesis Target Inputs -->
+<!-- LEFT COLUMN: Synthesis Target Inputs Only -->
 <section class="lg:col-span-4 flex flex-col gap-6" data-purpose="spec-input-card">
-<div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-<!-- Card Header with IC Microchip Icon -->
-<div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-<div class="flex items-center gap-2.5">
-<div class="w-7 h-7 rounded-md bg-cyan-100/70 border border-cyan-200 flex items-center justify-center text-cyan-700">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M4 6h16M4 12h16M4 18h16M9 4v16M15 4v16"></path>
-</svg>
+<div class="bg-white rounded-2xl border border-sky-100 p-6 shadow-sm">
+<div class="flex items-center justify-between pb-4 mb-6 border-b border-sky-100">
+<div>
+<h2 class="text-base font-bold text-slate-900 tracking-tight">Target Specifications</h2>
+
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-sky-50 text-sky-700 border border-sky-200">
+            4 Constraints
+          </span>
+</div>
+<form class="space-y-5" onsubmit="event.preventDefault();">
+<div>
+<label class="block text-xs font-bold font-mono uppercase tracking-wider text-slate-700 mb-2" for="min-gain">
+              Min Gain (A<sub>v0</sub>)
+            </label>
+<div class="relative rounded-xl shadow-xs">
+<input class="block w-full rounded-xl border border-slate-200 pr-14 font-mono text-base font-semibold text-slate-900 focus:border-sky-500 focus:ring-2 focus:ring-sky-200/50 bg-white transition-all py-3 px-4" id="min-gain" step="0.5" type="number" value="35" autofill-information="overall type: UNKNOWN_TYPE
+html type: HTML_TYPE_UNSPECIFIED
+server type: NO_SERVER_DATA
+heuristic type: UNKNOWN_TYPE
+pwm ml type: NO_SERVER_DATA
+label: Min Gain (Av0)
+parseable name: min-gain
+section: min-gain_0_477
+field signature: 207250520
+form signature: 4456878040809115734
+form signature in host form: 3496881631367968680
+alternative form signature: 4270167031119724386
+structural form signature: 10920105663023997745
+form name: 
+form id: 
+form button titles: Size &amp; Synthesize OTA
+field frame token: E0471950AE53BBF2389A3BF1556D39E3
+form renderer id: 1471
+field renderer id: 1476
+visible: true
+focusable: true
+field rank: 12
+field rank in signature group: 3
+field rank in host form: 0
+field rank in host form signature group: 0
+did_trigger_js_autofill: false" autofill-prediction="UNKNOWN_TYPE">
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+<span class="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">dB</span>
+</div>
+</div>
 </div>
 <div>
-<h2 class="text-sm font-bold text-slate-900">Target Specifications</h2>
-<p class="text-xs text-slate-500 mt-0.5">Constraint thresholds for LUT engine</p>
+<label class="block text-xs font-bold font-mono uppercase tracking-wider text-slate-700 mb-2" for="min-gbw">
+              Min GBW (Bandwidth)
+            </label>
+<div class="relative rounded-xl shadow-xs">
+<input class="block w-full rounded-xl border border-slate-200 pr-16 font-mono text-base font-semibold text-slate-900 focus:border-sky-500 focus:ring-2 focus:ring-sky-200/50 bg-white transition-all py-3 px-4" id="min-gbw" step="1" type="number" value="100" autofill-information="overall type: UNKNOWN_TYPE
+html type: HTML_TYPE_UNSPECIFIED
+server type: NO_SERVER_DATA
+heuristic type: UNKNOWN_TYPE
+pwm ml type: NO_SERVER_DATA
+label: Min GBW (Bandwidth)
+parseable name: min-gbw
+section: min-gain_0_477
+field signature: 3065742459
+form signature: 4456878040809115734
+form signature in host form: 3496881631367968680
+alternative form signature: 4270167031119724386
+structural form signature: 10920105663023997745
+form name: 
+form id: 
+form button titles: Size &amp; Synthesize OTA
+field frame token: E0471950AE53BBF2389A3BF1556D39E3
+form renderer id: 1471
+field renderer id: 1482
+visible: true
+focusable: true
+field rank: 13
+field rank in signature group: 3
+field rank in host form: 1
+field rank in host form signature group: 0
+did_trigger_js_autofill: false" autofill-prediction="UNKNOWN_TYPE">
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+<span class="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">MHz</span>
 </div>
 </div>
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-cyan-700 bg-cyan-50 border border-cyan-200/60 font-medium">
-  4 Active Constraints
-</span>
 </div>
-<!-- Parameter Form -->
-<form class="p-5 space-y-4" onsubmit="event.preventDefault();">
-<!-- Min Gain Field with Op-Amp / Gain Wave Icon -->
 <div>
-<label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gain">
-<span class="flex items-center gap-1.5">
-<!-- Analog gain amplification triangle icon -->
-<svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<polygon points="5 3 19 12 5 21 5 3"></polygon>
-</svg>
-    Min Gain (A<sub>v0</sub>)
-  </span>
-<span class="text-[10px] text-slate-400 font-mono">Open-Loop</span>
-</label>
-<div class="relative rounded-lg shadow-2xs">
-<input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="min-gain" step="0.5" type="number" value="35"/>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-<span class="text-xs font-mono font-medium text-slate-500">dB</span>
+<label class="block text-xs font-bold font-mono uppercase tracking-wider text-slate-700 mb-2" for="load-cap">
+              Load Capacitance (C<sub>L</sub>)
+            </label>
+<div class="relative rounded-xl shadow-xs">
+<input class="block w-full rounded-xl border border-slate-200 pr-14 font-mono text-base font-semibold text-slate-900 focus:border-sky-500 focus:ring-2 focus:ring-sky-200/50 bg-white transition-all py-3 px-4" id="load-cap" step="0.1" type="number" value="1" autofill-information="overall type: UNKNOWN_TYPE
+html type: HTML_TYPE_UNSPECIFIED
+server type: NO_SERVER_DATA
+heuristic type: UNKNOWN_TYPE
+pwm ml type: NO_SERVER_DATA
+label: Load Capacitance (CL)
+parseable name: load-cap
+section: min-gain_0_477
+field signature: 2249671409
+form signature: 4456878040809115734
+form signature in host form: 3496881631367968680
+alternative form signature: 4270167031119724386
+structural form signature: 10920105663023997745
+form name: 
+form id: 
+form button titles: Size &amp; Synthesize OTA
+field frame token: E0471950AE53BBF2389A3BF1556D39E3
+form renderer id: 1471
+field renderer id: 1489
+visible: true
+focusable: true
+field rank: 14
+field rank in signature group: 3
+field rank in host form: 2
+field rank in host form signature group: 0
+did_trigger_js_autofill: false" autofill-prediction="UNKNOWN_TYPE">
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+<span class="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">pF</span>
 </div>
 </div>
 </div>
-<!-- Min GBW Field with Frequency / Signal Pulse Icon -->
 <div>
-<label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="min-gbw">
-<span class="flex items-center gap-1.5">
-<!-- Frequency sinusoidal pulse wave icon -->
-<svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M2 12c3-8 5-8 8 0s5 8 8 0 3-4 4-4" stroke-linecap="round"></path>
-</svg>
-    Min GBW (Bandwidth)
-  </span>
-<span class="text-[10px] text-slate-400 font-mono">Unity Freq</span>
-</label>
-<div class="relative rounded-lg shadow-2xs">
-<input class="block w-full rounded-lg border-slate-300 pr-14 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="min-gbw" step="1" type="number" value="100"/>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-<span class="text-xs font-mono font-medium text-slate-500">MHz</span>
-</div>
-</div>
-<p class="text-[11px] text-slate-500 mt-1 font-mono">Overshoot target: 125.000 MHz (1.25×)</p>
-</div>
-<!-- Load Capacitance Field with Capacitor Schematic Icon -->
-<div>
-<label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="load-cap">
-<span class="flex items-center gap-1.5">
-<!-- Capacitor parallel plates icon -->
-<svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<line x1="2" x2="9" y1="12" y2="12"></line>
-<line x1="9" x2="9" y1="5" y2="19"></line>
-<line x1="15" x2="15" y1="5" y2="19"></line>
-<line x1="15" x2="22" y1="12" y2="12"></line>
-</svg>
-    Load Capacitance (C<sub>L</sub>)
-  </span>
-<span class="text-[10px] text-slate-400 font-mono">Output Pin</span>
-</label>
-<div class="relative rounded-lg shadow-2xs">
-<input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="load-cap" step="0.1" type="number" value="1"/>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-<span class="text-xs font-mono font-medium text-slate-500">pF</span>
+<label class="block text-xs font-bold font-mono uppercase tracking-wider text-slate-700 mb-2" for="max-power">
+              Max Total Power (P<sub>diss</sub>)
+            </label>
+<div class="relative rounded-xl shadow-xs">
+<input class="block w-full rounded-xl border border-slate-200 pr-14 font-mono text-base font-semibold text-slate-900 focus:border-sky-500 focus:ring-2 focus:ring-sky-200/50 bg-white transition-all py-3 px-4" id="max-power" step="5" type="number" value="200" autofill-information="overall type: UNKNOWN_TYPE
+html type: HTML_TYPE_UNSPECIFIED
+server type: NO_SERVER_DATA
+heuristic type: UNKNOWN_TYPE
+pwm ml type: NO_SERVER_DATA
+label: Max Total Power (Pdiss)
+parseable name: max-power
+section: min-gain_0_477
+field signature: 1150131227
+form signature: 4456878040809115734
+form signature in host form: 3496881631367968680
+alternative form signature: 4270167031119724386
+structural form signature: 10920105663023997745
+form name: 
+form id: 
+form button titles: Size &amp; Synthesize OTA
+field frame token: E0471950AE53BBF2389A3BF1556D39E3
+form renderer id: 1471
+field renderer id: 1496
+visible: true
+focusable: true
+field rank: 15
+field rank in signature group: 3
+field rank in host form: 3
+field rank in host form signature group: 0
+did_trigger_js_autofill: false" autofill-prediction="UNKNOWN_TYPE">
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+<span class="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">µW</span>
 </div>
 </div>
 </div>
-<!-- Max Power Field with Power / Dissipation Resistor Icon -->
-<div>
-<label class="flex items-center justify-between text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="max-power">
-<span class="flex items-center gap-1.5">
-<!-- Resistor / Current dissipation icon -->
-<svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M2 12h3l2-4 3 8 3-8 3 8 2-4h3" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-    Max Total Power (P<sub>diss</sub>)
-  </span>
-<span class="text-[10px] text-slate-400 font-mono">VDD Budget</span>
-</label>
-<div class="relative rounded-lg shadow-2xs">
-<input class="block w-full rounded-lg border-slate-300 pr-12 font-mono text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:ring-cyan-500 bg-slate-50/30 transition-colors" id="max-power" step="5" type="number" value="200"/>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-<span class="text-xs font-mono font-medium text-slate-500">µW</span>
-</div>
-</div>
-</div>
-<!-- Optimization & Execution Button with animated pulse & signal ping -->
-<div class="pt-2">
-<button class="relative group w-full cold-gradient-btn text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2.5 text-sm shadow-md cursor-pointer overflow-hidden border border-cyan-400/30" type="submit">
-<!-- Subtle ping wave behind icon -->
-<span class="relative flex h-3 w-3">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
-<span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-400"></span>
-</span>
-<!-- Electronics Lightning / Synthesis Icon -->
-<svg class="w-4 h-4 text-cyan-200 group-hover:rotate-6 transition-transform" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
-<path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span class="font-bold tracking-tight">Size &amp; Synthesize OTA</span>
+<div class="pt-3">
+<button class="w-full cold-cta-button text-white font-mono font-bold py-3.5 px-5 rounded-xl text-sm tracking-wide cursor-pointer shadow-md flex items-center justify-center gap-2" type="submit">
+<svg class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Size &amp; Synthesize OTA</span>
 </button>
 </div>
 </form>
-<!-- Secondary Engineering Parameters -->
-<div class="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 text-xs text-slate-600 space-y-2 font-mono">
-<div class="flex justify-between items-center">
-<span class="text-slate-500 flex items-center gap-1.5">
-<svg class="w-3 h-3 text-cyan-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  Internal Target:
-</span>
-<span class="font-semibold text-slate-800">GBW = 125.000 MHz</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-slate-500 flex items-center gap-1.5">
-<svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-  Policy Algorithm:
-</span>
-<span class="font-semibold text-slate-800">local_refinement_verified</span>
-</div>
-</div>
-</div>
-<!-- Schematic / Circuit Representation Minimal Diagram with MOSFET Gate Symbols -->
-<div class="bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs flex items-center gap-4 hover:border-cyan-300 transition-colors">
-<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-50 to-slate-100 border border-cyan-200/70 flex items-center justify-center flex-shrink-0 text-cyan-600 shadow-2xs">
-<!-- Transistor MOSFET Gate Icon -->
-<svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
-<!-- Gate line -->
-<line stroke-linecap="round" x1="4" x2="9" y1="12" y2="12"></line>
-<line stroke-linecap="round" stroke-width="2" x1="9" x2="9" y1="6" y2="18"></line>
-<!-- Channel segments -->
-<line x1="13" x2="13" y1="7" y2="9"></line>
-<line x1="13" x2="13" y1="11" y2="13"></line>
-<line x1="13" x2="13" y1="15" y2="17"></line>
-<!-- Drain / Source leads -->
-<path d="M13 8h7v-4"></path>
-<path d="M13 16h7v4"></path>
-<!-- Bulk / Substrate arrow -->
-<line x1="13" x2="18" y1="12" y2="12"></line>
-<polygon fill="currentColor" points="16,10 13,12 16,14"></polygon>
-</svg>
-</div>
-<div class="text-xs">
-<div class="flex items-center gap-1.5">
-<p class="font-bold text-slate-900">Differential 5-Transistor Cell</p>
-<span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-slate-100 text-slate-600">Schematic</span>
-</div>
-<p class="text-slate-500 mt-0.5 leading-relaxed">NMOS input pair (M1, M2) with PMOS active current mirror load (M3, M4) &amp; ideal tail sink.</p>
-</div>
 </div>
 </section>
-<!-- RIGHT COLUMN: Synthesis Results & Constraint Verification -->
+<!-- RIGHT COLUMN: Performance Cards & Transistor Geometries Table Only -->
 <section class="lg:col-span-8 space-y-6" data-purpose="synthesis-results-view">
-<!-- Verification Success Banner with Electronics Sparkle / Signal Pass Indicator -->
-<div class="bg-gradient-to-r from-emerald-50 via-emerald-50/60 to-cyan-50/40 border border-emerald-200 rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3" data-purpose="status-verification-banner">
-<div class="flex items-center gap-3.5">
-<div class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm ring-2 ring-emerald-100">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
-<path d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
+<!-- 4 High-Impact KPI Performance Metric Cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4" data-purpose="performance-metric-cards">
+<div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm cold-card relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-cyan-500"></div>
+<div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">DC Gain (A<sub>v0</sub>)</div>
+<div class="flex items-baseline gap-1">
+<span class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900 tabular-numbers">35.00</span>
+<span class="text-sm font-mono font-bold text-slate-500">dB</span>
 </div>
-<div>
+<div class="mt-3 inline-flex items-center gap-1 text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+<svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+<span class="">≥ 35.00 Target</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm cold-card relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-cyan-500"></div>
+<div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Gain-BW Product</div>
+<div class="flex items-baseline gap-1">
+<span class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900 tabular-numbers">125.83</span>
+<span class="text-sm font-mono font-bold text-slate-500">MHz</span>
+</div>
+<div class="mt-3 inline-flex items-center gap-1 text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+<svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+<span class="">+25.8% Margin</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm cold-card relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-cyan-500"></div>
+<div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Phase Margin (PM)</div>
+<div class="flex items-baseline gap-1">
+<span class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900 tabular-numbers">73.32</span>
+<span class="text-sm font-mono font-bold text-slate-500">°</span>
+</div>
+<div class="mt-3 inline-flex items-center gap-1 text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+<svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+<span class="">Stable (&gt; 60°)</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm cold-card relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-cyan-500"></div>
+<div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Power Dissipation</div>
+<div class="flex items-baseline gap-1">
+<span class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900 tabular-numbers">189.52</span>
+<span class="text-sm font-mono font-bold text-slate-500">µW</span>
+</div>
+<div class="mt-3 inline-flex items-center gap-1 text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+<svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+<span class="">-5.2% Budget</span>
+</div>
+</div>
+</div>
+<!-- Redesigned Synthesized Transistor Geometries Table -->
+<div class="bg-white rounded-2xl border border-sky-100 overflow-hidden shadow-sm cold-card" data-purpose="transistor-sizing-table">
+<div class="px-6 py-5 border-b border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gradient-to-r from-white via-sky-50/30 to-white">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+<h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider font-mono">Circuit Parameters</h3>
+</div>
 <div class="flex items-center gap-2">
-<h3 class="text-sm font-bold text-emerald-950">Verified sizing candidate found</h3>
-<!-- Live Signal Pulse Wave -->
-<span class="flex items-center gap-1 text-[11px] font-mono text-emerald-700 bg-white/80 px-2 py-0.5 rounded-full border border-emerald-200">
-<svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-    Spectre Verified
-  </span>
+<span class="text-xs font-mono font-bold text-sky-700 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full">
+              All dimensions in µm
+            </span>
 </div>
-<p class="text-xs font-mono text-emerald-700 mt-0.5">local_refinement_verified · 306 evaluations converged</p>
-</div>
-</div>
-<div class="flex items-center gap-2">
-<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">
-<span class="w-2 h-2 rounded-full bg-emerald-500 chip-glow-pulse"></span>
-  OPTIMAL CONVERGENCE
-</span>
-</div>
-</div>
-<!-- 4 Key Performance Stat Cards Grid with IC Vector Icons & Interactive Hover -->
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5" data-purpose="performance-metric-cards">
-<!-- Gain Metric -->
-<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
-<div class="flex items-center justify-between">
-<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">DC Gain</div>
-<svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-600 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M3 18l7-12 5 6 6-9" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<div class="mt-2 flex items-baseline gap-1.5">
-<span class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">35.00</span>
-<span class="text-xs font-mono font-medium text-slate-500">dB</span>
-</div>
-<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
-<span>● Target: ≥ 35.00</span>
-</div>
-</div>
-<!-- GBW Metric -->
-<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
-<div class="flex items-center justify-between">
-<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Gain-BW Product</div>
-<svg class="w-3.5 h-3.5 text-cyan-500 group-hover:text-cyan-700 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M2 12h4l2-6 4 12 4-12 2 6h4" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<div class="mt-2 flex items-baseline gap-1.5">
-<span class="text-2xl font-mono font-bold text-cyan-600 tabular-numbers">125.83</span>
-<span class="text-xs font-mono font-medium text-slate-500">MHz</span>
-</div>
-<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
-<span>+25.8% margin</span>
-</div>
-</div>
-<!-- Phase Margin Metric -->
-<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
-<div class="flex items-center justify-between">
-<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Phase Margin</div>
-<svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<circle cx="12" cy="12" r="9"></circle>
-<path d="M12 7v5l3 3"></path>
-</svg>
-</div>
-<div class="mt-2 flex items-baseline gap-1.5">
-<span class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">73.32</span>
-<span class="text-xs font-mono font-medium text-slate-500">deg (°)</span>
-</div>
-<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
-<span>Stable (&gt; 60°)</span>
-</div>
-</div>
-<!-- Power Dissipation Metric -->
-<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs interactive-card relative group">
-<div class="flex items-center justify-between">
-<div class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Power Dissipation</div>
-<svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<div class="mt-2 flex items-baseline gap-1.5">
-<span class="text-2xl font-mono font-bold text-slate-900 tabular-numbers">189.52</span>
-<span class="text-xs font-mono font-medium text-slate-500">µW</span>
-</div>
-<div class="mt-1 text-[11px] font-mono text-emerald-600 flex items-center gap-1 font-medium">
-<span>-5.2% budget</span>
-</div>
-</div>
-</div>
-<!-- Transistor Geometries Table Card with Silicon Die & MOSFET Indicators -->
-<div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden" data-purpose="transistor-sizing-table">
-<div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
-<div class="flex items-center gap-2">
-<svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<rect height="18" rx="2" width="18" x="3" y="3"></rect>
-<line x1="9" x2="9" y1="3" y2="21"></line>
-<line x1="15" x2="15" y1="3" y2="21"></line>
-<line x1="3" x2="21" y1="9" y2="9"></line>
-<line x1="3" x2="21" y1="15" y2="15"></line>
-</svg>
-<div>
-<h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Synthesized Transistor Geometries</h3>
-<p class="text-xs text-slate-500">Device sizing (Width &amp; Length) &amp; Operating Point</p>
-</div>
-</div>
-<span class="text-xs font-mono text-slate-500 flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-  Units in micrometers (µm)
-</span>
 </div>
 <div class="overflow-x-auto">
-<table class="w-full text-left text-sm font-mono">
-<thead class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
-<tr>
-<th class="py-2.5 px-5 font-semibold text-slate-600" scope="col">Device Component</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Width W (µm)</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Length L (µm)</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">W / L Aspect</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Multiplier</th>
+<table class="w-full text-left text-xs font-mono">
+<thead>
+<tr class="border-b border-sky-100 bg-slate-50/70 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+<th class="py-3.5 px-6 font-semibold" scope="col">Device Component / Role</th>
+<th class="py-3.5 px-6 text-right font-semibold" scope="col">Width W (µm)</th>
+<th class="py-3.5 px-6 text-right font-semibold" scope="col">Length L (µm)</th>
+<th class="py-3.5 px-6 text-right font-semibold" scope="col">Aspect Ratio (W/L)</th>
+<th class="py-3.5 px-6 text-center font-semibold" scope="col">Multiplier</th>
+<th class="py-3.5 px-6 font-semibold" scope="col">Relative Scale</th>
+<th class="py-3.5 px-6 text-right font-semibold" scope="col">Operating Point / Bias</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-slate-100">
-<!-- Row: M1 = M2 with NMOS Silicon Marker -->
-<tr class="hover:bg-cyan-50/30 transition-colors group cursor-default">
-<td class="py-3 px-5">
+<tbody class="divide-y divide-sky-100/80 text-slate-700">
+<!-- Row 1: M1 = M2 -->
+<tr class="cold-table-row">
+<td class="py-4 px-6">
+<div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+<span class="">M1 = M2</span>
+<span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold border border-sky-200">NMOS</span>
+</div>
+<div class="text-slate-500 text-xs mt-0.5 font-sans">Differential Input Pair</div>
+</td>
+<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">
+                  147.082
+                </td>
+<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">
+                  1.409
+                </td>
+<td class="py-4 px-6 text-right font-bold text-sky-700 text-sm tabular-numbers">
+                  104.38
+                </td>
+<td class="py-4 px-6 text-center">
+<span class="inline-block px-2.5 py-1 rounded bg-slate-100 font-bold text-slate-800 border border-slate-200/70">
+                    16×
+                  </span>
+</td>
+<td class="py-4 px-6 min-w-[140px]">
 <div class="flex items-center gap-2">
-<span class="w-2.5 h-2.5 rounded-full bg-cyan-500 ring-2 ring-cyan-100 group-hover:scale-125 transition-transform"></span>
-<span class="font-bold text-slate-900">M1 = M2</span>
-<span class="text-xs text-slate-500 font-sans flex items-center gap-1">
-  (Input Pair, NMOS)
-  <svg class="w-3 h-3 text-cyan-600 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-</span>
+<div class="flex-1 bg-sky-100 rounded-full h-2 overflow-hidden">
+<div class="bg-sky-500 h-full rounded-full" style="width: 100%"></div>
+</div>
+<span class="text-[11px] font-bold text-slate-600">100%</span>
 </div>
 </td>
-<td class="py-3 px-5 text-right font-bold text-slate-900 tabular-numbers group-hover:text-cyan-700 transition-colors">147.082</td>
-<td class="py-3 px-5 text-right text-slate-700 tabular-numbers">1.409</td>
-<td class="py-3 px-5 text-right text-slate-500 tabular-numbers">104.38</td>
-<td class="py-3 px-5 text-right text-slate-600 tabular-numbers font-semibold">16×</td>
+<td class="py-4 px-6 text-right">
+<div class="font-semibold text-slate-900">V<sub>ov</sub> ≈ 168 mV</div>
+<div class="text-[11px] text-emerald-600 font-bold flex items-center justify-end gap-1 mt-0.5">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+                    Saturation Checked
+                  </div>
+</td>
 </tr>
-<!-- Row: M3 = M4 with PMOS Marker -->
-<tr class="hover:bg-indigo-50/30 transition-colors group cursor-default">
-<td class="py-3 px-5">
+<!-- Row 2: M3 = M4 -->
+<tr class="cold-table-row">
+<td class="py-4 px-6">
+<div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+<span class="">M3 = M4</span>
+<span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">PMOS</span>
+</div>
+<div class="text-slate-500 text-xs mt-0.5 font-sans">Active Current Mirror Load</div>
+</td>
+<td class="py-4 px-6 text-right font-bold text-slate-900 text-sm tabular-numbers">
+                  100.578
+                </td>
+<td class="py-4 px-6 text-right font-semibold text-slate-700 text-sm tabular-numbers">
+                  1.354
+                </td>
+<td class="py-4 px-6 text-right font-bold text-sky-700 text-sm tabular-numbers">
+                  74.28
+                </td>
+<td class="py-4 px-6 text-center">
+<span class="inline-block px-2.5 py-1 rounded bg-slate-100 font-bold text-slate-800 border border-slate-200/70">
+                    12×
+                  </span>
+</td>
+<td class="py-4 px-6 min-w-[140px]">
 <div class="flex items-center gap-2">
-<span class="w-2.5 h-2.5 rounded-full bg-indigo-500 ring-2 ring-indigo-100 group-hover:scale-125 transition-transform"></span>
-<span class="font-bold text-slate-900">M3 = M4</span>
-<span class="text-xs text-slate-500 font-sans flex items-center gap-1">
-  (Mirror Load, PMOS)
-  <svg class="w-3 h-3 text-indigo-600 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg>
-</span>
+<div class="flex-1 bg-sky-100 rounded-full h-2 overflow-hidden">
+<div class="bg-cyan-500 h-full rounded-full" style="width: 68.4%"></div>
+</div>
+<span class="text-[11px] font-bold text-slate-600">68.4%</span>
 </div>
 </td>
-<td class="py-3 px-5 text-right font-bold text-slate-900 tabular-numbers group-hover:text-indigo-700 transition-colors">100.578</td>
-<td class="py-3 px-5 text-right text-slate-700 tabular-numbers">1.354</td>
-<td class="py-3 px-5 text-right text-slate-500 tabular-numbers">74.28</td>
-<td class="py-3 px-5 text-right text-slate-600 tabular-numbers font-semibold">12×</td>
+<td class="py-4 px-6 text-right">
+<div class="font-semibold text-slate-900">V<sub>dsat</sub> ≈ 195 mV</div>
+<div class="text-[11px] text-emerald-600 font-bold flex items-center justify-end gap-1 mt-0.5">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+                    Saturation Checked
+                  </div>
+</td>
 </tr>
-<!-- Row: Tail Current -->
-<tr class="hover:bg-amber-50/30 transition-colors bg-slate-50/30 font-sans group">
-<td class="py-2.5 px-5 font-mono">
-<div class="flex items-center gap-2">
-<span class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-amber-100 group-hover:scale-125 transition-transform"></span>
-<span class="font-bold text-slate-900">I<sub>tail</sub></span>
-<span class="text-xs text-slate-500">(Bias Sink Current)</span>
+<!-- Row 3: Itail (M5) -->
+<tr class="cold-table-row bg-sky-50/40">
+<td class="py-4 px-6">
+<div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+<span class="">I<sub>tail</sub></span>
+<span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">Bias</span>
+</div>
+<div class="text-slate-500 text-xs mt-0.5 font-sans">M5 Tail Current Sink</div>
+</td>
+<td class="py-4 px-6 text-center" colspan="2">
+<div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">
+<span class="text-slate-500 text-[11px]">Total Tail Current:</span>
+<span class="font-bold text-sky-700 text-sm tabular-numbers">157.932 µA</span>
 </div>
 </td>
-<td class="py-2.5 px-5 text-right font-mono font-bold text-slate-900 tabular-numbers" colspan="2">
-  157.932 <span class="font-normal text-slate-500">µA</span>
+<td class="py-4 px-6 text-center" colspan="2">
+<div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-lg border border-sky-200">
+<span class="text-slate-500 text-[11px]">Branch Bias:</span>
+<span class="font-bold text-slate-800 text-sm tabular-numbers">78.966 µA / leg</span>
+</div>
 </td>
-<td class="py-2.5 px-5 text-right font-mono text-xs text-slate-500" colspan="2">
-  V<sub>ov</sub> ≈ 168 mV
+<td class="py-4 px-6 text-right" colspan="2">
+<div class="font-bold text-slate-900 text-sm">V<sub>ov</sub> ≈ 168 mV</div>
+<div class="text-[11px] text-emerald-600 font-bold flex items-center justify-end gap-1 mt-0.5">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+                    Optimum Headroom
+                  </div>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<!-- Constraint Verification Table Card -->
-<div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden" data-purpose="constraint-pass-matrix">
-<div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
-<div class="flex items-center gap-2">
-<!-- IC Verification matrix check icon -->
-<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M9 11l3 3L22 4"></path>
-<path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
-</svg>
-<div>
-<h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Constraint Verification Matrix</h3>
-<p class="text-xs text-slate-500">Pre-layout Lookup Table (LUT) Signoff vs User Constraints</p>
-</div>
-</div>
-<div class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-<svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
-<path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span>8 / 8 Checks Passed</span>
-</div>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left font-mono text-xs">
-<thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] font-semibold">
-<tr>
-<th class="py-2.5 px-5 font-semibold text-slate-600" scope="col">Constraint Name</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Required</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Achieved</th>
-<th class="py-2.5 px-5 text-right font-semibold text-slate-600" scope="col">Margin</th>
-<th class="py-2.5 px-5 text-center font-semibold text-slate-600" scope="col">Status</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-slate-100">
-<!-- Gain Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">Gain_min</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">35.00 dB</td>
-<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">35.00 dB</td>
-<td class="py-2.5 px-5 text-right text-slate-500 tabular-numbers">0.00 dB</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- GBW Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">GBW_min</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">100.00 MHz</td>
-<td class="py-2.5 px-5 text-right font-semibold text-cyan-700 tabular-numbers">125.83 MHz</td>
-<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+25.83 MHz</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- Power Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">Power_max</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">200.00 µW</td>
-<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">189.52 µW</td>
-<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+10.48 µW</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- PM Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">PM_min</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">45.00 °</td>
-<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">73.32 °</td>
-<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+28.32 °</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- Saturation Margin -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">Sat_margin_min</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">0.05</td>
-<td class="py-2.5 px-5 text-right font-semibold text-slate-900 tabular-numbers">0.42</td>
-<td class="py-2.5 px-5 text-right text-emerald-600 tabular-numbers">+0.37</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- W_nmos_max Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">W_nmos_max</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">0.00</td>
-<td class="py-2.5 px-5 text-right text-slate-700 tabular-numbers">0.00</td>
-<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">bound</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- W_pmos_max Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">W_pmos_max</td>
-<td class="py-2.5 px-5 text-right text-slate-600 tabular-numbers">0.00</td>
-<td class="py-2.5 px-5 text-right text-slate-700 tabular-numbers">0.00</td>
-<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">bound</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-<!-- L_domain Check -->
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="py-2.5 px-5 font-semibold text-slate-800">L_domain</td>
-<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">NaN</td>
-<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">NaN</td>
-<td class="py-2.5 px-5 text-right text-slate-400 tabular-numbers">—</td>
-<td class="py-2.5 px-5 text-center">
-<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white tracking-wider shadow-2xs">PASS</span>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<!-- Official Tool Disclaimer / Verification Notice -->
-<div class="flex items-center gap-2 text-xs font-mono text-slate-500 px-1 pt-1" data-purpose="cadence-disclaimer">
-<svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<path d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span>Nominal LUT candidate — not PVT / post-layout signoff. Cadence Virtuoso / Spectre is the final authority.</span>
 </div>
 </section>
 </div>
 </main>
 <!-- END: MainContent -->
-<!-- BEGIN: ApplicationFooter -->
-<footer class="border-t border-slate-200 bg-white py-4 mt-auto">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-<div class="flex items-center gap-4">
-<span class="flex items-center gap-1.5 font-mono">
-<svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><circle cx="12" cy="12" r="2"></circle></svg>
-  Analog Synthesis Core · v2.4.19
-</span>
-<span class="text-slate-300">|</span>
-<span>Technology: TSMC 65 nm CRN65LP</span>
-</div>
-<div class="flex items-center gap-3">
-<span class="flex items-center gap-2 font-mono text-[11px] text-slate-600">
-<span class="relative flex h-2 w-2">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-<span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-</span>
-Spectre LUT Backend Online
-</span>
-</div>
-</div>
-</footer>
-<!-- END: ApplicationFooter -->
+
+
 </body></html>

@@ -238,3 +238,28 @@ failure, correction, and decision.
 - Playwright + Chromium installed into .venv (dev dependency; not added to
   the core web extra). Docs/WEB_APP_TEST_PLAN.md statuses updated to
   implemented.
+
+## 2026-09-04 — stitch_UI v3 redesign (user: "must look exactly like the design")
+
+- Rewrote web_app/static to the new stitch mock: light frost background,
+  5T badge + large title header with Engine pill / Reset / Export, clean
+  Target Specifications card (unit chips inside inputs, shimmer CTA), 4 KPI
+  cards with cyan top bars and green check chips, and the redesigned
+  Circuit Parameters table (NMOS/PMOS/Bias chips, relative-scale progress
+  bars, operating-point column). Removed elements the v3 mock drops:
+  topology strip, status/constraint cards, footer, watermark.
+- Mock placeholder data replaced with real, computed values: multiplier 1x
+  (netlist m=1), "Sat. margin ~= 419 mV / Saturation Checked" from the
+  verifier's Sat_margin_min (mock's Vov/Vdsat are not per-device available),
+  branch bias = Itail/2, relative scale = W/W1 (mock's own 68.4% matches
+  this formula), aspect ratio from full-precision W/L, Stable (> 45 deg)
+  per the verifier floor, "Ideal Tail Current Sink" (no M5 device).
+- Functional states kept: slim white status cards in the same design
+  language for unresolved (amber) and errors (red); results hidden until a
+  verified run; export gating; no-cache + ?v=5.
+- Fixed another watts-scaling bug in the power-budget chip (same class as
+  the constraint-table bug; caught by the E2E suite this time).
+- Header wraps on narrow screens (E11 passes at 390px).
+- Verified: 38 pytest + 10 Playwright green; screenshot comparison vs
+  screen.png at 1629px (ui_v3_screenshot.png stub, ui_v3_live_real.png
+  real engine) - layout and styling match the mock; real data shown.
