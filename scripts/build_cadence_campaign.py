@@ -56,6 +56,13 @@ def main() -> None:
                                    "source_row_count": len(ids)})
     if args.candidate_multiplier < 1:
         ap.error("--candidate-multiplier must be >= 1")
+    if args.max_request_gbw_mhz is not None:
+        cap_hz = args.max_request_gbw_mhz * 1e6
+        before = len(requests)
+        requests = [r for r in requests
+                    if float(r["req_GBW_min"]) <= cap_hz]
+        print(f"domain cap {args.max_request_gbw_mhz:.0f} MHz: candidate "
+              f"rows {before} -> {len(requests)}", flush=True)
     selected = select_campaign_requests(
         requests, args.n_each * args.candidate_multiplier, excluded_ids)
     champion_file = Path(args.ckpt_dir) / "champion.json"

@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0 vdd!
-parameters VDD=1.2 Vincm=0.6 cL=1e-12 L34=1.83639713734e-07 W34=2.10384552975e-05 L12=1.99981995757e-07 W12=7.87265073727e-05 Itail=7.04608670865e-05
+parameters VDD=1.2 Vincm=0.6 cL=1e-12 L34=6.87289810181e-07 W34=1.17938704757e-05 L12=7.64937486649e-07 W12=5.20174577709e-05 Itail=6.98470911384e-05
 include "/home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/tsmcN65/../models/spectre/toplevel.scs" section=tt_lib
 
 // Library name: analogLib

@@ -27,22 +27,22 @@
       "case_id": "tbv3_001_low_power",
       "category": "low_power",
       "category_rank": 1,
-      "source_row_id": "r00016381",
-      "pipeline_status": "verified_best_of_k",
+      "source_row_id": "r00012691",
+      "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 32.26528684906438,
-        "GBW_min": 261956673.17118606,
+        "Gain_min": 30.76408361682016,
+        "GBW_min": 146613453.96184477,
         "CL_pF": 0.2,
-        "Power_max": 8.657059064300877e-05
+        "Power_max": 8.810103044094027e-05
       },
       "internal_specs": {
-        "Gain_min": 32.26528684906438,
-        "GBW_min": 309108874.34199953,
+        "Gain_min": 30.76408361682016,
+        "GBW_min": 173003875.67497683,
         "CL_pF": 0.2,
-        "Power_max": 8.657059064300877e-05
+        "Power_max": 8.810103044094027e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -51,22 +51,22 @@
       "case_id": "tbv3_002_low_power",
       "category": "low_power",
       "category_rank": 2,
-      "source_row_id": "r00024160",
-      "pipeline_status": "local_refinement_verified",
-      "pipeline_oracle_evals": 1140,
+      "source_row_id": "r00023134",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 27.94271965252418,
-        "GBW_min": 105492784.2680696,
+        "Gain_min": 32.16565778302833,
+        "GBW_min": 75823461.83364153,
         "CL_pF": 1.0,
-        "Power_max": 8.493928000963548e-05
+        "Power_max": 8.677756568154963e-05
       },
       "internal_specs": {
-        "Gain_min": 27.94271965252418,
-        "GBW_min": 124481485.43632212,
+        "Gain_min": 32.16565778302833,
+        "GBW_min": 89471684.963697,
         "CL_pF": 1.0,
-        "Power_max": 8.493928000963548e-05
+        "Power_max": 8.677756568154963e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -75,22 +75,22 @@
       "case_id": "tbv3_003_low_power",
       "category": "low_power",
       "category_rank": 3,
-      "source_row_id": "r00019176",
+      "source_row_id": "r00032379",
       "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 27.28868528663604,
-        "GBW_min": 16111508.331140077,
+        "Gain_min": 28.506985174598764,
+        "GBW_min": 9851190.954104634,
         "CL_pF": 5.0,
-        "Power_max": 8.272911112368735e-05
+        "Power_max": 8.465427666010103e-05
       },
       "internal_specs": {
-        "Gain_min": 27.28868528663604,
-        "GBW_min": 19011579.83074529,
+        "Gain_min": 28.506985174598764,
+        "GBW_min": 11624405.325843468,
         "CL_pF": 5.0,
-        "Power_max": 8.272911112368735e-05
+        "Power_max": 8.465427666010103e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -99,22 +99,22 @@
       "case_id": "tbv3_004_low_power",
       "category": "low_power",
       "category_rank": 4,
-      "source_row_id": "r00022633",
+      "source_row_id": "r00014940",
       "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 29.290618970684832,
-        "GBW_min": 16138525.661398424,
-        "CL_pF": 5.0,
-        "Power_max": 8.069468355343362e-05
+        "Gain_min": 28.774106899533777,
+        "GBW_min": 174501779.3279613,
+        "CL_pF": 0.2,
+        "Power_max": 8.226594358148924e-05
       },
       "internal_specs": {
-        "Gain_min": 29.290618970684832,
-        "GBW_min": 19043460.28045014,
-        "CL_pF": 5.0,
-        "Power_max": 8.069468355343362e-05
+        "Gain_min": 28.774106899533777,
+        "GBW_min": 205912099.60699433,
+        "CL_pF": 0.2,
+        "Power_max": 8.226594358148924e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -123,22 +123,22 @@
       "case_id": "tbv3_005_low_power",
       "category": "low_power",
       "category_rank": 5,
-      "source_row_id": "r00014946",
+      "source_row_id": "r00003987",
       "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 27.963918249937915,
-        "GBW_min": 17115112.754231934,
-        "CL_pF": 5.0,
-        "Power_max": 7.880357498333556e-05
+        "Gain_min": 25.913770131301003,
+        "GBW_min": 252226252.79182178,
+        "CL_pF": 0.2,
+        "Power_max": 7.981676246118822e-05
       },
       "internal_specs": {
-        "Gain_min": 27.963918249937915,
-        "GBW_min": 20195833.04999368,
-        "CL_pF": 5.0,
-        "Power_max": 7.880357498333556e-05
+        "Gain_min": 25.913770131301003,
+        "GBW_min": 297626978.2943497,
+        "CL_pF": 0.2,
+        "Power_max": 7.981676246118822e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -147,22 +147,22 @@
       "case_id": "tbv3_006_high_gain",
       "category": "high_gain",
       "category_rank": 1,
-      "source_row_id": "r00012553",
+      "source_row_id": "r00025096",
       "pipeline_status": "local_refinement_verified",
       "pipeline_oracle_evals": 605,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 31.843945597233773,
-        "GBW_min": 2837400.2535738945,
-        "CL_pF": 5.0,
-        "Power_max": 1.608023086886367e-05
+        "Gain_min": 31.279467162896015,
+        "GBW_min": 90813003.56952631,
+        "CL_pF": 1.0,
+        "Power_max": 8.249384294108626e-05
       },
       "internal_specs": {
-        "Gain_min": 31.843945597233773,
-        "GBW_min": 3348132.2992171953,
-        "CL_pF": 5.0,
-        "Power_max": 1.608023086886367e-05
+        "Gain_min": 31.279467162896015,
+        "GBW_min": 107159344.21204105,
+        "CL_pF": 1.0,
+        "Power_max": 8.249384294108626e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -171,22 +171,22 @@
       "case_id": "tbv3_007_high_gain",
       "category": "high_gain",
       "category_rank": 2,
-      "source_row_id": "r00019843",
-      "pipeline_status": "verified_best_of_k",
-      "pipeline_oracle_evals": 5,
+      "source_row_id": "r00017728",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 31.97749144186199,
-        "GBW_min": 55235584.99317723,
+        "Gain_min": 31.317427274780325,
+        "GBW_min": 7060143.111606862,
         "CL_pF": 5.0,
-        "Power_max": 0.00036861377047388505
+        "Power_max": 4.482044311245584e-05
       },
       "internal_specs": {
-        "Gain_min": 31.97749144186199,
-        "GBW_min": 65177990.29194912,
+        "Gain_min": 31.317427274780325,
+        "GBW_min": 8330968.871696097,
         "CL_pF": 5.0,
-        "Power_max": 0.00036861377047388505
+        "Power_max": 4.482044311245584e-05
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -195,22 +195,430 @@
       "case_id": "tbv3_008_high_gain",
       "category": "high_gain",
       "category_rank": 3,
-      "source_row_id": "r00005619",
+      "source_row_id": "r00009949",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 31.36929623804159,
+        "GBW_min": 104637192.67756668,
+        "CL_pF": 1.0,
+        "Power_max": 0.0001326466663801023
+      },
+      "internal_specs": {
+        "Gain_min": 31.36929623804159,
+        "GBW_min": 123471887.35952868,
+        "CL_pF": 1.0,
+        "Power_max": 0.0001326466663801023
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_009_high_gain",
+      "category": "high_gain",
+      "category_rank": 4,
+      "source_row_id": "r00027861",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 418,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 31.422241563205993,
+        "GBW_min": 66059648.94631184,
+        "CL_pF": 5.0,
+        "Power_max": 0.0006665252667107245
+      },
+      "internal_specs": {
+        "Gain_min": 31.422241563205993,
+        "GBW_min": 77950385.75664796,
+        "CL_pF": 5.0,
+        "Power_max": 0.0006665252667107245
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_010_high_gain",
+      "category": "high_gain",
+      "category_rank": 5,
+      "source_row_id": "r00019114",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 31.47369207473611,
+        "GBW_min": 68768437.8971638,
+        "CL_pF": 5.0,
+        "Power_max": 0.00047549025845573735
+      },
+      "internal_specs": {
+        "Gain_min": 31.47369207473611,
+        "GBW_min": 81146756.71865328,
+        "CL_pF": 5.0,
+        "Power_max": 0.00047549025845573735
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_011_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 1,
+      "source_row_id": "r00031711",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 29.5511100910605,
+        "GBW_min": 151945546.38648698,
+        "CL_pF": 1.0,
+        "Power_max": 0.00017593759095637108
+      },
+      "internal_specs": {
+        "Gain_min": 29.5511100910605,
+        "GBW_min": 179295744.73605463,
+        "CL_pF": 1.0,
+        "Power_max": 0.00017593759095637108
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_012_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 2,
+      "source_row_id": "r00014143",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 155,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 32.50745036415063,
+        "GBW_min": 154666004.10995418,
+        "CL_pF": 1.0,
+        "Power_max": 0.0001924233755821191
+      },
+      "internal_specs": {
+        "Gain_min": 32.50745036415063,
+        "GBW_min": 182505884.84974593,
+        "CL_pF": 1.0,
+        "Power_max": 0.0001924233755821191
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_013_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 3,
+      "source_row_id": "r00004809",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 27.226963372254012,
+        "GBW_min": 158131247.06783772,
+        "CL_pF": 1.0,
+        "Power_max": 0.00038634278990209043
+      },
+      "internal_specs": {
+        "Gain_min": 27.226963372254012,
+        "GBW_min": 186594871.54004848,
+        "CL_pF": 1.0,
+        "Power_max": 0.00038634278990209043
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_014_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 4,
+      "source_row_id": "r00018904",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 155,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 33.023565111542084,
+        "GBW_min": 162113781.90288007,
+        "CL_pF": 1.0,
+        "Power_max": 0.0002188899937881463
+      },
+      "internal_specs": {
+        "Gain_min": 33.023565111542084,
+        "GBW_min": 191294262.64539847,
+        "CL_pF": 1.0,
+        "Power_max": 0.0002188899937881463
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_015_high_gbw",
+      "category": "high_gbw",
+      "category_rank": 5,
+      "source_row_id": "r00001381",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1679,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 24.316049196584427,
+        "GBW_min": 165043256.90844986,
+        "CL_pF": 1.0,
+        "Power_max": 0.00013429125210544343
+      },
+      "internal_specs": {
+        "Gain_min": 24.316049196584427,
+        "GBW_min": 194751043.15197083,
+        "CL_pF": 1.0,
+        "Power_max": 0.00013429125210544343
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_016_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 1,
+      "source_row_id": "r00009213",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 28.594451000734008,
+        "GBW_min": 37530081.38206306,
+        "CL_pF": 5.0,
+        "Power_max": 0.000181870100941514
+      },
+      "internal_specs": {
+        "Gain_min": 28.594451000734008,
+        "GBW_min": 44285496.03083441,
+        "CL_pF": 5.0,
+        "Power_max": 0.000181870100941514
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_017_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 2,
+      "source_row_id": "r00025504",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 28.754252680561315,
+        "GBW_min": 38442493.0653406,
+        "CL_pF": 5.0,
+        "Power_max": 0.00031112692537998396
+      },
+      "internal_specs": {
+        "Gain_min": 28.754252680561315,
+        "GBW_min": 45362141.8171019,
+        "CL_pF": 5.0,
+        "Power_max": 0.00031112692537998396
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_018_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 3,
+      "source_row_id": "r00023604",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 27.989875047174337,
+        "GBW_min": 39767196.96919516,
+        "CL_pF": 5.0,
+        "Power_max": 0.0002427878895830806
+      },
+      "internal_specs": {
+        "Gain_min": 27.989875047174337,
+        "GBW_min": 46925292.42365028,
+        "CL_pF": 5.0,
+        "Power_max": 0.0002427878895830806
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_019_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 4,
+      "source_row_id": "r00025792",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1205,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 25.554813834289718,
+        "GBW_min": 40812167.59267221,
+        "CL_pF": 5.0,
+        "Power_max": 0.00016492619583155795
+      },
+      "internal_specs": {
+        "Gain_min": 25.554813834289718,
+        "GBW_min": 48158357.7593532,
+        "CL_pF": 5.0,
+        "Power_max": 0.00016492619583155795
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_020_heavy_load",
+      "category": "heavy_load",
+      "category_rank": 5,
+      "source_row_id": "r00023118",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 25.52353958598799,
+        "GBW_min": 41903617.273269944,
+        "CL_pF": 5.0,
+        "Power_max": 0.0003320524817264413
+      },
+      "internal_specs": {
+        "Gain_min": 25.52353958598799,
+        "GBW_min": 49446268.38245853,
+        "CL_pF": 5.0,
+        "Power_max": 0.0003320524817264413
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_021_boundary",
+      "category": "boundary",
+      "category_rank": 1,
+      "source_row_id": "r00016816",
       "pipeline_status": "verified_best_of_k",
       "pipeline_oracle_evals": 5,
       "calibration_policy": "custom",
       "gbw_guard_band": 0.18,
       "user_specs": {
-        "Gain_min": 32.011138875938556,
-        "GBW_min": 44343358.26713225,
+        "Gain_min": 31.741726717884372,
+        "GBW_min": 34627700.34459006,
         "CL_pF": 1.0,
-        "Power_max": 6.13844031104887e-05
+        "Power_max": 3.5145782400653674e-05
       },
       "internal_specs": {
-        "Gain_min": 32.011138875938556,
-        "GBW_min": 52325162.755216055,
+        "Gain_min": 31.741726717884372,
+        "GBW_min": 40860686.40661627,
         "CL_pF": 1.0,
-        "Power_max": 6.13844031104887e-05
+        "Power_max": 3.5145782400653674e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_022_boundary",
+      "category": "boundary",
+      "category_rank": 2,
+      "source_row_id": "r00001852",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 29.768251361823896,
+        "GBW_min": 38125539.595177084,
+        "CL_pF": 5.0,
+        "Power_max": 0.000267425591504662
+      },
+      "internal_specs": {
+        "Gain_min": 29.768251361823896,
+        "GBW_min": 44988136.722308956,
+        "CL_pF": 5.0,
+        "Power_max": 0.000267425591504662
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_023_boundary",
+      "category": "boundary",
+      "category_rank": 3,
+      "source_row_id": "r00004165",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 32.00456231579666,
+        "GBW_min": 46261856.30530017,
+        "CL_pF": 5.0,
+        "Power_max": 0.00020805267837090846
+      },
+      "internal_specs": {
+        "Gain_min": 32.00456231579666,
+        "GBW_min": 54588990.4402542,
+        "CL_pF": 5.0,
+        "Power_max": 0.00020805267837090846
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_024_boundary",
+      "category": "boundary",
+      "category_rank": 4,
+      "source_row_id": "r00018469",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 30.285586919816488,
+        "GBW_min": 189322538.56545383,
+        "CL_pF": 0.2,
+        "Power_max": 4.200884483359723e-05
+      },
+      "internal_specs": {
+        "Gain_min": 30.285586919816488,
+        "GBW_min": 223400595.5072355,
+        "CL_pF": 0.2,
+        "Power_max": 4.200884483359723e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_025_boundary",
+      "category": "boundary",
+      "category_rank": 5,
+      "source_row_id": "r00015250",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 30.114012172779102,
+        "GBW_min": 199215103.336828,
+        "CL_pF": 1.0,
+        "Power_max": 0.0004800058756910599
+      },
+      "internal_specs": {
+        "Gain_min": 30.114012172779102,
+        "GBW_min": 235073821.93745703,
+        "CL_pF": 1.0,
+        "Power_max": 0.0004800058756910599
       },
       "user_verdict": true,
       "internal_verdict": true
@@ -220,8 +628,8 @@
     {
       "attempt": 1,
       "category": "low_power",
-      "source_row_id": "r00016381",
-      "pipeline_status": "verified_best_of_k",
+      "source_row_id": "r00012691",
+      "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "accepted": true,
       "case_id": "tbv3_001_low_power"
@@ -229,16 +637,16 @@
     {
       "attempt": 2,
       "category": "low_power",
-      "source_row_id": "r00024160",
-      "pipeline_status": "local_refinement_verified",
-      "pipeline_oracle_evals": 1140,
+      "source_row_id": "r00023134",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
       "accepted": true,
       "case_id": "tbv3_002_low_power"
     },
     {
       "attempt": 3,
       "category": "low_power",
-      "source_row_id": "r00019176",
+      "source_row_id": "r00032379",
       "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "accepted": true,
@@ -247,7 +655,7 @@
     {
       "attempt": 4,
       "category": "low_power",
-      "source_row_id": "r00022633",
+      "source_row_id": "r00014940",
       "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "accepted": true,
@@ -256,7 +664,7 @@
     {
       "attempt": 5,
       "category": "low_power",
-      "source_row_id": "r00014946",
+      "source_row_id": "r00003987",
       "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "accepted": true,
@@ -265,57 +673,182 @@
     {
       "attempt": 41,
       "category": "high_gain",
-      "source_row_id": "r00024427",
-      "accepted": false,
-      "skipped": "request GBW 352 MHz above the app-domain cap"
-    },
-    {
-      "attempt": 42,
-      "category": "high_gain",
-      "source_row_id": "r00012553",
+      "source_row_id": "r00025096",
       "pipeline_status": "local_refinement_verified",
       "pipeline_oracle_evals": 605,
       "accepted": true,
       "case_id": "tbv3_006_high_gain"
     },
     {
-      "attempt": 43,
+      "attempt": 42,
       "category": "high_gain",
-      "source_row_id": "r00027289",
-      "accepted": false,
-      "skipped": "request GBW 1039 MHz above the app-domain cap"
-    },
-    {
-      "attempt": 44,
-      "category": "high_gain",
-      "source_row_id": "r00019989",
-      "accepted": false,
-      "skipped": "request GBW 796 MHz above the app-domain cap"
-    },
-    {
-      "attempt": 45,
-      "category": "high_gain",
-      "source_row_id": "r00019843",
-      "pipeline_status": "verified_best_of_k",
-      "pipeline_oracle_evals": 5,
+      "source_row_id": "r00017728",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605,
       "accepted": true,
       "case_id": "tbv3_007_high_gain"
     },
     {
-      "attempt": 46,
+      "attempt": 43,
       "category": "high_gain",
-      "source_row_id": "r00005619",
-      "pipeline_status": "verified_best_of_k",
+      "source_row_id": "r00009949",
+      "pipeline_status": "verified",
       "pipeline_oracle_evals": 5,
       "accepted": true,
       "case_id": "tbv3_008_high_gain"
     },
     {
-      "attempt": 47,
+      "attempt": 44,
       "category": "high_gain",
-      "source_row_id": "r00013879",
-      "accepted": false,
-      "skipped": "request GBW 376 MHz above the app-domain cap"
+      "source_row_id": "r00027861",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 418,
+      "accepted": true,
+      "case_id": "tbv3_009_high_gain"
+    },
+    {
+      "attempt": 45,
+      "category": "high_gain",
+      "source_row_id": "r00019114",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_010_high_gain"
+    },
+    {
+      "attempt": 81,
+      "category": "high_gbw",
+      "source_row_id": "r00031711",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_011_high_gbw"
+    },
+    {
+      "attempt": 82,
+      "category": "high_gbw",
+      "source_row_id": "r00014143",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 155,
+      "accepted": true,
+      "case_id": "tbv3_012_high_gbw"
+    },
+    {
+      "attempt": 83,
+      "category": "high_gbw",
+      "source_row_id": "r00004809",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_013_high_gbw"
+    },
+    {
+      "attempt": 84,
+      "category": "high_gbw",
+      "source_row_id": "r00018904",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 155,
+      "accepted": true,
+      "case_id": "tbv3_014_high_gbw"
+    },
+    {
+      "attempt": 85,
+      "category": "high_gbw",
+      "source_row_id": "r00001381",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1679,
+      "accepted": true,
+      "case_id": "tbv3_015_high_gbw"
+    },
+    {
+      "attempt": 121,
+      "category": "heavy_load",
+      "source_row_id": "r00009213",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_016_heavy_load"
+    },
+    {
+      "attempt": 122,
+      "category": "heavy_load",
+      "source_row_id": "r00025504",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_017_heavy_load"
+    },
+    {
+      "attempt": 123,
+      "category": "heavy_load",
+      "source_row_id": "r00023604",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_018_heavy_load"
+    },
+    {
+      "attempt": 124,
+      "category": "heavy_load",
+      "source_row_id": "r00025792",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1205,
+      "accepted": true,
+      "case_id": "tbv3_019_heavy_load"
+    },
+    {
+      "attempt": 125,
+      "category": "heavy_load",
+      "source_row_id": "r00023118",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_020_heavy_load"
+    },
+    {
+      "attempt": 161,
+      "category": "boundary",
+      "source_row_id": "r00016816",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_021_boundary"
+    },
+    {
+      "attempt": 162,
+      "category": "boundary",
+      "source_row_id": "r00001852",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_022_boundary"
+    },
+    {
+      "attempt": 163,
+      "category": "boundary",
+      "source_row_id": "r00004165",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605,
+      "accepted": true,
+      "case_id": "tbv3_023_boundary"
+    },
+    {
+      "attempt": 164,
+      "category": "boundary",
+      "source_row_id": "r00018469",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_024_boundary"
+    },
+    {
+      "attempt": 165,
+      "category": "boundary",
+      "source_row_id": "r00015250",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_025_boundary"
     }
   ]
 }

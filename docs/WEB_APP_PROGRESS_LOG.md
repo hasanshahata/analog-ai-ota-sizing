@@ -342,3 +342,19 @@ failure, correction, and decision.
 - Expected effect: GBW overshoot vs user request drops from ~+20% to
   ~+10% typical; the result chip now also shows "expected Spectre UGF"
   (LUT x 0.94 mean measured in-domain ratio).
+
+## 2026-09-04 — band18 campaign generated and staged (Step 1 complete)
+
+- First build attempt failed structurally: the high_gbw category exhausted
+  its pool (all its candidates exceed the 300 MHz domain cap by
+  definition). Fix: with --max-request-gbw-mhz set, the candidate pool is
+  filtered to in-domain rows BEFORE selection, so high_gbw picks the top
+  in-domain GBW rows. Partial 20-job directory discarded; full rebuild.
+- Final campaign ideal_tail_tt_band18_validation_25: 25/25 cases, flat
+  18% band, requests 7-252 MHz (all in-domain), 5 regimes x 5, all
+  internal verdicts pass, 50 source rows excluded (disjoint from both
+  prior campaigns). high_gbw tier at 152-165 MHz requests (the top
+  in-domain rows remaining). Paths: 14 verified / 3 best_of_k /
+  8 local_refinement, 0 global fallback.
+- Staged to E:/Cadence_AI_Share (25 tbv3_* jobs, zero private files,
+  zero missing public files). Awaiting Debian execution.
