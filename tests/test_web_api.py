@@ -138,7 +138,7 @@ def test_health_reflects_state_and_never_loads(monkeypatch):
     assert r.status_code == 200
     body = r.json()
     assert body["state"] == "loading"
-    assert body["policy_version"] == "tt-ideal-tail-gbw-v1"
+    assert body["policy_version"].startswith("tt-ideal-tail-gbw-v2-tiered")
     # sizing while loading is refused; health never triggered a load
     assert calls == []
     r = client.post("/api/v1/size", json=GOOD)

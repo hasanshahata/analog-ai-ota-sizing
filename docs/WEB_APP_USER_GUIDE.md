@@ -12,10 +12,10 @@ Supported — exactly this, nothing else:
   load (M3 = M4), **ideal tail-current source** (no finite M5);
 - TSMC 65 nm LUT device data at the typical `tt_lib` corner;
 - VDD = 1.2 V, Vincm = 0.6 V, solved LUT operating point;
-- deployment guard policy `tt-ideal-tail-gbw-v1` (internal GBW target is
-  1.25 × your requested GBW minimum; validated on one disjoint 25-case
-  nominal Cadence campaign, 25/25 user-spec passes — not a universal
-  guarantee).
+- deployment guard policy `tt-ideal-tail-gbw-v2-tiered` (internal GBW
+  target is 1.18 × your requested GBW minimum for requests up to 300 MHz;
+  provisional — validated configuration was the flat 1.25 × policy, and a
+  third blind Cadence campaign for the 1.18 tier is in preparation).
 
 **Not** supported: finite M5, other corners / PVT / Monte Carlo, other
 supplies or common-mode points, other technologies, post-layout parasitics.

@@ -40,6 +40,9 @@ def main() -> None:
     ap.add_argument("--campaign-name", default="ideal_tail_tt_25")
     ap.add_argument("--candidate-multiplier", type=int, default=4,
                     help="preselect this many candidates per required job")
+    ap.add_argument("--max-request-gbw-mhz", type=float, default=None,
+                    help="skip candidates whose request GBW exceeds this "
+                         "(e.g. 300 restricts the campaign to the app domain)")
     args = ap.parse_args()
 
     requests, _ = sdata.load_dataset(args.data)
@@ -87,6 +90,18 @@ def main() -> None:
         if accepted_by_category[category] >= args.n_each:
             continue
         specs = canonical_specs(row)
+        if (args.max_request_gbw_mhz is not None
+                and specs["GBW_min"] > args.max_request_gbw_mhz * 1e6):
+            manifest["attempts"].append({
+                "attempt": attempt_i, "category": category,
+                "source_row_id": row["row_id"], "accepted": False,
+                "skipped": (f"request GBW {specs['GBW_min'] / 1e6:.0f} MHz "
+                            "above the app-domain cap")})
+            manifest_path.write_text(json.dumps(manifest, indent=2) + "\n",
+                                     encoding="utf-8")
+            print(f"[attempt {attempt_i:03d}] {row['row_id']} {category}: "
+                  "skipped (request above domain cap)", flush=True)
+            continue
         result = size_ideal_tail_ota(
             ota, ck["proposal"], specs, lo, hi,
             guard_band=args.gbw_guard_band, global_fallback=True,

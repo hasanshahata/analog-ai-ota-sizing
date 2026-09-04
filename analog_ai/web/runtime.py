@@ -17,7 +17,8 @@ from pathlib import Path
 
 import numpy as np
 
-from ..correlation.calibration import GBW_GUARD_BAND, POLICY_VERSION
+from ..correlation.calibration import (GBW_GUARD_BAND, POLICY_VERSION,
+                                       V2_POLICY_VERSION)
 from .schemas import json_safe
 
 log = logging.getLogger("analog_ai.web")
@@ -38,12 +39,17 @@ class SizingRuntime:
     """Load-once, lock-protected facade over ``size_ideal_tail_ota``."""
 
     def __init__(self, project_root: str | Path | None = None,
-                 ckpt_dir: str | Path | None = None):
+                 ckpt_dir: str | Path | None = None,
+                 tiered_band: bool = True):
         self.root = (Path(project_root).resolve() if project_root
                      else Path(__file__).resolve().parents[2])
         self.ckpt_dir = (Path(ckpt_dir) if ckpt_dir
                          else self.root / DEFAULT_CKPT_SUBPATH)
         self.lut_dir = self.root / DEFAULT_LUT_DIRNAME
+        # v2 tiered policy (18% in-domain / 25% beyond) - provisional until
+        # the third disjoint validation campaign passes (owner decision
+        # 2026-09-04, reducing overdesign vs the validated flat 25%).
+        self.tiered_band = tiered_band
         self.state = "loading"           # loading | ready | failed
         self.detail: str | None = None
         self.ota = None
@@ -109,7 +115,7 @@ class SizingRuntime:
             try:
                 record = size_ideal_tail_ota(
                     self.ota, self.model, work, self.feat_lo, self.feat_hi,
-                    seed=seed)
+                    tiered_band=self.tiered_band, seed=seed)
             except Exception as exc:                  # noqa: BLE001
                 log.exception("sizing failed for specs %s", snapshot)
                 raise SizingFailure(_public_size_error(exc)) from None
@@ -126,7 +132,8 @@ class SizingRuntime:
         return {
             "state": self.state,
             "detail": self.detail if self.state == "failed" else None,
-            "policy_version": POLICY_VERSION,
+            "policy_version": (f"{V2_POLICY_VERSION} (provisional)"
+                               if self.tiered_band else POLICY_VERSION),
             "scope": ("ideal-tail 5T OTA, TSMC 65nm tt_lib, VDD 1.2 V, "
                       "Vincm 0.6 V, solved LUT operating point"),
             "busy": cur is not None,

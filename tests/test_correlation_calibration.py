@@ -40,3 +40,23 @@ def test_calibration_rejects_empty_or_invalid_evidence():
         analyze_gbw_calibration([
             {"status": "completed", "expected": {"gbw_Hz": 100.0},
              "spectre": {"gbw_Hz": 0.0}}])
+
+
+def test_tiered_band_v2_policy():
+    from analog_ai.correlation.calibration import (
+        BAND_IN_DOMAIN, BAND_OUT_OF_DOMAIN, DOMAIN_MAX_GBW_HZ,
+        V2_POLICY_VERSION, tiered_guard_band, tiered_policy_record)
+    # in-domain tier covers the whole app request range
+    assert tiered_guard_band(50e6) == BAND_IN_DOMAIN == 0.18
+    assert tiered_guard_band(300e6) == 0.18
+    assert tiered_guard_band(300e6 + 1) == BAND_OUT_OF_DOMAIN == 0.25
+    rec = tiered_policy_record(100e6)
+    assert rec["version"] == V2_POLICY_VERSION == "tt-ideal-tail-gbw-v2-tiered"
+    assert rec["gbw_guard_band"] == 0.18
+    assert rec["tier"] == "in_domain"
+    assert rec["provisional"] is True
+    assert "pending" in rec["validation"]
+    with pytest.raises(ValueError):
+        tiered_guard_band(0.0)
+    with pytest.raises(ValueError):
+        tiered_guard_band(float("nan"))

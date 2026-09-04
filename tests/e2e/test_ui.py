@@ -181,7 +181,7 @@ def test_e2_verified_run(page, server):
     # cost chip: pipeline path, oracle evals, wall time
     chip = page.locator("#meta-chip-text").inner_text()
     assert chip.startswith("local_refinement_verified · 306 evals · ")
-    assert chip.endswith(" s")
+    assert "expected Spectre UGF ≈ 118 MHz" in chip   # 125.83 * 0.94
 
 
 # --------------------------------------------------- E4 out of range ---

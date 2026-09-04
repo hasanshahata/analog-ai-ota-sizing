@@ -322,3 +322,23 @@ failure, correction, and decision.
 - Table headers use CSS uppercase, which rendered "µm" as "µM"; the units
   are now wrapped in normal-case spans so they read "µm" like the power
   card's "µW". Verified live; all web tests green.
+
+## 2026-09-04 — v2 tiered GBW policy (18% in-domain) + third validation campaign
+
+- User decision after seeing +20.6% GBW overshoot (100 MHz request ->
+  120.6 MHz Spectre): reduce overdesign. Data supports a tiered band:
+  worst in-domain uplift needed 16.1% (n=25) vs 24.6% out-of-domain.
+- New policy `tt-ideal-tail-gbw-v2-tiered` (PROVISIONAL): band 18% for
+  requests <= 300 MHz (the app domain), 25% beyond (calibration.py:
+  tiered_guard_band / tiered_policy_record; sizing.py: tiered_band flag;
+  web runtime defaults to tiered, health reports the provisional version).
+  The validated v1 flat 25% remains available (tiered_band=False).
+- Campaign builder: added --max-request-gbw-mhz to restrict a campaign to
+  the app domain (skipped attempts retained as evidence).
+- Third validation campaign generating: ideal_tail_tt_band18_validation_25,
+  flat 18% band, requests capped at 300 MHz, source rows disjoint from BOTH
+  prior campaigns, seed 20260904, 5 regimes x 5. Zero-false-pass gate must
+  pass before the 18% tier leaves provisional status.
+- Expected effect: GBW overshoot vs user request drops from ~+20% to
+  ~+10% typical; the result chip now also shows "expected Spectre UGF"
+  (LUT x 0.94 mean measured in-domain ratio).

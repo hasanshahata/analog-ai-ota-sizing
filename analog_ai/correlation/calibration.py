@@ -9,6 +9,42 @@ import numpy as np
 GBW_GUARD_BAND = 0.25
 POLICY_VERSION = "tt-ideal-tail-gbw-v1"
 
+# ---- v2 tiered policy (PROVISIONAL - pending third disjoint validation) ----
+# Measured Spectre/LUT GBW ratios, split by whether the request sits inside
+# the app domain (<= 300 MHz): worst uplift needed in-domain 16.1% (n=25
+# across both campaigns), out-of-domain 24.6%. The v1 25% flat band covered
+# everything but overdesigns in-domain by ~10-20%.
+V2_POLICY_VERSION = "tt-ideal-tail-gbw-v2-tiered"
+DOMAIN_MAX_GBW_HZ = 300e6
+BAND_IN_DOMAIN = 0.18
+BAND_OUT_OF_DOMAIN = 0.25
+
+
+def tiered_guard_band(user_gbw_hz: float) -> float:
+    """Band for one request under the v2 tiered policy."""
+    if not math.isfinite(user_gbw_hz) or user_gbw_hz <= 0:
+        raise ValueError("user_gbw_hz must be positive and finite")
+    if user_gbw_hz <= DOMAIN_MAX_GBW_HZ:
+        return BAND_IN_DOMAIN
+    return BAND_OUT_OF_DOMAIN
+
+
+def tiered_policy_record(user_gbw_hz: float) -> dict:
+    """Serializable provenance for a v2 tiered sizing decision."""
+    band = tiered_guard_band(user_gbw_hz)
+    return {
+        "version": V2_POLICY_VERSION,
+        "gbw_guard_band": band,
+        "internal_target_formula": "user_GBW_min * (1 + tiered_guard_band)",
+        "tier": ("in_domain" if user_gbw_hz <= DOMAIN_MAX_GBW_HZ
+                 else "out_of_domain"),
+        "domain_max_gbw_hz": DOMAIN_MAX_GBW_HZ,
+        "provisional": True,
+        "validation": ("pending third disjoint blind Cadence campaign "
+                       "(18% tier)"),
+        "scope": "5t_ota_ideal_tail_tt_lib_nominal",
+    }
+
 
 def guarded_specs(specs: dict, guard_band: float = GBW_GUARD_BAND) -> dict:
     """Return internal sizing targets while preserving the user contract."""

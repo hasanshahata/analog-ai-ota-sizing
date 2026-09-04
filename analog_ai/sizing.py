@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from .correlation.calibration import (GBW_GUARD_BAND, guarded_specs,
-                                      policy_record)
+                                      policy_record, tiered_guard_band,
+                                      tiered_policy_record)
 from .evaluation.constraints import evaluate_constraints
 from .surrogate.evaluate import eval_request_staged
 
@@ -19,6 +20,7 @@ def _constraints(perf: dict, specs: dict) -> tuple[list[dict], bool]:
 def size_ideal_tail_ota(ota, model, user_specs: dict, feat_lo, feat_hi,
                         device: str = "cpu",
                         guard_band: float = GBW_GUARD_BAND,
+                        tiered_band: bool = False,
                         global_fallback: bool = True,
                         global_maxiter: int = 20,
                         seed: int = 0) -> dict:
@@ -27,12 +29,22 @@ def size_ideal_tail_ota(ota, model, user_specs: dict, feat_lo, feat_hi,
     The external request is immutable. Proposal, local refinement, and global
     fallback all optimize the stronger internal request. Both verdicts and
     the calibration provenance are returned explicitly.
+
+    ``tiered_band=True`` selects the v2 policy: the band depends on the
+    request frequency (18% inside the 300 MHz app domain, 25% beyond) and
+    is marked provisional pending the third validation campaign.
     """
     missing = [name for name in SPEC_KEYS if name not in user_specs]
     if missing:
         raise ValueError("user specification is missing: " + ", ".join(missing))
     user = {name: float(user_specs[name]) for name in SPEC_KEYS}
-    internal = guarded_specs(user, guard_band)
+    if tiered_band:
+        band = tiered_guard_band(user["GBW_min"])
+        calibration = tiered_policy_record(user["GBW_min"])
+    else:
+        band = guard_band
+        calibration = policy_record(guard_band)
+    internal = guarded_specs(user, band)
     pipeline = eval_request_staged(
         ota, model, internal, feat_lo, feat_hi, device=device, local=True,
         global_fallback=global_fallback, global_maxiter=global_maxiter,
@@ -42,7 +54,7 @@ def size_ideal_tail_ota(ota, model, user_specs: dict, feat_lo, feat_hi,
         "corner": "tt_lib",
         "user_specs": user,
         "internal_specs": internal,
-        "calibration": policy_record(guard_band),
+        "calibration": calibration,
         "status": pipeline["status"],
         "n_oracle_evals": pipeline["n_oracle_evals"],
         "pipeline": pipeline,

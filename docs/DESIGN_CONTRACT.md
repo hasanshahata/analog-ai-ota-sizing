@@ -79,6 +79,17 @@ both contracts and never mutates the caller's request. Policy
 ideal-tail, typical-corner scope. It is provisional until a new disjoint blind
 Cadence campaign passes the zero-false-pass gate.
 
+**Deployment update 2026-09-04 (v2 tiered, provisional):** the sizing
+service now defaults to the tiered policy `tt-ideal-tail-gbw-v2-tiered`:
+`internal GBW = user_GBW_min * 1.18` inside the request domain
+(GBW <= 300 MHz) and `* 1.25` beyond it. Rationale: measured in-domain
+Spectre/LUT ratios need at most 16.1% uplift (n = 25 across both
+campaigns), so the flat 25% over-designed in-domain requests. The 18%
+tier is provisional until a third disjoint blind Cadence campaign
+(restricted to the app domain, disjoint from both prior campaigns) passes
+the zero-false-pass gate. The validated v1 flat 25% remains the fallback
+configuration.
+
 ## Target sampling ranges (training only)
 
 `Gain 20–45 dB, GBW 50–300 MHz, CL 0.1–5 pF, Power 50–400 µW` — sampled

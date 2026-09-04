@@ -84,9 +84,13 @@ function renderSuccess(b) {
   current = b;
   $("export-btn").disabled = false;
   $("status-banner").classList.add("hidden");
+  // expected Spectre UGF: mean measured LUT->Spectre ratio 0.94 in-domain
+  // (campaign evidence; actual may vary ~±7%)
+  const spectreEst = Math.round(m.gbw_MHz * 0.94);
   $("meta-chip-text").textContent = b.sizing_path.pipeline_status +
     " · " + b.sizing_path.n_oracle_evals + " evals · " +
-    ((performance.now() - runT0) / 1000).toFixed(1) + " s";
+    ((performance.now() - runT0) / 1000).toFixed(1) + " s" +
+    " · expected Spectre UGF ≈ " + spectreEst + " MHz";
 
   $("m-gain").textContent = fmt(m.gain_dB, 2);
   $("m-gain-sub").innerHTML = kpiChip("≥ " + fmt(b.user_specs.Gain_min, 2) + " Target");

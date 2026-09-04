@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "campaign": "ideal_tail_tt_band18_validation_25",
+  "selection": {
+    "categories": 5,
+    "n_each": 5,
+    "source_split": "test",
+    "seed": 20260904,
+    "candidate_multiplier": 8,
+    "excluded_source_rows": 50,
+    "excluded_campaigns": [
+      {
+        "manifest": "correlation_jobs/campaign_25/campaign_manifest.json",
+        "source_row_count": 25
+      },
+      {
+        "manifest": "correlation_jobs/guardband_validation_25_v2/campaign_manifest.json",
+        "source_row_count": 25
+      }
+    ]
+  },
+  "champion": "seed2.pt",
+  "template": "5T_OTA_netlist_cadence.txt",
+  "gbw_guard_band": 0.18,
+  "cases": [
+    {
+      "case_id": "tbv3_001_low_power",
+      "category": "low_power",
+      "category_rank": 1,
+      "source_row_id": "r00016381",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 32.26528684906438,
+        "GBW_min": 261956673.17118606,
+        "CL_pF": 0.2,
+        "Power_max": 8.657059064300877e-05
+      },
+      "internal_specs": {
+        "Gain_min": 32.26528684906438,
+        "GBW_min": 309108874.34199953,
+        "CL_pF": 0.2,
+        "Power_max": 8.657059064300877e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_002_low_power",
+      "category": "low_power",
+      "category_rank": 2,
+      "source_row_id": "r00024160",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1140,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 27.94271965252418,
+        "GBW_min": 105492784.2680696,
+        "CL_pF": 1.0,
+        "Power_max": 8.493928000963548e-05
+      },
+      "internal_specs": {
+        "Gain_min": 27.94271965252418,
+        "GBW_min": 124481485.43632212,
+        "CL_pF": 1.0,
+        "Power_max": 8.493928000963548e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_003_low_power",
+      "category": "low_power",
+      "category_rank": 3,
+      "source_row_id": "r00019176",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 27.28868528663604,
+        "GBW_min": 16111508.331140077,
+        "CL_pF": 5.0,
+        "Power_max": 8.272911112368735e-05
+      },
+      "internal_specs": {
+        "Gain_min": 27.28868528663604,
+        "GBW_min": 19011579.83074529,
+        "CL_pF": 5.0,
+        "Power_max": 8.272911112368735e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_004_low_power",
+      "category": "low_power",
+      "category_rank": 4,
+      "source_row_id": "r00022633",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 29.290618970684832,
+        "GBW_min": 16138525.661398424,
+        "CL_pF": 5.0,
+        "Power_max": 8.069468355343362e-05
+      },
+      "internal_specs": {
+        "Gain_min": 29.290618970684832,
+        "GBW_min": 19043460.28045014,
+        "CL_pF": 5.0,
+        "Power_max": 8.069468355343362e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_005_low_power",
+      "category": "low_power",
+      "category_rank": 5,
+      "source_row_id": "r00014946",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 27.963918249937915,
+        "GBW_min": 17115112.754231934,
+        "CL_pF": 5.0,
+        "Power_max": 7.880357498333556e-05
+      },
+      "internal_specs": {
+        "Gain_min": 27.963918249937915,
+        "GBW_min": 20195833.04999368,
+        "CL_pF": 5.0,
+        "Power_max": 7.880357498333556e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_006_high_gain",
+      "category": "high_gain",
+      "category_rank": 1,
+      "source_row_id": "r00012553",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 31.843945597233773,
+        "GBW_min": 2837400.2535738945,
+        "CL_pF": 5.0,
+        "Power_max": 1.608023086886367e-05
+      },
+      "internal_specs": {
+        "Gain_min": 31.843945597233773,
+        "GBW_min": 3348132.2992171953,
+        "CL_pF": 5.0,
+        "Power_max": 1.608023086886367e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_007_high_gain",
+      "category": "high_gain",
+      "category_rank": 2,
+      "source_row_id": "r00019843",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 31.97749144186199,
+        "GBW_min": 55235584.99317723,
+        "CL_pF": 5.0,
+        "Power_max": 0.00036861377047388505
+      },
+      "internal_specs": {
+        "Gain_min": 31.97749144186199,
+        "GBW_min": 65177990.29194912,
+        "CL_pF": 5.0,
+        "Power_max": 0.00036861377047388505
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    },
+    {
+      "case_id": "tbv3_008_high_gain",
+      "category": "high_gain",
+      "category_rank": 3,
+      "source_row_id": "r00005619",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "calibration_policy": "custom",
+      "gbw_guard_band": 0.18,
+      "user_specs": {
+        "Gain_min": 32.011138875938556,
+        "GBW_min": 44343358.26713225,
+        "CL_pF": 1.0,
+        "Power_max": 6.13844031104887e-05
+      },
+      "internal_specs": {
+        "Gain_min": 32.011138875938556,
+        "GBW_min": 52325162.755216055,
+        "CL_pF": 1.0,
+        "Power_max": 6.13844031104887e-05
+      },
+      "user_verdict": true,
+      "internal_verdict": true
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "category": "low_power",
+      "source_row_id": "r00016381",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_001_low_power"
+    },
+    {
+      "attempt": 2,
+      "category": "low_power",
+      "source_row_id": "r00024160",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 1140,
+      "accepted": true,
+      "case_id": "tbv3_002_low_power"
+    },
+    {
+      "attempt": 3,
+      "category": "low_power",
+      "source_row_id": "r00019176",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_003_low_power"
+    },
+    {
+      "attempt": 4,
+      "category": "low_power",
+      "source_row_id": "r00022633",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_004_low_power"
+    },
+    {
+      "attempt": 5,
+      "category": "low_power",
+      "source_row_id": "r00014946",
+      "pipeline_status": "verified",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_005_low_power"
+    },
+    {
+      "attempt": 41,
+      "category": "high_gain",
+      "source_row_id": "r00024427",
+      "accepted": false,
+      "skipped": "request GBW 352 MHz above the app-domain cap"
+    },
+    {
+      "attempt": 42,
+      "category": "high_gain",
+      "source_row_id": "r00012553",
+      "pipeline_status": "local_refinement_verified",
+      "pipeline_oracle_evals": 605,
+      "accepted": true,
+      "case_id": "tbv3_006_high_gain"
+    },
+    {
+      "attempt": 43,
+      "category": "high_gain",
+      "source_row_id": "r00027289",
+      "accepted": false,
+      "skipped": "request GBW 1039 MHz above the app-domain cap"
+    },
+    {
+      "attempt": 44,
+      "category": "high_gain",
+      "source_row_id": "r00019989",
+      "accepted": false,
+      "skipped": "request GBW 796 MHz above the app-domain cap"
+    },
+    {
+      "attempt": 45,
+      "category": "high_gain",
+      "source_row_id": "r00019843",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_007_high_gain"
+    },
+    {
+      "attempt": 46,
+      "category": "high_gain",
+      "source_row_id": "r00005619",
+      "pipeline_status": "verified_best_of_k",
+      "pipeline_oracle_evals": 5,
+      "accepted": true,
+      "case_id": "tbv3_008_high_gain"
+    },
+    {
+      "attempt": 47,
+      "category": "high_gain",
+      "source_row_id": "r00013879",
+      "accepted": false,
+      "skipped": "request GBW 376 MHz above the app-domain cap"
+    }
+  ]
+}
