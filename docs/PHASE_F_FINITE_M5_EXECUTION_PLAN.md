@@ -390,7 +390,8 @@ Stop implementation and return to discussion if:
 
 ## Opus 5 pre-implementation review
 
-**Review status:** awaiting Opus 5
+**Review status:** submitted 2026-09-04 - awaiting Hassan/Codex discussion
+(completed review below).
 
 **Implementation authorization:** NOT APPROVED
 
@@ -411,12 +412,253 @@ Requested plan changes:
 Questions for Hassan/Codex:
 ```
 
+### Completed review - 2026-09-04
+
+**Reviewer/date:** Opus 5 (Claude), 2026-09-04
+
+**Files read** (plan's required order, plus the fixture source):
+`docs/HANDOFF.md`, `docs/DESIGN_CONTRACT.md`, this plan,
+`docs/CORRECTION_LOG.md` (incl. the 2026-09-04 still-open list),
+`analog_ai/config.py`, `analog_ai/devices/lut.py`,
+`analog_ai/devices/device_model.py`, `analog_ai/circuit/dc_solver.py`,
+`analog_ai/circuit/ota5t.py`, `analog_ai/circuit/mna.py`,
+`analog_ai/evaluation/constraints.py`, `analog_ai/evaluation/evaluator.py`,
+`analog_ai/utils/netlist.py`, `analog_ai/optimization/de_baseline.py`,
+`analog_ai/optimization/local_refine.py`, `tests/test_dc_solver.py`,
+`tests/test_ota.py`, `tests/test_mna.py`, plus `tests/conftest.py` (needed
+below: it defines the synthetic LUT's capacitance convention, which settles
+one of the plan's open questions).
+
+**Recommended solver:** the nested three-voltage solve - with ONE change to
+the proposed formulation: `Vbias_tail = lookup_vgs(nch, L5, gmid5, VDS=Vtail,
+VSB=0)` must be computed once per OUTER iteration and held FROZEN during the
+inner Newton solve, not recomputed inside every residual evaluation.
+
+- The physical circuit has a fixed gate bias. The inner solve should see a
+  fixed device, exactly as W1/W3 are frozen; the gm/Id5 target is re-imposed
+  at each outer fixed-point update, so at convergence `Vbias_tail` is
+  self-consistent with the solved Vtail (same philosophy as the existing
+  W1/W3 sizing loop, `dc_solver.py:109-150`).
+- With a frozen `Vbias_tail` the residuals are smooth LUT interpolants of
+  (Vtail, Vmirror, Vout), so the numeric Jacobian has exactly the character
+  the existing damped-Newton/backtracking was tuned for; no
+  `d(Vbias_tail)/d(Vtail)` coupling is injected mid-Newton.
+- The strict reverse lookup (`lut.py:119-163`, raises on unachievable gm/Id
+  or non-monotonic curves) then only ever fires on converged outer iterates
+  - a deterministic invalid record - never mid-line-search at a trial Vtail
+  that briefly leaves the achievable-gm/Id region.
+
+Initial guess: same recipe as ideal mode (VGS1 at Vicm/2 -> Vtail0), then
+`W5_0 = Itail / ids_char(L5, vgs5(Vtail0), Vtail0) * w_ref_n`.
+
+**Equation/sign check** (magnitudes |Ids|; PMOS in |V| = VSG/VSD; currents
+leaving a node positive):
+
+- `Rtail = Id_M1 + Id_M2 - Id_M5 = 0` with
+  `Id_M5 = (W5/w_ref_n) * ids(nch, L5, VGS5=Vbias_tail, VDS5=Vtail, VSB5=0)`.
+  Sign confirmed: M5 conducts tail-node -> ground, M1/M2 sources feed the
+  node. This is exactly ideal-mode R1 (`dc_solver.py:93`:
+  `i1 + i2 - Itail`) with `Itail -> Id_M5`. `VDS5 = Vtail` and `VSB5 = 0`
+  are correct (drain at the tail node, source grounded), so no body effect
+  enters M5.
+- `Rmirror = Id_M1 - Id_M3 = 0` (ideal-mode residual [1], unchanged).
+- `Rout = Id_M4 - Id_M2 = 0` (ideal-mode residual [2], unchanged).
+- W1 sizing: unchanged (reverse lookup at own solved bias, VSB = Vtail).
+- W3 sizing: unchanged (diode self-consistency loop).
+- W5 sizing (new): `W5 = Itail / ids_char(nch, L5, vgs5, Vtail, 0) *
+  w_ref_n` with `vgs5 = lookup_vgs(L5, gmid5, VDS=Vtail, VSB=0)`.
+
+Fixed-point consistency (why the final checks hold by construction): at the
+accepted point, `vgs5` was produced by the reverse lookup AT that Vtail
+(achieved gm/Id5 = target to interpolation error) and W5 makes
+`Id_M5 = Itail` at that same point, so the tail KCL reduces to the
+ideal-mode equation and `Id_M1 + Id_M2 = Id_M5 = Itail` simultaneously.
+Re-evaluating with the returned FIXED W5 and FIXED `Vbias_tail` is then the
+identical function evaluation, so "Id_M5 approximately equals Itail" and
+"gmid_M5 approximately equals gmid5" hold by construction; the declared
+tolerances only have to absorb interpolation roundoff. No sign errors found.
+
+**Nested-vs-four-unknown comparison:** AGREE with nested.
+
+- Residual units: nested = all amperes, same as the shipped solver;
+  four-unknown mixes amperes with a dimensionless gm/Id residual and needs
+  ad-hoc Jacobian row scaling.
+- Jacobian cost: nested = 3 finite-difference columns of plain forward
+  lookups; four-unknown adds a 4th column that perturbs `Vbias_tail`
+  through a full VGS-curve interpolation per residual call.
+- Branch safety: the strict reverse lookup restricts the solution to the
+  post-peak decreasing branch of gm/Id(VGS) (`lut.py:145-162`). A FREE
+  `Vbias_tail` unknown has no such guard and can converge to the
+  subthreshold side of the peak on a locally flat curve.
+- Domain handling: nested fails closed (DomainError at converged outer
+  points); the gm/Id residual in the four-unknown form is defined even
+  where the gate voltage is not characterizable - easier to hide a bad
+  bias.
+- Reuse/testability: nested reuses the exact Newton/backtracking
+  scaffolding, so the ideal-mode suite is a meaningful control.
+- Accuracy: identical at convergence (gm/Id5 pinned exactly either way).
+
+Keep the four-unknown form only as a documented fallback if the nested
+outer loop fails to converge on synthetic tests (not expected; the
+W5-Vtail coupling is the same class the W1 loop already handles).
+
+**Proposed numerical tolerances:**
+
+- Inner KCL: Newton target `tol = 1e-12` A; acceptance `max|R| <= 1e-9` A -
+  identical to ideal mode (`dc_solver.py:41` and `:155`). Ideal mode
+  achieves <= 6e-11 A on real LUTs at 10-500 uA branch currents (<= 1e-5
+  relative); nothing about the finite tail changes that scale.
+- Outer width consistency: max relative change over (W1, W3, W5) < 1e-6,
+  `max_outer = 8` (raise to 12 only if the three-width fixed point
+  measurably needs it); log iteration counts and final width deltas in the
+  record for diagnosis.
+- `Id_M5` vs `Itail`: acceptance bound 0.1% relative at the accepted point
+  - exact by construction at convergence; the bound doubles as a tripwire
+  against a silently clamped or mis-scaled M5 evaluation.
+- Achieved gm/Id5 vs target: acceptance bound |achieved - target| <= 1e-3
+  1/V - exact by construction of the reverse lookup at the converged Vtail;
+  catches accidental evaluation at a stale bias.
+- Iterations: `max_newton = 60`, backtracking steps 30 - unchanged.
+- NEW hard rejection: W5 sizing producing `W5 > W_NMOS_MAX` (250 um)
+  rejects the design as invalid at sizing time (an unsizable tail means the
+  DC point is not implementable). The existing `max(id_char, 1e-18)` guard
+  would otherwise hide this as an absurd width. (W1/W3 keep their
+  trial-level `max(vtail, 0)` / `1e-3` sizing guards; the final strict
+  domain check still governs - no permanent clamping anywhere in the
+  accepted path.)
+
+**M5 AC/capacitance interpretation:** the gate-bias generator is outside the
+sized boundary and M5's source is at ground, so both M5 gate and source are
+AC ground. M5 therefore contributes NO transconductance term to the
+admittance matrix - only drain loading at the tail node. The existing stamp
+`Y[0,0] += m5["gds"] + s*m5["cdd"]` (`mna.py:49-51`) is already structurally
+correct for a finite M5; F2's MNA work is PLUMBING (feed the solved M5
+operating point instead of the zeroed `ideal_tail` dict), not new stamps.
+
+On the plan's double-counting question, this repo's own data model answers
+it in-convention: `tests/conftest.py` `_caps` defines
+`cgd = cox*W_REF*10nm` (overlap) and `cdd = cgd + 0.2*cox*W*L`, i.e. `cdd`
+ALREADY INCLUDES the gate-drain overlap. The stamp must therefore use `cdd`
+alone and must NOT add `cgd` - which the current stamp already satisfies.
+Caveat: that pins the convention of this codebase's LUTs; before F2 freezes,
+the real TSMC characterization deck / save list should be checked once to
+confirm the pickle's `cdd` carries the same meaning. If it does not, only
+the finite stamp changes (ideal mode has `cdd_M5 = 0` and is unaffected).
+M5's `cgs`/`cgg` never enter the 3x3 solve.
+
+**Swing/ICMR decision:** do NOT copy the imposed-mode finite formulas; the
+solved point knows Vtail exactly, so use it:
+
+- `Swing = (VDD - VDSAT4) - (Vtail + VDSAT2)`, all at the solved point. The
+  imposed formula `VDD - VDSAT4 - VDSAT2 - VDSAT5` substitutes VDSAT5 for
+  Vtail only because imposed mode does not know Vtail. M5's own saturation
+  (`Vtail - VDSAT5`) is already enforced separately as `sat_m5` /
+  `Sat_margin_min`; folding it into Swing a second time double-counts the
+  same physical limit.
+- `ICMR_min = VGS1(solved) + VDSAT5(solved)`: the textbook lower ICMR bound
+  (tail needs `Vtail >= VDSAT5` while `Vicm = Vtail + VGS1`). It reduces to
+  the current solved-mode value `ICMR_min = VGS1` (`ota5t.py:260`) as
+  `VDSAT5 -> 0`, so ideal-mode regression values are preserved exactly.
+- The upper ICMR limit is not derivable from this proxy without new
+  assumptions; leave it unreported rather than confident-wrong (matches the
+  plan's F2 task 5).
+- Both definitions land in F2 with synthetic-LUT unit tests; if either is
+  challenged in discussion, mark the metric unavailable instead of guessing.
+
+**F1 files to change:**
+
+- `analog_ai/circuit/dc_solver.py` - add the finite-tail solver as a
+  separate function; `solve_operating_point` itself untouched, so the ideal
+  call graph is provably unchanged.
+- `tests/test_dc_solver_finite.py` (new) - the plan's F1 test list: nominal
+  convergence + determinism, three KCL residuals + M5 current consistency,
+  returned W5/L5/`Vbias_tail`, achieved gm/Id5, wrong arity and
+  non-finite/negative rejection, M5 reverse-lookup/domain rejection,
+  impossible headroom and saturation-boundary behavior, convergence failure
+  and singular-Jacobian behavior, unchanged ideal-mode regression outputs.
+- `analog_ai/circuit/ota5t.py` - NO functional change in F1 under the split
+  requested below (docstring note only).
+- Nothing else: `mna.py` / `constraints.py` / `evaluator.py` / `netlist.py`
+  belong to F2/F3 exactly as planned.
+
+**Risks and fail-closed behavior:**
+
+1. Reverse-lookup DomainError cannot occur mid-Newton under the frozen-
+   `Vbias_tail` scheme; at outer converged points it raises ->
+   deterministic invalid record. No clamping in the accepted path.
+2. Near-threshold M5: `ids_char -> 0` makes naive W5 explode; the
+   `max(id_char, 1e-18)` guard exists and the new `W_NMOS_MAX` sizing-time
+   rejection turns that case into a clean invalid instead of an absurd
+   design.
+3. Headroom exhaustion (`Vbias_tail + VDSAT5` leaves no room for VGS1 at
+   the given Vicm): tail KCL unsolvable -> `DCConvergenceError` ->
+   `InvalidDesignError`, the same fail-closed path as today.
+4. Singular/ill-conditioned Jacobian (M5 deep in subthreshold flattening
+   `dId_M5/dVtail`): existing `LinAlgError` raise -> invalid; the residual
+   non-convergence path also catches slow gradient death.
+5. Outer-loop oscillation between W5 and Vtail: bounded by `max_outer` with
+   a deterministic message and the last width deltas recorded.
+6. Trial-point voltage clipping during backtracking stays exactly as in
+   ideal mode (`np.clip` to `[1e-3, VDD-1e-3]`, recorded in
+   `domain_clamps`), and the final solution passes the strict unclamped
+   domain check extended with the M5 coordinates (VDS5 = Vtail within the
+   VDS grid, VGS5 = `Vbias_tail` within the VGS grid, L5 within the L
+   grid).
+7. Ideal-mode regression lock: existing `test_dc_solver.py`, `test_ota.py`,
+   `test_mna.py` must pass with unchanged results; the finite path lives
+   behind a separate function and, during F1, behind the still-in-place
+   evaluator guard.
+8. No persisted evidence before F3: F1/F2 produce test-level evidence only;
+   canonical records under new provenance start at F3/F4, so no finite
+   result can be mistaken for an ideal-tail record (ORACLE_VERSION bump
+   stays in F3 as planned).
+
+**Requested plan changes:**
+
+1. Freeze `Vbias_tail` within each inner Newton solve; recompute it once
+   per outer iteration (rationale under "Recommended solver").
+2. Move "remove the finite+solved NotImplementedError guard" (F1 task 4) to
+   the START of F2. Removing it in F1 would make
+   `OTA5T(tail_device="finite", op_point="solved").evaluate()` callable
+   while m5 is not yet plumbed - ideal-tail AC metrics could present
+   themselves as finite-mode results, exactly the failure class this plan
+   exists to prevent. F2 task 0 becomes: remove guard, plumb the solved m5
+   into the MNA call, prove the stamp with tests.
+3. Add the sizing-time `W5 > W_NMOS_MAX` rejection (see tolerances).
+4. Adopt the solved-Vtail swing/ICMR definitions above instead of the
+   imposed-mode formulas - the plan itself demands proof "instead of
+   copying the imposed-mode formulas without proof", and the proof points
+   the other way.
+5. Make explicit in F1 that no canonical/persisted records are written
+   before F3's versioning lands (implied by the package order already).
+
+**Questions for Hassan/Codex:**
+
+1. `cdd` convention of the real TSMC pickle: may the characterization deck
+   / OCEAN save list be checked (one-time, before the F2 freeze) to confirm
+   `cdd` includes the gate-drain overlap, as the repo's synthetic-LUT
+   convention does? If it cannot be checked, I propose stamping cdd-only
+   (current behavior) and letting the F5 manual-reference correlation
+   arbitrate, reserving the stop condition "M5 capacitance meaning cannot
+   be established" for a demonstrated disagreement.
+2. Are the two proposed metric definitions accepted for F2 (solved-Vtail
+   swing; `ICMR_min = VGS1 + VDSAT5`)?
+3. Is the guard-removal move to F2 (requested change 2) acceptable?
+4. F4 runs the five frozen regression requests verbatim in finite mode;
+   outcomes may legitimately differ from the ideal-tail baseline
+   (documented per plan). Confirm no attempt should be made to make them
+   match by tuning.
+5. Trial-point voltage clipping with recorded clamps + strict final check
+   (as in ideal mode) - confirmed as the accepted policy for the finite
+   solver?
+
 ## Decision record
 
 | Date | Decision | Owner | Evidence/reason |
 |---|---|---|---|
 | 2026-09-04 | External M5 gate bias is returned; its generator remains out of scope | Project | Keeps the seven-variable sizing problem explicit and implementable |
 | 2026-09-04 | Existing ideal-tail pipeline and web default stay frozen | Project | Preserves validated nominal evidence and deployed behavior |
+| 2026-09-04 | F0.5 pre-implementation review submitted by Opus 5 - recommends the nested solver with a frozen inner Vbias_tail; five plan-change requests pending discussion | Opus 5 | Completed review appended under "Opus 5 pre-implementation review" |
 | Pending | Select nested or four-unknown finite solver | Hassan/Codex after Opus review | Awaiting F0.5 discussion |
 | Pending | Approve F1 implementation | Hassan/Codex | Awaiting F0.5 discussion |
 
@@ -433,3 +675,37 @@ Questions for Hassan/Codex:
 - Added work-package boundaries, tests, evidence locations, stop conditions,
   Git discipline, and separate Cadence validation requirements.
 - No production code or runtime behavior changed.
+
+### 2026-09-04 - F0.5 pre-implementation review submitted
+
+- Read the full required-reading list (HANDOFF, DESIGN_CONTRACT, this plan,
+  CORRECTION_LOG, config, lut, device_model, dc_solver, ota5t, mna,
+  constraints, evaluator, netlist, de_baseline, local_refine, and the
+  three solver test files) plus tests/conftest.py.
+- Appended the completed review under "Opus 5 pre-implementation review".
+  Headline conclusions:
+  - Nested three-voltage solver recommended, with Vbias_tail computed once
+    per outer iteration and frozen during the inner Newton (the strict
+    reverse lookup then only fires on converged points, and the inner
+    Jacobian keeps the character the ideal solver was tuned for).
+  - Residual signs verified against the shipped ideal solver
+    (`Rtail = Id_M1 + Id_M2 - Id_M5`, `Rmirror = Id_M1 - Id_M3`,
+    `Rout = Id_M4 - Id_M2`); at the outer fixed point the final M5 checks
+    hold by construction.
+  - Tolerances proposed: KCL acceptance <= 1e-9 A, width consistency 1e-6
+    relative over (W1, W3, W5), Id_M5 vs Itail 0.1%, gm/Id5 error
+    <= 1e-3 1/V, plus a new sizing-time W5 > W_NMOS_MAX rejection.
+  - cdd/cgd question resolved in-convention: conftest defines
+    `cdd = cgd + junction`, so the tail stamp uses cdd alone and must not
+    add cgd (the existing stamp already complies); real-pickle check
+    requested before the F2 freeze.
+  - Honest solved-point metric definitions proposed instead of the imposed
+    formulas: Swing = (VDD - VDSAT4) - (Vtail + VDSAT2);
+    ICMR_min = VGS1 + VDSAT5 (reduces to the ideal-mode value).
+  - Five requested plan changes, notably: keep the finite+solved evaluator
+    guard until F2 plumbs m5 (prevents ideal-tail metrics masquerading as
+    finite results), and move the guard removal to F2 task 0.
+- Five questions for Hassan/Codex recorded (cdd provenance check, metric
+  definitions, guard move, F4 no-tuning confirmation, trial-clip policy).
+- No production code or runtime behavior changed. Implementation remains
+  NOT APPROVED pending Hassan/Codex discussion.

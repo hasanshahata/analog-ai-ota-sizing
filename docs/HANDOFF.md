@@ -216,3 +216,18 @@ bias-contract decisions are recorded in
 to complete an F0.5 technical review in that same file and stop for discussion;
 F1 production implementation is not authorized until the decision record is
 explicitly approved. The current web app remains ideal-tail only.
+
+**Update 2026-09-04 (later): F0.5 review submitted.** The completed Opus 5
+review is appended to `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md` under
+"Opus 5 pre-implementation review". Headlines: nested three-voltage solver
+recommended with `Vbias_tail` frozen inside the inner Newton (recomputed once
+per outer iteration); residual signs verified against the shipped ideal
+solver; tolerances proposed (KCL <= 1e-9 A, width 1e-6 relative, Id_M5 0.1%,
+gm/Id5 <= 1e-3 1/V, plus a sizing-time `W5 > W_NMOS_MAX` rejection); the
+cdd/cgd double-counting question resolved in-convention (`cdd` already
+includes the gate-drain overlap per `tests/conftest.py` — stamp uses `cdd`
+alone); honest solved-point swing/ICMR definitions proposed instead of the
+imposed-mode formulas; five plan-change requests and five open questions for
+Hassan/Codex (notably: keep the finite+solved evaluator guard until F2
+plumbs m5). No production code changed; implementation remains NOT APPROVED
+pending discussion.

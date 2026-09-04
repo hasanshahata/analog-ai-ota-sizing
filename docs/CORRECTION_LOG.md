@@ -303,10 +303,31 @@ proof of physical infeasibility. Phase E's exit gate is met because synthetic
 OOD and optimizer-tested boundary evidence are separated and calibration,
 threshold, coverage, and difficulty evidence are reported explicitly.
 
+## 2026-09-04 — Phase F planning: F0.5 pre-implementation review submitted
+
+Codex's finite-M5 execution plan
+(`docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`) requires a mandatory Opus review
+gate (F0.5) before any implementation. The completed review is now appended
+to that plan file: recommends the nested three-voltage solver with
+`Vbias_tail` frozen inside the inner Newton solve; verifies residual signs
+against the shipped ideal solver; proposes tolerances (KCL acceptance
+<= 1e-9 A, width consistency 1e-6 relative, Id_M5 vs Itail 0.1%, gm/Id5
+error <= 1e-3 1/V) plus a sizing-time `W5 > W_NMOS_MAX` rejection; resolves
+the cdd/cgd double-counting question from the repo's own data-model
+convention (`cdd` already includes the gate-drain overlap, so the tail stamp
+uses `cdd` alone); proposes honest solved-point swing
+(`(VDD - VDSAT4) - (Vtail + VDSAT2)`) and ICMR_min (`VGS1 + VDSAT5`)
+definitions instead of the imposed-mode formulas; and requests five plan
+changes, notably keeping the finite+solved evaluator guard until F2 plumbs
+m5. Five questions for Hassan/Codex are recorded in the plan. No production
+code changed; implementation remains NOT APPROVED pending discussion.
+
 ## Still open (updated 2026-09-04)
 
 1. **Finite-M5 solved mode (Phase F)** — the next major physical gate and a
-   prerequisite for a complete five-transistor sizing claim.
+   prerequisite for a complete five-transistor sizing claim. F0.5 review
+   submitted 2026-09-04; awaiting Hassan/Codex discussion and F1 approval
+   (see the plan's decision record).
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a
