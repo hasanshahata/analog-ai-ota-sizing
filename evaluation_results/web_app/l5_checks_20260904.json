@@ -1,0 +1,38 @@
+{
+  "date": "2026-09-04",
+  "checks": {
+    "R2_repeat_identical": {
+      "pass": true,
+      "timings": {
+        "35.0dB/100.0MHz": {
+          "run1_s": 34.14,
+          "run2_s": 34.62,
+          "path": "local_refinement_verified",
+          "evals": 306
+        },
+        "32.0dB/120.0MHz": {
+          "run1_s": 7.64,
+          "run2_s": 7.02,
+          "path": "local_refinement_verified",
+          "evals": 75
+        }
+      }
+    },
+    "R1_parity": {
+      "pass": true,
+      "detail": {
+        "design_variables": true,
+        "lut_metrics": true,
+        "user_verdict": true,
+        "internal_verdict": true,
+        "policy": true,
+        "internal_gbw": true,
+        "n_evals": true,
+        "path": true
+      }
+    },
+    "R3_latency": {
+      "note": "served wall times per request in R2.timings; envelope: direct <= 15 s, refinement <= 90 s"
+    }
+  }
+}

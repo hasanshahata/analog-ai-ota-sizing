@@ -212,3 +212,29 @@ failure, correction, and decision.
 - Wrote docs/WEB_APP_TEST_PLAN.md: L0-L5 layers, test matrix (implemented
   vs specified), Playwright E2E blueprint, real-LUT E2E scripting, CI
   gates, exit criteria.
+
+## 2026-09-04 — L4 Playwright suite + L5 scripted checks; constraint-unit fix; de-branding
+
+- **Constraint-display bug fixed (user screenshot)**: the matrix showed
+  0.00 for Power_max and the W-limit rows because display scaling divided
+  where it had to multiply (W -> µW, m -> µm are x1e6; only Hz -> MHz is
+  x1e-6). Corrected rows: Power_max 200.00 / 189.52 µW, +10.48 µW margin.
+  The two internal W-bounds rows are now hidden from display entirely
+  (always "bound"-type PASS; still in the API payload and in the pass
+  count? no - badge counts visible rows: 6 / 6).
+- **De-branding (user request)**: all user-visible "TSMC" wording removed;
+  the app now says "65nm CMOS" (header badge, topology chip, footer).
+- **L4 implemented**: tests/e2e/test_ui.py - 11 Playwright scenarios
+  (E1-E9, E11, E12) against the real FastAPI app with a stubbed sizing
+  runtime on port 8123; skips cleanly without Playwright. Two real bugs
+  found by writing the suite: (1) stale "8 / 8" selector after hiding the
+  W rows (test-side), (2) header action buttons overflowed 390px viewport
+  by 31px -> buttons are icon-only below the sm breakpoint now.
+- **L5 scripted**: scripts/run_web_e2e_checks.py launches the real server,
+  checks R1 parity (8/8 sub-checks identical vs direct API, seed 0),
+  R2 repeat determinism (bit-identical), R3 latency (7.0-34.6 s on
+  local_refinement path; envelope <= 90 s). Evidence:
+  evaluation_results/web_app/l5_checks_20260904.json. PASS.
+- Playwright + Chromium installed into .venv (dev dependency; not added to
+  the core web extra). Docs/WEB_APP_TEST_PLAN.md statuses updated to
+  implemented.

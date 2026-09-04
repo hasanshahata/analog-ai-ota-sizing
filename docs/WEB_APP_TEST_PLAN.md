@@ -1,6 +1,6 @@
 # Web App Test Plan — UI, API, Runtime, and Pipeline
 
-**Created:** 2026-09-04 · **Status:** L0–L3 implemented and green; L4–L5 specified, not yet automated.
+**Created:** 2026-09-04 · **Status:** L0–L4 implemented and green (38 pytest + 11 Playwright); L5 scripted (`scripts/run_web_e2e_checks.py`, PASS 2026-09-04).
 
 Covers everything from the browser form down to the verified-sizing oracle:
 `web_app/static/*` → `analog_ai/web/{schemas,runtime,app}.py` →
@@ -27,8 +27,8 @@ Covers everything from the browser form down to the verified-sizing oracle:
 | **L1** contract units | `schemas.py`: validation, units, frozen display rule | pytest + pydantic | no | ✅ `test_web_schemas.py` (14) |
 | **L2** runtime logic | `runtime.py`: forwarding, locking, error hygiene | pytest + fakes + monkeypatch | no | ✅ `test_web_runtime.py` (9) |
 | **L3** HTTP API | `app.py`: status codes, error format, netlist export | pytest + FastAPI TestClient | no | ✅ `test_web_api.py` (11) |
-| **L4** browser E2E | rendered UI behavior | Playwright (spec below) | no (stubbed backend) | 📋 specified |
-| **L5** real-LUT E2E | full stack parity + latency | Playwright/HTTP + direct API | yes | 📋 manual today (parity smoke recorded) |
+| **L4** browser E2E | rendered UI behavior | Playwright (stubbed backend) | no | ✅ `tests/e2e/test_ui.py` (11) |
+| **L5** real-LUT E2E | full stack parity + latency | `scripts/run_web_e2e_checks.py` | yes | ✅ PASS 2026-09-04 (`l5_checks_20260904.json`) |
 
 ## 2. Test matrix
 
@@ -67,7 +67,7 @@ missing / out-of-range / unknown field / raw `NaN` JSON, 503 not-ready,
 health detail sanitised, static index served, **netlist export**: 200 with
 golden template + analyses lines, 422 on bad geometry.
 
-### L4 — browser E2E (specified; Playwright blueprint in §4)
+### L4 — browser E2E (implemented: `tests/e2e/test_ui.py`; E10 covered for the ready state)
 
 | ID | Scenario | Steps | Expected |
 |---|---|---|---|
@@ -108,7 +108,7 @@ golden template + analyses lines, 422 on bad geometry.
 node --check web_app/static/app.js
 ```
 
-## 4. L4 blueprint (Playwright, Python)
+## 4. L4 implementation notes (Playwright, Python)
 
 Setup (one-time, ~120 MB browser download):
 
@@ -188,8 +188,11 @@ repeats) as the R1–R5 evidence trail.
 
 ## 7. Exit criteria for "fully automated"
 
-- [x] L0–L3 in the default pytest run (34 web tests, green)
-- [ ] L4 committed with the 12 scenarios above, running in Gate 3
-- [ ] L5 R1–R3 scripted (replacing the manual parity smoke) with evidence
-      files auto-written under `evaluation_results/web_app/`
-- [ ] All three gates runnable via a single command each
+- [x] L0–L3 in the default pytest run (38 web tests, green)
+- [x] L4 committed (11 Playwright scenarios against a stubbed backend;
+      skips cleanly when Playwright is not installed)
+- [x] L5 R1–R3 scripted with evidence auto-written under
+      `evaluation_results/web_app/` (PASS 2026-09-04)
+- [x] All gates runnable via a single command each
+- [ ] E10 loading→ready transition (needs a controllable stub; ready state
+      is covered)

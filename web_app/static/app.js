@@ -167,9 +167,10 @@ function renderSuccess(b) {
     '<td class="py-2.5 px-5 text-right font-mono text-xs text-slate-500" colspan="2">' +
     "V<sub>tail</sub> ≈ " + fmt(m.vtail_V, 3) + " V</td></tr>";
 
-  $("constraint-body").innerHTML = (b.constraints || []).map(constraintRow).join("");
-  const nPass = (b.constraints || []).filter(c => c.passed).length;
-  const nAll = (b.constraints || []).length;
+  const visible = (b.constraints || []).filter(c => !C_HIDE.has(c.name));
+  $("constraint-body").innerHTML = visible.map(constraintRow).join("");
+  const nPass = visible.filter(c => c.passed).length;
+  const nAll = visible.length;
   $("checks-text").textContent = nPass + " / " + nAll + " Checks Passed";
   const checksBadge = $("checks-badge");
   checksBadge.classList.remove("text-emerald-700", "bg-emerald-50", "border-emerald-200",
@@ -197,11 +198,12 @@ function row2(dotCls, hoverCls, name, role, roleIcon, w, l, wHover) {
     '<td class="py-3 px-5 text-right text-slate-600 tabular-numbers font-semibold">1×</td></tr>';
 }
 
+/* display scale = multiplier into the shown unit (SI value * scale) */
 const C_LABELS = {
-  Gain_min: ["dB", 1], GBW_min: ["MHz", 1e6], Power_max: ["µW", 1e6],
+  Gain_min: ["dB", 1], GBW_min: ["MHz", 1e-6], Power_max: ["µW", 1e6],
   PM_min: ["°", 1], Sat_margin_min: ["V", 1],
-  W_nmos_max: ["µm", 1e6], W_pmos_max: ["µm", 1e6],
 };
+const C_HIDE = new Set(["W_nmos_max", "W_pmos_max"]);  // internal bounds
 
 function constraintRow(c) {
   const chip = c.passed
@@ -215,9 +217,9 @@ function constraintRow(c) {
       : "—";
   } else {
     const u = C_LABELS[c.name] || ["", 1];
-    req = c.limit === null || c.limit === undefined ? "—" : fmt(c.limit / u[1], 2) + " " + u[0];
-    ach = c.achieved === null || c.achieved === undefined ? "—" : fmt(c.achieved / u[1], 2) + " " + u[0];
-    margin = signed(c.margin === null || c.margin === undefined ? null : c.margin / u[1], 2, u[0]);
+    req = c.limit === null || c.limit === undefined ? "—" : fmt(c.limit * u[1], 2) + " " + u[0];
+    ach = c.achieved === null || c.achieved === undefined ? "—" : fmt(c.achieved * u[1], 2) + " " + u[0];
+    margin = signed(c.margin === null || c.margin === undefined ? null : c.margin * u[1], 2, u[0]);
   }
   const achCls = c.passed ? "font-semibold text-slate-900" : "font-semibold text-red-700";
   return '<tr class="hover:bg-slate-50 transition-colors">' +
