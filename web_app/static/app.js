@@ -10,6 +10,7 @@ const PM_FLOOR = 45;            // verifier default (deg)
 
 let current = null;             // last verified API response (enables export)
 let pollTimer = null;
+let runT0 = 0;                  // wall-clock start of the in-flight request
 
 /* ------------------------------------------------------------ helpers -- */
 function fmt(v, d) {
@@ -74,6 +75,9 @@ function renderSuccess(b) {
   current = b;
   $("export-btn").disabled = false;
   $("status-banner").classList.add("hidden");
+  $("meta-chip-text").textContent = b.sizing_path.pipeline_status +
+    " · " + b.sizing_path.n_oracle_evals + " evals · " +
+    ((performance.now() - runT0) / 1000).toFixed(1) + " s";
 
   $("m-gain").textContent = fmt(m.gain_dB, 2);
   $("m-gain-sub").innerHTML = kpiChip("≥ " + fmt(b.user_specs.Gain_min, 2) + " Target");
@@ -203,6 +207,7 @@ $("reset-btn").addEventListener("click", () => {
 
 function startProgress() {
   const t0 = Date.now();
+  runT0 = performance.now();
   $("submit-btn").disabled = true;
   const tick = () => {
     $("submit-label").textContent = "Synthesizing… " + Math.round((Date.now() - t0) / 1000) + " s";

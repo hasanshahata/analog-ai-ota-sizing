@@ -176,6 +176,10 @@ def test_e2_verified_run(page, server):
     assert "/ leg" not in body
     assert not page.locator("#export-btn").is_disabled()
     assert not page.locator("#status-banner").is_visible()
+    # cost chip: pipeline path, oracle evals, wall time
+    chip = page.locator("#meta-chip-text").inner_text()
+    assert chip.startswith("local_refinement_verified · 306 evals · ")
+    assert chip.endswith(" s")
 
 
 # --------------------------------------------------- E4 out of range ---

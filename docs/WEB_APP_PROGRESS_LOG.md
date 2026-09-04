@@ -294,3 +294,12 @@ failure, correction, and decision.
   "Eng. Hassan Shehata · Analog IC Design" and a LinkedIn link
   (linkedin.com/in/hshehata). Screenshot ui_v3_logo.png verified.
 - 4 static + 10 Playwright tests green.
+
+## 2026-09-04 — Cost chip: path · evals · wall time on every result (user request)
+
+- Added a small mono chip between the KPI cards and the Circuit Parameters
+  table showing the sizing path, oracle-evaluation count, and measured wall
+  time (e.g. "local_refinement_verified · 306 evals · 25.3 s"), so the
+  difference between sub-second direct hits and refinement runs is visible
+  on every result. Assets bumped to ?v=8; E2E asserts the chip content.
+- 4 static + 10 Playwright tests green.
