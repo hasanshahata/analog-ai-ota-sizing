@@ -46,7 +46,10 @@ class OTA5T:
         if op_point not in ("imposed", "solved"):
             raise ValueError("op_point must be 'imposed' or 'solved'")
         if tail_device == "finite" and op_point == "solved":
-            raise NotImplementedError("solved op point requires the ideal tail")
+            raise NotImplementedError(
+                "finite-tail solved evaluation is not available yet; "
+                "public finite metrics open at the Phase F2 gate "
+                "(docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md)")
         self.dm = device_model
         self.mna = MNAEngine()
         self.VDD = vdd
@@ -74,11 +77,22 @@ class OTA5T:
                       currents actually balance.
 
         Raises InvalidDesignError / DomainError for designs with no consistent
-        operating point or out-of-LUT-domain parameters. Callers (RL env,
-        optimizer) treat those as invalid evaluations with a finite penalty.
+        operating point or out-of-LUT-domain parameters, and
+        NotImplementedError for every finite+solved combination - including
+        per-call ``op_point`` overrides, which previously bypassed the
+        constructor guard and returned ideal-tail results for a finite-tail
+        object (closed in Phase F1; public finite evaluation opens only at
+        the F2 integration gate - see docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md).
+        Callers (RL env, optimizer) treat invalid designs as invalid
+        evaluations with a finite penalty.
         """
         op_point = op_point or self.op_point
         if op_point == "solved":
+            if self.tail_device == "finite":
+                raise NotImplementedError(
+                    "finite-tail solved evaluation is not available yet; "
+                    "public finite metrics open at the Phase F2 gate "
+                    "(docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md)")
             return self._evaluate_solved(x, CL, freqs)
         return self._evaluate_imposed(x, CL, freqs)
 

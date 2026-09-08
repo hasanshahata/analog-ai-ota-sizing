@@ -1,0 +1,140 @@
+{
+  "probe": "phase_f1_finite_kernel_real_lut",
+  "timestamp": "2026-09-09T02:07:28",
+  "oracle_version_of_runtime": "analog_ai-0.1.0-proxy",
+  "note": "development probe only; finite records carry no canonical identity until the F2/F3 schema gate (Astra A3)",
+  "tolerances": {
+    "kcl_newton_target_a": 1e-12,
+    "kcl_acceptance_a": 1e-09,
+    "width_rel_change": 1e-06,
+    "bias_abs_change_v": 1e-08,
+    "id5_rel_error": 0.001,
+    "gmid5_abs_error_inv": 0.001
+  },
+  "lut_manifest": {
+    "nch": {
+      "bytes": 2763639830,
+      "file": "TSMC_fast_65nm_nch.pkl",
+      "sha256": "20c15dd9215789d94a438ffd14229f8ab09459474bb965371077a5435ed87e01"
+    },
+    "pch": {
+      "bytes": 2763639830,
+      "file": "TSMC_fast_65nm_pch.pkl",
+      "sha256": "ea80ded3113fb3b701b5bbca9fc4f854c1b1742bb716e668dc95fe92ac169a6c"
+    }
+  },
+  "designs": [
+    {
+      "name": "nominal_50uA",
+      "x7": [
+        5e-07,
+        15.0,
+        6e-07,
+        12.0,
+        5e-07,
+        10.0,
+        5e-05
+      ],
+      "status": "converged",
+      "runtime_s": 0.47,
+      "Vtail": 0.0790659578005083,
+      "Vmirror": 0.65028843579026,
+      "Vout": 0.6502884357902637,
+      "W1": 9.922290486078753e-06,
+      "W3": 1.3920980514473675e-05,
+      "W5": 1.28894978964469e-05,
+      "Vbias_tail": 0.5676023709966532,
+      "kcl_max_abs": 3.1944453389464757e-12,
+      "kcl_max_over_itail": 6.388890677892951e-08,
+      "m5_current_error_rel": 0.0,
+      "m5_gmid_forward_error": 9.414691248821327e-14,
+      "m5_gmid_table": 10.007987000400158,
+      "m5_gmid_forward": 9.999999999999906,
+      "sat_m5": -0.048042915671901484,
+      "convergence": {
+        "outer_iterations": 12,
+        "inner_newton_steps": 19,
+        "final_width_rel_change": 1.1276555745162508e-07,
+        "final_bias_abs_change_v": 4.957812382855309e-09,
+        "tolerances": {
+          "kcl_newton_target_a": 1e-12,
+          "kcl_acceptance_a": 1e-09,
+          "width_rel_change": 1e-06,
+          "bias_abs_change_v": 1e-08,
+          "id5_rel_error": 0.001,
+          "gmid5_abs_error_inv": 0.001
+        }
+      },
+      "clip_diagnostics": {
+        "lut_axis_clamps": {},
+        "voltage_line_search_clips": 0
+      },
+      "ideal_reference_voltages": {
+        "Vtail": 0.07906599666158204,
+        "Vmirror": 0.6502884303936268,
+        "Vout": 0.6502884303936272
+      }
+    },
+    {
+      "name": "wide_100uA",
+      "x7": [
+        6e-07,
+        12.0,
+        7.5e-07,
+        10.0,
+        6e-07,
+        12.0,
+        0.0001
+      ],
+      "runtime_s": 0.82,
+      "status": "DCConvergenceError",
+      "message": "finite sizing fixed point did not converge in 20 outer iterations (final width rel change 3.29e-05, bias change 8.7e-07 V)"
+    },
+    {
+      "name": "boundary_10uA",
+      "x7": [
+        5e-07,
+        15.0,
+        6e-07,
+        12.0,
+        5e-07,
+        10.0,
+        1e-05
+      ],
+      "status": "converged",
+      "runtime_s": 0.38,
+      "Vtail": 0.0790659578001287,
+      "Vmirror": 0.6502884357896836,
+      "Vout": 0.6502884357896884,
+      "W1": 1.984458097215768e-06,
+      "W3": 2.784196102894836e-06,
+      "W5": 2.5778995793025396e-06,
+      "Vbias_tail": 0.5676023709964289,
+      "kcl_max_abs": 6.38820290408044e-13,
+      "kcl_max_over_itail": 6.38820290408044e-08,
+      "m5_current_error_rel": 0.0,
+      "m5_gmid_forward_error": 9.592326932761353e-14,
+      "m5_gmid_table": 10.00798700039999,
+      "m5_gmid_forward": 9.999999999999904,
+      "sat_m5": -0.048042915672139586,
+      "convergence": {
+        "outer_iterations": 12,
+        "inner_newton_steps": 17,
+        "final_width_rel_change": 1.1275341736635548e-07,
+        "final_bias_abs_change_v": 4.957278587625069e-09,
+        "tolerances": {
+          "kcl_newton_target_a": 1e-12,
+          "kcl_acceptance_a": 1e-09,
+          "width_rel_change": 1e-06,
+          "bias_abs_change_v": 1e-08,
+          "id5_rel_error": 0.001,
+          "gmid5_abs_error_inv": 0.001
+        }
+      },
+      "clip_diagnostics": {
+        "lut_axis_clamps": {},
+        "voltage_line_search_clips": 0
+      }
+    }
+  ]
+}

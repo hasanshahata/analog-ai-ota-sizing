@@ -27,9 +27,9 @@ DESIGN_BOUNDS = (
 # package and available here via OTA5T(tail_device="finite").
 DESIGN_PARAM_NAMES_7 = ("L1", "gmid1", "L3", "gmid3", "L5", "gmid5", "Itail")
 DESIGN_BOUNDS_7 = DESIGN_BOUNDS[:4] + (
-    (60e-9, 1.5e-6),   # L5
-    (5.0, 25.0),       # gmid5
-)
+    (60e-9, 1.5e-6),   # L5    NMOS tail device channel length [m]
+    (5.0, 25.0),       # gmid5 NMOS tail device gm/Id          [1/V]
+) + DESIGN_BOUNDS[4:]  # Itail shares the five-parameter bound
 
 # ------------------------------------------------- hard constraint limits --
 # Defaults; a request may tighten but not silently relax them (docs/DESIGN_CONTRACT.md).

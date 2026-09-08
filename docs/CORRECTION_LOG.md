@@ -322,12 +322,47 @@ changes, notably keeping the finite+solved evaluator guard until F2 plumbs
 m5. Five questions for Hassan/Codex are recorded in the plan. No production
 code changed; implementation remains NOT APPROVED pending discussion.
 
-## Still open (updated 2026-09-04)
+## 2026-09-09 — Phase F1: solved finite DC kernel implemented
 
-1. **Finite-M5 solved mode (Phase F)** — the next major physical gate and a
-   prerequisite for a complete five-transistor sizing claim. F0.5 review
-   submitted 2026-09-04; awaiting Hassan/Codex discussion and F1 approval
-   (see the plan's decision record).
+Astra's gate review (`astra_review.md`; amendments recorded in the Phase F
+plan) was followed by Hassan's bounded F1 authorization. Delivered:
+
+- `DESIGN_BOUNDS_7` corrected (six → seven entries; Itail restored); the
+  finite/imposed → solved per-call override bypass in `OTA5T.evaluate` is
+  closed — public finite evaluation remains rejected everywhere.
+- `analog_ai/circuit/dc_solver.py` gains the finite-tail kernel
+  (`solve_operating_point_finite`): nested three-voltage solve with W1/W3/W5
+  and `Vbias_tail` frozen inside the inner Newton; forward gm/ID5 acceptance
+  gate solved by bracketed Brent on the decreasing branch (the reverse lookup
+  is an initial estimate only — the table ratio measurably differs from the
+  forward ratio, e.g. 10.008 vs 10.000 on real TSMC data); strict
+  fixed-device final verification with closed-domain (no-extrapolation)
+  semantics; convergence, width/bias-delta, and clipping diagnostics; hard
+  width limits on final geometry. The ideal solver is untouched and locked
+  by a byte-stable snapshot test.
+- Tests: 27 new focused tests (`tests/test_dc_solver_finite.py`) covering
+  the full F1 list (determinism, KCL/M5 current consistency, geometry/bias,
+  forward gate, domain rejection, headroom, budget exhaustion, nonfinite
+  data, W5 hard limit, fixed-device perturbation, ideal-reference
+  cross-check, closed public surface). Gates: 166/166 non-real-LUT, 3/3
+  real-LUT integration.
+- Two deviations from Astra's initial settings, recorded with before/after
+  evidence per A2: `max_outer` 8 → 60 (measured geometric convergence;
+  synthetic nominal needs 10 iterations, a real wide design 31), and
+  closed-domain final checks via `LUT.in_domain` semantics with edge-snap
+  evaluation (1-ULP edge excursions evaluated at the edge, never
+  extrapolated). Both flagged for Astra sign-off.
+- Real-LUT development probe archived (`scripts/probe_finite_kernel.py`,
+  `evaluation_results/finite_m5/f1_probe_*/`): nominal/wide/boundary designs
+  converge in 0.4–0.9 s with KCL ≤ 1.7e-11 A. Not a canonical evaluation;
+  no finite record carries canonical identity before F3.
+
+## Still open (updated 2026-09-09)
+
+1. **Finite-M5 solved mode (Phase F)** — F1 (finite DC kernel) is
+   implemented and delivered for Astra gate review; F2 (finite metrics, MNA
+   plumbing, constraints, minimal finite records) and later packages await
+   Astra's F1 acceptance.
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a

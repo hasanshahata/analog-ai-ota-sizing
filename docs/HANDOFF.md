@@ -231,3 +231,38 @@ imposed-mode formulas; five plan-change requests and five open questions for
 Hassan/Codex (notably: keep the finite+solved evaluator guard until F2
 plumbs m5). No production code changed; implementation remains NOT APPROVED
 pending discussion.
+
+## 2026-09-09 — Astra gate review; Phase F1 implemented and delivered
+
+Astra's full project review (`astra_review.md`, summarized in the Phase F
+plan) amended the finite-M5 plan (nested solver confirmed; forward gm/ID
+gate required; six-entry `DESIGN_BOUNDS_7` and a finite/solved dispatch
+bypass flagged and to be fixed; brain/muscles ownership protocol). Hassan
+then authorized the bounded F1 package, and F1 is now implemented:
+
+- `DESIGN_BOUNDS_7` corrected to seven entries; the finite/solved override
+  bypass is closed (finite + solved raises everywhere in `OTA5T`).
+- New finite DC kernel `solve_operating_point_finite`
+  (`analog_ai/circuit/dc_solver.py`): nested three-voltage solve, widths and
+  `Vbias_tail` frozen through the inner Newton, forward gm/ID5 gate (bracketed
+  Brent on the decreasing branch; reverse lookup as estimate only), strict
+  fixed-device final verification, convergence/clip diagnostics, hard width
+  limits on final geometry. The ideal kernel is untouched (byte-stable
+  snapshot test).
+- Public finite evaluation stays closed until the F2 integration gate.
+- Gates: **166/166** non-real-LUT (139 baseline + 27 new focused finite
+  tests) and **3/3** real-LUT integration. Real-LUT probe (nominal/wide/
+  boundary designs) archived under `evaluation_results/finite_m5/f1_probe_*/`:
+  all converge in < 1 s with KCL ≤ 1.7e-11 A; the Astra forward-vs-table
+  gm/Id discrepancy is confirmed on TSMC data.
+- Two recorded deviations with before/after evidence (Astra A2 allows):
+  `max_outer` default 8 → 60 (measured geometric rates: synthetic nominal
+  needs 10 iterations, a real wide design 31 — not oscillation), and
+  closed-domain final checks use the repo's `LUT.in_domain` semantics with
+  edge-snap evaluation (a 1-ULP edge excursion is evaluated at the edge,
+  never extrapolated). Both are flagged in the plan's execution log for
+  Astra sign-off.
+
+Full delivery record: `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md` execution
+log, 2026-09-09 F1 entry. F2 (finite metrics, MNA plumbing, constraints,
+minimal finite records) is not started and awaits Astra's F1 acceptance.
