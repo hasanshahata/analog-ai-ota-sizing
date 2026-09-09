@@ -357,12 +357,57 @@ plan) was followed by Hassan's bounded F1 authorization. Delivered:
   converge in 0.4–0.9 s with KCL ≤ 1.7e-11 A. Not a canonical evaluation;
   no finite record carries canonical identity before F3.
 
+## 2026-09-09 — Phase F1 corrective package (Astra gate review R1–R5)
+
+Astra's review of the F1 commit returned CHANGES REQUIRED with five
+reproduced findings. One bounded corrective package addresses all of them:
+
+- **R1 (domain):** the 1e-9 edge tolerance is replaced by true
+  ULP-scale canonicalization (`_canonical_coord`, two-ULP allowance,
+  edge-snap recorded in `coordinate_snaps`); 0.5 nm below the LUT length
+  minimum now rejects. All twelve final device coordinates are
+  canonicalized once and feed BOTH the acceptance KCL (recomputed from the
+  returned M1–M5 IDs) and the returned points — the verified point and the
+  returned evidence are one evaluation. Forward bias derivation
+  canonicalizes its coordinates before every lookup.
+- **R2 (roots):** the forward gm/Id solve enforces a unique root on the
+  decreasing branch — node hits, sign-change intervals, and target plateaus
+  are counted together; zero roots reject as unbracketed, more than one
+  (including plateaus) rejects as ambiguous. The reverse-estimate proximity
+  selection is gone.
+- **R3 (finite evidence):** every returned M1–M5 point is validated for
+  finite, physical mandatory data before acceptance; all M5 threshold
+  comparisons are preceded by explicit finiteness checks; explicit singular
+  (true rank-deficient construction) and ill-conditioned Jacobian guard
+  tests were added.
+- **R4 (mode surface):** `OTA5T.evaluate` validates explicit `op_point`
+  values (`'solvde'`, `''` now raise ValueError; None still means
+  constructor mode).
+- **R5 (recordation):** kernel records carry effective tol and iteration
+  budgets; the probe self-verifies LUT sha256 hashes against the manifest,
+  records source identity, archives full OP records and per-iteration
+  traces for successful AND failed runs (including a no-source-edit
+  before/after budget comparison), and writes strict JSON
+  (`allow_nan=False`).
+
+Tests grew 27 → 46 focused (nextafter cases, 0.5 nm kernel rejection, snap
+recording, bitwise KCL identity, six root-uniqueness cases, nonfinite
+gm/gds/VDSAT rejection incl. final-only poisoning, Jacobian guards, mode
+validation, effective settings); the flat-ratio exact-sizing fixture that
+had endorsed ambiguity selection was replaced with a unique-root fixture.
+Gates: 46/46 focused, full non-real-LUT suite exit 0, real-LUT integration
+3/3. Evidence: `evaluation_results/finite_m5/f1_probe_20260909_031000/`.
+
+Recorded per Astra's interpretation: the successful probe cases carry
+negative M5 saturation margins (-48.0/-58.6/-48.0 mV) — converged DC
+diagnostics, not feasible designs; F2's saturation verifier must reject
+them and F4 owes evidence of physically feasible finite designs.
+
 ## Still open (updated 2026-09-09)
 
-1. **Finite-M5 solved mode (Phase F)** — F1 (finite DC kernel) is
-   implemented and delivered for Astra gate review; F2 (finite metrics, MNA
-   plumbing, constraints, minimal finite records) and later packages await
-   Astra's F1 acceptance.
+1. **Finite-M5 solved mode (Phase F)** — F1 corrective package delivered;
+   awaiting Astra re-review. F2 (finite metrics, MNA plumbing, constraints,
+   minimal finite records) and later packages remain closed until then.
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a

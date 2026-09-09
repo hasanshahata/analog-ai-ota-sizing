@@ -262,30 +262,59 @@ FINITE_TOLERANCES = {
     "gmid5_abs_error_inv": 1e-3,     # |gm5/ID5 - gmid5| [1/V], forward ratio
 }
 _COND_REJECT = 1e12                # Jacobian condition-number guard (upper bound)
-_DOMAIN_EDGE_TOL = 1e-9            # matches LUT.in_domain's float-representation slack
 
 
-def _ids_closed(lut: LUT, w: float, w_ref: float, L: float, vgs: float,
-                vds: float, vsb: float) -> float:
-    """|Ids| for width w under CLOSED-domain semantics (finite kernel).
+def _canonical_coord(val: float, grid: np.ndarray, name: str) -> float:
+    """Canonical LUT coordinate for the finite kernel (F1-R1).
 
-    Coordinates must lie inside the characterized domain per the LUT's own
-    membership definition (``LUT.in_domain``: grid endpoints legal, 1e-9
-    float-representation slack). A coordinate within that slack of an edge
-    is evaluated AT the edge - never extrapolated beyond the characterized
-    box. Anything genuinely outside raises DomainError deterministically.
+    Values strictly inside the characterized grid pass through unchanged.
+    A value outside the grid is accepted ONLY within a floating-point
+    representation allowance of two ULPs of the violated edge: a single
+    subtraction of two grid-edge-scale operands can miss the edge by that
+    much (e.g. 1.2 - 0.7500000000000001 against a 0.45 grid minimum), and
+    the returned value is the EDGE itself, so every downstream lookup sees
+    the characterized endpoint and nothing is ever extrapolated. Anything
+    further outside raises DomainError - a 0.5 nm excursion on a length
+    axis is billions of ULPs and is rejected, so no historical absolute
+    tolerance is copied into the finite contract (A2).
     """
-    q = []
-    for val, grid, name in ((L, lut.L, "L"), (vgs, lut.VGS, "VGS"),
-                            (vds, lut.VDS, "VDS"), (vsb, lut.VSB, "VSB")):
-        lo, hi = float(grid.min()), float(grid.max())
-        if not lo - _DOMAIN_EDGE_TOL <= val <= hi + _DOMAIN_EDGE_TOL:
-            raise DomainError(
-                f"finite operating point outside the closed LUT domain: "
-                f"{name}={val:.6g} outside [{lo:.6g}, {hi:.6g}]")
-        q.append(min(max(val, lo), hi))
-    return float(abs(lut.lookup("ids", [q[0]], [q[1]], [q[2]], [q[3]])[0])) \
-        * (w / w_ref)
+    lo, hi = float(grid.min()), float(grid.max())
+    if lo <= val <= hi:
+        return float(val)
+    edge = lo if val < lo else hi
+    allowance = 2.0 * float(np.spacing(abs(edge)))
+    if abs(val - edge) <= allowance:
+        return edge
+    raise DomainError(
+        f"finite operating point outside the characterized LUT domain: "
+        f"{name}={val:.17g} outside [{lo:.17g}, {hi:.17g}]")
+
+
+def _validate_point_finite(name: str, point: dict) -> None:
+    """Reject a returned device operating point whose mandatory data is
+    nonfinite or nonphysical (F1-R3). Applied to the finite path only: a
+    present-but-NaN value must never masquerade as a successful OP, and
+    finiteness is checked BEFORE any threshold comparison.
+    """
+    def bad(detail: str) -> None:
+        raise DCConvergenceError(
+            f"returned {name} operating point: {detail}")
+
+    for key in ("W", "L", "VGS", "VDS", "VSB", "ID", "gm", "gds", "VDSAT"):
+        v = point.get(key)
+        if v is None or not np.isfinite(v):
+            bad(f"{key} is not finite (got {v!r})")
+    if not point["W"] > 0.0:
+        bad(f"W must be positive (got {point['W']:.6g})")
+    if not point["L"] > 0.0:
+        bad(f"L must be positive (got {point['L']:.6g})")
+    if not point["ID"] > 0.0:
+        bad(f"ID must be positive (got {point['ID']:.6g})")
+    for key in ("gmid_achieved", "gmid_target", "gmid_error", "gmbs",
+                "cgg", "cgs", "cgd", "cdd"):
+        v = point.get(key)
+        if v is not None and not np.isfinite(v):
+            bad(f"{key} is not finite (got {v!r})")
 
 
 def validate_finite_design(x) -> tuple:
@@ -319,23 +348,31 @@ def _forward_gmid_vgs(lut: LUT, L: float, gmid_target: float, vds: float,
                       vsb: float) -> float:
     """VGS at which the FORWARD ratio |gm|/|ids| equals ``gmid_target``.
 
-    The strict reverse lookup interpolates the gm/Id *table* and is used
-    here only as a branch-aware initial estimate; the accepted tail bias
-    must satisfy the forward ratio of separately interpolated gm and ids
-    (the two disagree materially on real data - Astra A2). The root is
-    solved by bracketed Brent iteration on the post-peak decreasing branch
-    of the table gm/Id curve. Unbracketed or ambiguous roots raise
-    deterministically: no branch extension, no endpoint clamping, no
-    current floor.
+    The strict reverse lookup interpolates the gm/Id *table* and disagrees
+    with the forward ratio of separately interpolated gm and ids on real
+    data (Astra A2), so the accepted tail bias solves the FORWARD ratio.
+
+    Domain (F1-R1): L, VDS, and VSB are canonicalized with
+    :func:`_canonical_coord` before every lookup - no lookup ever runs
+    outside the validated domain, and no lookup ever extrapolates.
+
+    Uniqueness (F1-R2): the target must have EXACTLY ONE root on the
+    post-peak decreasing branch of the table gm/Id curve. Exact grid-node
+    hits, sign-change intervals, and flat target plateaus are counted
+    together; a grid-node root shared by neighboring intervals is counted
+    once because strict sign products never include a zero endpoint. Zero
+    roots raise as unbracketed; more than one root - including a two-node
+    target plateau - raises as ambiguous. No proximity or first-hit
+    selection exists, so no initial estimate is needed.
     """
+    Lc = _canonical_coord(L, lut.L, "L")
+    vdsc = _canonical_coord(vds, lut.VDS, "VDS")
+    vsbc = _canonical_coord(vsb, lut.VSB, "VSB")
+
     vgs_grid = lut.VGS
-    if not bool(lut.in_domain(L, vgs_grid, vds, vsb).all()):
-        raise DomainError(
-            f"M5 bias point outside the characterized LUT domain "
-            f"(L={L:.3g}, VDS={vds:.3g}, VSB={vsb:.3g})")
     pts = np.column_stack([
-        np.full_like(vgs_grid, L), vgs_grid,
-        np.full_like(vgs_grid, vds), np.full_like(vgs_grid, vsb)])
+        np.full_like(vgs_grid, Lc), vgs_grid,
+        np.full_like(vgs_grid, vdsc), np.full_like(vgs_grid, vsbc)])
     table = lut.interpolators["gmid"](pts)
     i_peak = int(np.argmax(table))
     branch = table[i_peak:]
@@ -343,12 +380,13 @@ def _forward_gmid_vgs(lut: LUT, L: float, gmid_target: float, vds: float,
     if np.any(np.diff(branch) > max(0.01 * span, 1e-6)):
         raise DomainError(
             f"gm/Id(VGS) curve not decreasing after its peak "
-            f"(L={L:.3g}, VDS={vds:.3g}, VSB={vsb:.3g}) - characterization problem")
+            f"(L={Lc:.3g}, VDS={vdsc:.3g}, VSB={vsbc:.3g}) - "
+            "characterization problem")
 
     vgs_b = np.asarray(vgs_grid[i_peak:], dtype=float)
     one = np.ones_like(vgs_b)
-    gm_b = np.abs(lut.lookup("gm", one * L, vgs_b, one * vds, one * vsb))
-    ids_b = np.abs(lut.lookup("ids", one * L, vgs_b, one * vds, one * vsb))
+    gm_b = np.abs(lut.lookup("gm", one * Lc, vgs_b, one * vdsc, one * vsbc))
+    ids_b = np.abs(lut.lookup("ids", one * Lc, vgs_b, one * vdsc, one * vsbc))
     ratio = np.where(ids_b > 0.0, gm_b / np.where(ids_b > 0.0, ids_b, 1.0),
                      np.inf)
     resid = ratio - gmid_target
@@ -360,60 +398,43 @@ def _forward_gmid_vgs(lut: LUT, L: float, gmid_target: float, vds: float,
             raise DomainError(
                 f"forward gm/Id target {gmid_target:.6g} 1/V not achievable "
                 f"on the decreasing branch (range [{ok.min():.6g}, "
-                f"{ok.max():.6g}]) at L={L:.3g}, VDS={vds:.3g}, VSB={vsb:.3g}")
-    hits = np.flatnonzero(finite & (resid == 0.0))
-    if hits.size:
-        return float(vgs_b[hits[0]])
+                f"{ok.max():.6g}]) at L={Lc:.3g}, VDS={vdsc:.3g}, "
+                f"VSB={vsbc:.3g}")
 
-    # Initial estimate from the table reverse lookup (same branch).
-    try:
-        vgs_est = float(lut.lookup_vgs([L], [gmid_target], [vds], [vsb])[0])
-    except DomainError:
-        vgs_est = None
-
-    brackets = [(float(vgs_b[i]), float(vgs_b[i + 1]))
-                for i in range(len(resid) - 1)
+    node_roots = np.flatnonzero(finite & (resid == 0.0))
+    brackets = [i for i in range(len(resid) - 1)
                 if finite[i] and finite[i + 1]
                 and resid[i] * resid[i + 1] < 0.0]
-    if not brackets:
+    n_roots = int(node_roots.size) + len(brackets)
+    if n_roots == 0:
         raise DomainError(
             f"forward gm/Id target {gmid_target:.6g} 1/V not bracketed on "
-            f"the decreasing branch at L={L:.3g}, VDS={vds:.3g}, "
-            f"VSB={vsb:.3g}")
-    if len(brackets) > 1:
-        if vgs_est is None:
-            raise DomainError(
-                f"ambiguous forward gm/Id root ({len(brackets)} brackets) "
-                f"and no reverse-lookup estimate at L={L:.3g}, "
-                f"VDS={vds:.3g}, VSB={vsb:.3g}")
-        brackets.sort(key=lambda ab: abs(0.5 * (ab[0] + ab[1]) - vgs_est))
+            f"the decreasing branch at L={Lc:.3g}, VDS={vdsc:.3g}, "
+            f"VSB={vsbc:.3g}")
+    if n_roots > 1:
+        detail = ("repeated target hits / plateau on the branch"
+                  if node_roots.size >= 2 else f"{n_roots} distinct roots")
+        raise DomainError(
+            f"ambiguous forward gm/Id root ({detail}) for target "
+            f"{gmid_target:.6g} 1/V at L={Lc:.3g}, VDS={vdsc:.3g}, "
+            f"VSB={vsbc:.3g}; the decreasing branch must cross the target "
+            "exactly once")
 
     def _ratio(vgs: float) -> float:
-        gm_v = float(abs(lut.lookup("gm", [L], [vgs], [vds], [vsb])[0]))
-        ids_v = float(abs(lut.lookup("ids", [L], [vgs], [vds], [vsb])[0]))
+        gm_v = float(abs(lut.lookup("gm", [Lc], [vgs], [vdsc], [vsbc])[0]))
+        ids_v = float(abs(lut.lookup("ids", [Lc], [vgs], [vdsc], [vsbc])[0]))
         if not (np.isfinite(gm_v) and np.isfinite(ids_v) and ids_v > 0.0):
             raise DomainError(
                 f"nonpositive or nonfinite device current while solving the "
-                f"forward gm/Id root (VGS={vgs:.6g}, VDS={vds:.6g})")
+                f"forward gm/Id root (VGS={vgs:.6g}, VDS={vdsc:.6g})")
         return gm_v / ids_v
 
-    a, b = brackets[0]
-    if _ratio(a) == gmid_target:
-        return a
-    if _ratio(b) == gmid_target:
-        return b
+    if node_roots.size == 1:
+        return float(vgs_b[node_roots[0]])
+    a = float(vgs_b[brackets[0]])
+    b = float(vgs_b[brackets[0] + 1])
     return float(brentq(lambda v: _ratio(v) - gmid_target, a, b,
                         xtol=1e-12, maxiter=100))
-
-
-def _verify_in_domain_finite(dm, L1, L3, L5, vicm, vdd, vt, vm, vo, vb5):
-    """Strict closed-domain check at the finite solution (all five devices)."""
-    vgs1 = vicm - vt
-    _ids_closed(dm.nch, 1.0, 1.0, L1, vgs1, vm - vt, vt)
-    _ids_closed(dm.nch, 1.0, 1.0, L1, vgs1, vo - vt, vt)
-    _ids_closed(dm.pch, 1.0, 1.0, L3, vdd - vm, vdd - vm, 0.0)
-    _ids_closed(dm.pch, 1.0, 1.0, L3, vdd - vm, vdd - vo, 0.0)
-    _ids_closed(dm.nch, 1.0, 1.0, L5, vb5, vt, 0.0)
 
 
 def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
@@ -452,14 +473,15 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
     evaluation_results/finite_m5/f1_probe_*/.
 
     Fails closed: invalid inputs raise ValueError; no converged in-domain
-    point raises DCConvergenceError; out-of-domain final coordinates raise
-    DomainError / LUTDomainError. Trial-point clipping is permitted only
-    inside the line search and is counted in the returned diagnostics; the
-    final verification re-evaluates all five devices at the FIXED returned
-    widths and gate bias with trial clamping disabled (strict closed-domain
-    semantics per ``LUT.in_domain``: grid endpoints legal, coordinates
-    within float-representation slack of an edge are evaluated AT the edge,
-    nothing ever extrapolated beyond the characterized box).
+    point raises DCConvergenceError; genuinely out-of-grid final coordinates
+    raise DomainError. Trial-point clipping is permitted only inside the
+    line search and is counted in the returned diagnostics. The final
+    verification canonicalizes every LUT coordinate of all five devices
+    (F1-R1: ULP-scale representation allowance, edge-snap recorded, never
+    extrapolated), builds the returned device points from those canonical
+    coordinates, validates every point for finite physical data (F1-R3),
+    and recomputes the acceptance KCL FROM the returned points - the
+    accepted evaluation and the returned evidence are one evaluation.
     """
     L1, gmid1, L3, gmid3, L5, gmid5, Itail = validate_finite_design(
         (L1, gmid1, L3, gmid3, L5, gmid5, Itail))
@@ -472,27 +494,20 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
     n_vclip = 0                 # line-search voltage clips (A2 diagnostic)
     n_newton = 0
 
-    def ids_n(w, vgs, vds, vsb, strict=False):
-        if strict:
-            return _ids_closed(dm.nch, w, w_ref_n, L1, vgs, vds, vsb)
+    def ids_n(w, vgs, vds, vsb):
         return _ids(dm.nch, w, w_ref_n, L1, vgs, vds, vsb, clamps)
 
-    def ids_p(w, vsg, vsd, strict=False):
-        if strict:
-            return _ids_closed(dm.pch, w, w_ref_p, L3, vsg, vsd, 0.0)
+    def ids_p(w, vsg, vsd):
         return _ids(dm.pch, w, w_ref_p, L3, vsg, vsd, 0.0, clamps)
 
-    def residuals(z, w1, w3, w5, vb5, strict=False):
+    def residuals(z, w1, w3, w5, vb5):
         vt, vm, vo = z
         vgs = vicm - vt
-        i1 = ids_n(w1, vgs, vm - vt, vt, strict)
-        i2 = ids_n(w1, vgs, vo - vt, vt, strict)
-        i3 = ids_p(w3, vdd - vm, vdd - vm, strict)
-        i4 = ids_p(w3, vdd - vm, vdd - vo, strict)
-        if strict:
-            i5 = _ids_closed(dm.nch, w5, w_ref_n, L5, vb5, vt, 0.0)
-        else:
-            i5 = _ids(dm.nch, w5, w_ref_n, L5, vb5, vt, 0.0, clamps)
+        i1 = ids_n(w1, vgs, vm - vt, vt)
+        i2 = ids_n(w1, vgs, vo - vt, vt)
+        i3 = ids_p(w3, vdd - vm, vdd - vm)
+        i4 = ids_p(w3, vdd - vm, vdd - vo)
+        i5 = _ids(dm.nch, w5, w_ref_n, L5, vb5, vt, 0.0, clamps)
         return np.array([i1 + i2 - i5, i1 - i3, i4 - i2])
 
     # ---- sizing helpers (same rules as ideal mode for W1/W3) -------------
@@ -626,19 +641,39 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
             f"outer iterations (final width rel change {w_rel:.3g}, "
             f"bias change {dvb:.3g} V)")
 
-    # ---- final verification: FIXED returned device, strict domain ---------
-    r_final = residuals(z, w1, w3, w5, vb5, strict=True)
-    kcl_max = float(np.max(np.abs(r_final)))
-    if kcl_max > FINITE_TOLERANCES["kcl_acceptance_a"]:
-        raise DCConvergenceError(
-            f"KCL residual after finite sizing loop: {kcl_max:.3g} A")
-
+    # ---- final verification: FIXED returned device, canonical domain ------
+    # (F1-R1) One canonical coordinate set feeds the acceptance KCL
+    # recomputation AND every returned device point, so the accepted
+    # evaluation and the returned evidence are the same evaluation by
+    # construction. Genuine out-of-grid coordinates raise; only ULP-scale
+    # representation excursions are snapped, and every snap is recorded.
     vt, vm, vo = (float(v) for v in z)
     for nm, val in (("Vtail", vt), ("Vmirror", vm), ("Vout", vo),
                     ("Vbias_tail", vb5)):
         if not 0.0 < val < vdd:
             raise DCConvergenceError(f"{nm}={val:.6g} V outside (0, VDD)")
-    _verify_in_domain_finite(dm, L1, L3, L5, vicm, vdd, vt, vm, vo, vb5)
+
+    snaps: list[dict] = []
+
+    def canon(val, grid, name):
+        before = float(val)
+        q = _canonical_coord(val, grid, name)
+        if q != before:
+            snaps.append({"axis": name, "requested": before, "canonical": q})
+        return q
+
+    L1c = canon(L1, dm.nch.L, "L")
+    vg1 = canon(vicm - vt, dm.nch.VGS, "VGS")
+    vsb1 = canon(vt, dm.nch.VSB, "VSB")
+    vd1 = canon(vm - vt, dm.nch.VDS, "VDS")
+    vd2 = canon(vo - vt, dm.nch.VDS, "VDS")
+    L3c = canon(L3, dm.pch.L, "L")
+    vg3 = canon(vdd - vm, dm.pch.VGS, "VGS")
+    vd3 = canon(vdd - vm, dm.pch.VDS, "VDS")
+    vd4 = canon(vdd - vo, dm.pch.VDS, "VDS")
+    L5c = canon(L5, dm.nch.L, "L")
+    vg5 = canon(vb5, dm.nch.VGS, "VGS")
+    vd5 = canon(vt, dm.nch.VDS, "VDS")
 
     # Hard width limits bind on the FINAL geometry only (A2: an excessive
     # intermediate W5 is diagnostic, not proof of impossibility).
@@ -650,24 +685,44 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
                 f"final {nm}={wv * 1e6:.1f} um outside hard limit "
                 f"{lim * 1e6:.1f} um")
 
-    # ---- per-device operating points at the accepted point ----------------
-    vgs1 = vicm - vt
-    vds1, vds2 = vm - vt, vo - vt
-    vsb1 = vt
-    vsg34 = vdd - vm
-    vsd3, vsd4 = vsg34, vdd - vo
+    # Returned device points at the canonical coordinates; acceptance KCL is
+    # recomputed FROM these points (F1-R1), and every point is validated for
+    # finite, physical mandatory data before acceptance (F1-R3).
+    points = {
+        "M1": _point(dm.nch, w1, w_ref_n, L1c, vg1, vd1, vsb1, gmid1),
+        "M2": _point(dm.nch, w1, w_ref_n, L1c, vg1, vd2, vsb1, gmid1),
+        "M3": _point(dm.pch, w3, w_ref_p, L3c, vg3, vd3, 0.0, gmid3),
+        "M4": _point(dm.pch, w3, w_ref_p, L3c, vg3, vd4, 0.0, gmid3),
+        "M5": _point(dm.nch, w5, w_ref_n, L5c, vg5, vd5, 0.0, gmid5),
+    }
+    for name, point in points.items():
+        _validate_point_finite(name, point)
 
-    m5 = _point(dm.nch, w5, w_ref_n, L5, vb5, vt, 0.0, gmid5)
-    if not (np.isfinite(m5["ID"]) and m5["ID"] > 0.0):
-        raise DCConvergenceError("M5 returned current not positive/finite")
-    # Forward-ratio evidence (A2): gm/ID from the returned gm and ID, NOT
-    # the interpolated gmid table value, which is recorded under its own
-    # name (interpolating a ratio is not the ratio of interpolated values).
+    i1, i2 = points["M1"]["ID"], points["M2"]["ID"]
+    i3, i4 = points["M3"]["ID"], points["M4"]["ID"]
+    i5 = points["M5"]["ID"]
+    r_final = np.array([i1 + i2 - i5, i1 - i3, i4 - i2])
+    if not np.isfinite(r_final).all():
+        raise DCConvergenceError("nonfinite KCL residual at the final point")
+    kcl_max = float(np.max(np.abs(r_final)))
+    if kcl_max > FINITE_TOLERANCES["kcl_acceptance_a"]:
+        raise DCConvergenceError(
+            f"KCL residual after finite sizing loop: {kcl_max:.3g} A")
+
+    # Forward-ratio evidence (A2/F1-R3): gm/ID from the returned gm and ID,
+    # NOT the interpolated gmid table value, which is recorded separately
+    # under its own name. Finiteness is checked before any comparison.
+    m5 = points["M5"]
     gmid5_forward = m5["gm"] / m5["ID"]
+    if not np.isfinite(gmid5_forward):
+        raise DCConvergenceError(
+            f"forward gm/Id5 not finite (gm={m5['gm']!r}, ID={m5['ID']!r})")
     m5["gmid_table"] = m5["gmid_achieved"]
     m5["gmid_forward"] = gmid5_forward
     m5["gmid_forward_error"] = gmid5_forward - gmid5
     id5_err = abs(m5["ID"] - Itail) / Itail
+    if not np.isfinite(id5_err):
+        raise DCConvergenceError("M5 current error not finite")
     gmid5_err = abs(gmid5_forward - gmid5)
     if id5_err > FINITE_TOLERANCES["id5_rel_error"]:
         raise DCConvergenceError(
@@ -682,11 +737,8 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
         "Vtail": vt, "Vmirror": vm, "Vout": vo,
         "W1": w1, "W3": w3, "W5": w5,
         "Vbias_tail": vb5,
-        "M1": _point(dm.nch, w1, w_ref_n, L1, vgs1, vds1, vsb1, gmid1),
-        "M2": _point(dm.nch, w1, w_ref_n, L1, vgs1, vds2, vsb1, gmid1),
-        "M3": _point(dm.pch, w3, w_ref_p, L3, vsg34, vsd3, 0.0, gmid3),
-        "M4": _point(dm.pch, w3, w_ref_p, L3, vsg34, vsd4, 0.0, gmid3),
-        "M5": m5,
+        "M1": points["M1"], "M2": points["M2"], "M3": points["M3"],
+        "M4": points["M4"], "M5": m5,
         "kcl_residuals": {
             "tail": float(r_final[0]), "mirror": float(r_final[1]),
             "output": float(r_final[2]),
@@ -695,16 +747,21 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
         "kcl_max_over_itail": kcl_max / Itail,
         "m5_current_error_rel": float(id5_err),
         "m5_gmid_forward_error": float(gmid5_err),
-        "sat_m5": float(vt - m5["VDSAT"]),
+        "sat_m5": float(vd5 - m5["VDSAT"]),
         "convergence": {
             "outer_iterations": _outer + 1,
             "inner_newton_steps": n_newton,
             "final_width_rel_change": float(w_rel),
             "final_bias_abs_change_v": float(dvb),
-            "tolerances": dict(FINITE_TOLERANCES),
+            "tolerances": {**FINITE_TOLERANCES,
+                           "kcl_newton_target_a": float(tol)},
+            "effective_settings": {"tol": float(tol),
+                                   "max_newton": int(max_newton),
+                                   "max_outer": int(max_outer)},
         },
         "clip_diagnostics": {
             "lut_axis_clamps": {k: v for k, v in sorted(Counter(clamps).items())},
             "voltage_line_search_clips": n_vclip,
+            "coordinate_snaps": snaps,
         },
     }

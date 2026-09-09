@@ -77,16 +77,22 @@ class OTA5T:
                       currents actually balance.
 
         Raises InvalidDesignError / DomainError for designs with no consistent
-        operating point or out-of-LUT-domain parameters, and
-        NotImplementedError for every finite+solved combination - including
-        per-call ``op_point`` overrides, which previously bypassed the
-        constructor guard and returned ideal-tail results for a finite-tail
-        object (closed in Phase F1; public finite evaluation opens only at
-        the F2 integration gate - see docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md).
+        operating point or out-of-LUT-domain parameters, ValueError for an
+        invalid explicit ``op_point`` value (only None falls back to the
+        constructor mode), and NotImplementedError for every finite+solved
+        combination - including per-call ``op_point`` overrides, which
+        previously bypassed the constructor guard and returned ideal-tail
+        results for a finite-tail object (closed in Phase F1; public finite
+        evaluation opens only at the F2 integration gate - see
+        docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md).
         Callers (RL env, optimizer) treat invalid designs as invalid
         evaluations with a finite penalty.
         """
-        op_point = op_point or self.op_point
+        if op_point is None:
+            op_point = self.op_point
+        if op_point not in ("imposed", "solved"):
+            raise ValueError(
+                f"op_point must be 'imposed' or 'solved', got {op_point!r}")
         if op_point == "solved":
             if self.tail_device == "finite":
                 raise NotImplementedError(

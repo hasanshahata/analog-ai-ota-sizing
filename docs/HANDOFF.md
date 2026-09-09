@@ -266,3 +266,28 @@ then authorized the bounded F1 package, and F1 is now implemented:
 Full delivery record: `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md` execution
 log, 2026-09-09 F1 entry. F2 (finite metrics, MNA plumbing, constraints,
 minimal finite records) is not started and awaits Astra's F1 acceptance.
+
+**Update 2026-09-09 (later): F1 corrective package delivered.** Astra's gate
+review of `6b42cf6` returned CHANGES REQUIRED (F1-R1..R5, with
+reproductions). The bounded corrective package addresses all five: true
+ULP-scale coordinate canonicalization with recorded edge snaps (0.5 nm
+below the LUT length minimum now rejects; the old 1e-9 tolerance is gone);
+acceptance KCL recomputed FROM the returned device points at one canonical
+coordinate set (verified point == returned evidence); strict unique-root
+enforcement in the forward gm/Id solve (multi-crossing curves and target
+plateaus reject; no proximity selection); finite/physical validation of
+every returned M1-M5 point with finiteness checks before threshold
+comparisons; explicit `op_point` value validation (`'solvde'`/`''` raise);
+effective solver settings recorded in every kernel record; and the probe
+now self-verifies LUT hashes, records source identity, and archives full
+OP records plus per-iteration traces for successful AND failed runs in
+strict JSON. Gates: 46/46 focused, full non-real-LUT suite exit 0 (139
+baseline + 46), 3/3 real-LUT integration. Corrective evidence:
+`evaluation_results/finite_m5/f1_probe_20260909_031000/`.
+
+**Prominent (Astra, saturation):** the three successful probe cases all
+have NEGATIVE M5 saturation margins (-48.0 / -58.6 / -48.0 mV) — they are
+converged DC diagnostics, not feasible finite-OTA designs. F2's saturation
+verifier must reject them, F4 still owes evidence of physically feasible
+finite designs, and the saturation floor must not be adjusted to make
+probes pass.

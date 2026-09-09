@@ -4,8 +4,11 @@
 
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
-**Status:** F1 (solved finite DC kernel) implemented 2026-09-09 under Hassan's
-authorization and delivered for Astra gate review. F2 not started.
+**Status:** Astra reviewed F1 commit `6b42cf6` on 2026-09-09: **CHANGES
+REQUIRED**. The bounded F1 corrective package (F1-R1..R5) is now implemented
+and delivered; awaiting Astra re-review of the corrective diff. F2 remains
+closed. See the F1 gate-review entry and the corrective execution-log entry
+at the end of this document.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -1009,6 +1012,11 @@ Opus has already executed the amended plan.
 | 2026-09-09 | Astra owns design/gate review; Opus owns implementation/tests/evidence | Hassan direction, recorded by Astra | User's brain/muscles assignment |
 | 2026-09-09 | Implementation authorization: APPROVED for the bounded F1 package | Hassan | User instruction 2026-09-09: "Implementation authorization: APPROVED" |
 | 2026-09-09 | F1 delivered: finite DC kernel + 27 focused tests; gates 166/166 non-real-LUT and 3/3 real-LUT; real-LUT probe archived; submitted for Astra review | Opus | Execution log 2026-09-09; evidence under `evaluation_results/finite_m5/f1_probe_*/` |
+| 2026-09-09 | Astra F1 gate review: CHANGES REQUIRED (F1-R1..R5); F2 stays closed | Astra | Gate-review entry; reproductions in `astra_review.md` findings |
+| 2026-09-09 | F1 corrective package delivered addressing F1-R1..R5; awaiting Astra re-review | Opus | Corrective execution-log entry; evidence `f1_probe_20260909_031000` |
+| 2026-09-09 | Probe saturation margins are diagnostics only: F2's saturation verifier must reject the probe cases; no floor adjustment | Astra direction, recorded by Opus | Astra F1 gate review, saturation interpretation |
+| 2026-09-09 | F1 technical review: CHANGES REQUIRED; F2 remains closed | Astra | Independently reproduced domain/extrapolation, ambiguous-root, and nonfinite-output failures; corrections below |
+| 2026-09-09 | Accept max_outer=60 as a bounded default; reject the common 1e-9 edge tolerance and inconsistent final evaluation | Astra | Synthetic nominal requires 10 iterations; archived wide real case needs 31; domain deviation contradicts A2 and permits out-of-grid geometry |
 
 ## Execution log
 
@@ -1132,7 +1140,11 @@ Astra gate review before any F2 work.
   at 8 it stalls at width change 3.7e-6); a real TSMC wide design
   (L1=L5=0.6 um, gmid1=gmid5=12, gmid3=10, Itail=100 uA) needs 31
   (rate ~0.64, Vtail ~ 30 mV; at 20 it stalls at width 3.3e-5, bias
-  8.7e-7 V). Trajectories captured with the kernel `trace`. Not an
+  8.7e-7 V). Correction (2026-09-09, per Astra F1-R5): the trajectories
+  were observed interactively at delivery but NOT archived; they are
+  archived from the corrective package onward
+  (`f1_probe_20260909_031000`, traces for the 12/31/12-iteration
+  convergences and the 20-iteration failure). Not an
   oscillation; outer iterations past the first cost 1-3 Newton steps, so
   the raise is nearly free in wall time (worst measured full solve 0.88 s).
 - Strict final domain semantics use the repo's closed-domain definition
@@ -1198,3 +1210,276 @@ all three converge at max_outer=60).
    hard-constraint matter for F2.
 4. `astra_review.md` is still untracked in the working tree (Astra's
    artifact; left for its author to commit).
+
+### 2026-09-09 - Astra F1 gate review of commit 6b42cf6
+
+**Decision: CHANGES REQUIRED. F2 must not start yet.** This is a technical
+review of the delivered package, not a request to restart the implementation.
+Retain the sound parts and deliver a bounded F1 corrective commit.
+
+**Independently verified**
+
+- Reviewed actual commit `6b42cf60d5daaa19eb347fe1551f3c3e082b4e4c`, the focused
+  tests, probe script, and both archived real-LUT probe JSON files.
+- Reran the full non-real-LUT suite: **166 passed**, exit 0. Reran real-LUT
+  integration: **3 passed**, exit 0. The two dependency deprecation warnings
+  remain non-failing. No new real finite probe or Cadence campaign was run.
+- Compared parsed definitions against `f9798cd`: all pre-existing functions
+  and classes in `dc_solver.py` are unchanged. The new seven-entry bounds,
+  frozen inner geometry/bias, and explicit finite+solved override rejection
+  implement the intended direction.
+- Reproduced synthetic nominal failure at max_outer=8 (width change
+  3.72155e-6, bias change 1.99485e-7 V), followed by convergence in 10 outer
+  iterations with the default 60. The last width changes contract by about
+  0.198 per iteration. The archived real wide case fails at 20 and converges
+  at 31. **The 60-iteration bound is accepted**; acceleration is not an F1
+  requirement. Do not generalize the measured subsecond runtime to all inputs.
+
+#### F1-R1 - P1: domain handling violates the finite contract
+
+**Locations:** `dc_solver.py::_ids_closed`, `_forward_gmid_vgs`, the final
+`_point` calls, and `_DOMAIN_EDGE_TOL` (reviewed line 265).
+
+The constant is **1e-9 in every axis**, including meters. It is not a one-ULP
+representation allowance. A 0.5 nm out-of-grid length is many orders of
+magnitude larger than floating-point spacing at that length. A2 explicitly
+prohibits copying the historical common length/voltage tolerance.
+
+Reproduced with the repository synthetic LUT and the nominal seven-vector,
+changing only L5 to **179.5 nm** while the LUT minimum is **180 nm**:
+
+- The kernel returns successfully and reports the out-of-grid L5.
+- The reported tail residual is `3.6211808856e-10 A`.
+- Tail KCL recomputed from returned device IDs is `-3.1416074576e-12 A`.
+- Clip diagnostics are empty.
+
+The discrepancy has a direct source explanation: final residuals use snapped
+`_ids_closed` coordinates, whereas forward-bias lookups and returned `_point`
+data use raw coordinates accepted by the permissive legacy LUT checker. Those
+lookups can extrapolate. Thus the final verified point and returned evidence
+are not the same evaluation, and the claim that nothing ever extrapolates is
+incorrect.
+
+**Required correction:** introduce finite-specific coordinate validation with
+at most a small, justified floating-point representation allowance per axis;
+reject genuinely out-of-grid geometry. Handle a legal endpoint consistently
+across bias lookup, final currents, and all returned device parameters. Keep
+the requested design distinct from any canonicalized evaluation coordinates
+and record any permitted snap. Recompute acceptance KCL from the same device
+points that are returned. Preserve legacy ideal LUT behavior.
+
+**Required tests:** legal endpoints including VSB=0; `nextafter` cases on both
+sides of relevant voltage/length endpoints; 0.5 nm below the length minimum
+must reject; no forward or final lookup outside the validated domain;
+returned-current KCL agrees with reported KCL to floating-point accuracy.
+
+#### F1-R2 - P1: ambiguous forward gm/ID roots are accepted
+
+**Location:** `dc_solver.py::_forward_gmid_vgs`, reviewed lines 364-389.
+
+Multiple brackets are sorted by distance from the reverse-lookup estimate and
+the first is selected. Multiple exact hits return the first hit immediately.
+This contradicts A2 and the delivery claim that ambiguous roots are rejected.
+
+Reproduced using the existing `_FakeLUT` interface with constant positive
+current and a consistent gm/current/table curve on its VGS grid:
+
+```text
+ratio = [12, 10.005, 9.995, 10.005, 9, 8, 7, 6,
+         5, 4, 3.8, 3.6, 3.4, 3.2, 3, 2.8]
+target = 10
+```
+
+This curve passes the allowed small-wiggle check but has three target
+crossings. The helper returns **VGS=0.525 V**. A curve containing a target
+plateau `[12, 10, 10, 9, ...]` also returns a gate voltage instead of rejecting
+the nonunique solution. The current exact-sizing test relies on an entirely
+flat target curve, so it currently endorses that ambiguity.
+
+**Required correction:** establish one unique, valid decreasing-branch root
+before solving/returning. Count exact hits, intervals, and plateaus together,
+deduplicating a single grid-node root shared by adjacent intervals. Reject
+multiple roots and flat target intervals rather than choosing one by proximity.
+Replace the flat-ratio exact-sizing fixture with a unique-root fixture.
+
+**Required tests:** multiple crossings with a valid reverse estimate; repeated
+exact roots; target plateau; unique endpoint root; unique interior root;
+unbracketed root. These tests must not simply mirror the current selection rule.
+
+#### F1-R3 - P1: successful records can contain nonfinite operating-point data
+
+**Location:** final verification and per-device `_point` construction in
+`solve_operating_point_finite`, reviewed lines 629-694.
+
+The finite checks largely cover residuals during iteration and M5 current.
+They do not validate the complete returned device data. Reproduced by wrapping
+the synthetic PMOS LUT's `lookup('gm', ...)` to return NaN while leaving its
+current and gm/Id table unchanged: the kernel returns successfully with
+**M3.gm=NaN and M4.gm=NaN**. Its existing nonfinite-current test does not cover
+this failure. Comparisons of the form `error > tolerance` also do not reject
+NaN without an explicit finiteness check.
+
+**Required correction:** construct and validate all returned device points
+before acceptance. Require finite mandatory currents, gm/gds/VDSAT, geometry,
+voltages, errors, and residuals; require appropriate positive current/geometry.
+Optional absent data may have an explicit unavailable policy, but present NaN
+data must not masquerade as a successful OP. Check finiteness before threshold
+comparisons. Apply this only to the finite path.
+
+**Required tests:** isolated nonfinite gm, gds, and VDSAT; nonfinite M5 error;
+final-only nonfinite data; actual singular and ill-conditioned Jacobian guards.
+The last two Jacobian cases were required in F1 but have no explicit focused
+tests in the delivered file. A headroom/convergence failure is not equivalent
+coverage.
+
+#### F1-R4 - P2: invalid per-call mode values still silently fall back
+
+**Location:** `analog_ai/circuit/ota5t.py::evaluate`, reviewed line 89.
+
+The finite+solved bypass is fixed, but `op_point='solvde'` still returns imposed
+results, and `op_point=''` is treated as an omitted override. Reproduced on an
+ideal/solved object. A3 requires validation of explicit overrides, not only
+the supported finite+solved combination.
+
+**Required correction:** distinguish `None` from an explicit override and
+validate the effective value against the supported modes before dispatch.
+Test invalid strings and empty strings while preserving all valid ideal calls
+and the finite+solved prohibition.
+
+#### F1-R5 - P2: effective numerical settings and trajectories are not archived
+
+**Locations:** kernel convergence metadata; `scripts/probe_finite_kernel.py`;
+both `f1_probe_*` JSON files.
+
+The kernel reports the constant tolerance dictionary even when `tol` is
+overridden. Reproduced: a call with `tol=5e-13` records `1e-12`. Maximum inner
+and outer budgets are not included in the returned configuration. The probe
+copies expected LUT manifest values without verifying hashes itself, omits
+source revision/hash and full device records, and never passes or archives
+`trace`. Neither committed JSON contains the trajectories claimed in the
+delivery. The pre-change wide error and post-change count support the budget
+increase, but the detailed reproducibility claim needs correction.
+
+**Required correction:** validate and record effective tol/iteration budgets;
+give the probe explicit budget arguments; hash the loaded LUT files before
+loading or reference a verifiable check; record source identity, full kernel
+OP, and traces for both successful and failed comparison runs. Development
+records can have a distinct noncanonical schema without borrowing a production
+finite-oracle identity. Reproduce the before/after runs without source edits,
+and use strict JSON. Correct the historical log wording if a claimed artifact
+was only observed interactively and not saved.
+
+#### Interpretation of the real-device evidence
+
+All three successful archived cases have **negative M5 saturation margins**:
+
+| Case | Archived sat_m5 |
+|---|---:|
+| nominal_50uA | -48.043 mV |
+| wide_100uA | -58.598 mV |
+| boundary_10uA | -48.043 mV |
+
+These are converged DC points, not feasible finite-OTA designs. Returning them
+for F1 diagnostics is consistent with separating convergence from saturation
+acceptance. This is **not an additional F1 blocker**. Make it prominent in the
+handoff: F2's saturation verifier must reject these cases, and F4 still owes
+evidence of physically feasible finite designs. Do not adjust the saturation
+floor to make these probes pass.
+
+#### Next Opus delivery
+
+Deliver one bounded F1 corrective package addressing F1-R1 through F1-R5,
+with the specified regression cases and updated development evidence. Keep
+public finite evaluation closed and leave F2 metrics/MNA work for the next
+package. Rerun focused tests, the complete non-real-LUT suite, and real-LUT
+integration after the corrections. Astra will review the actual diff and
+artifacts; passing the old 169 tests alone does not close the findings.
+
+This review changed only this plan. It did not implement fixes, run F2, commit,
+or push; the pre-existing untracked `astra_review.md` was left unchanged.
+
+### 2026-09-09 - F1 corrective package delivered (addresses F1-R1..R5)
+
+One bounded corrective commit addressing Astra's F1 gate review; public
+finite evaluation stays closed; F2 not started.
+
+**F1-R1 (domain handling).** `_canonical_coord` replaces the rejected 1e-9
+tolerance scheme: coordinates strictly inside the grid pass through; an
+outside value is accepted only within TWO ULPs of the violated edge (a
+single subtraction of grid-edge-scale operands can miss an edge by that
+much - the float-representation allowance Astra asked for), snapped to the
+edge, and recorded in `clip_diagnostics.coordinate_snaps` (axis, requested,
+canonical). Anything further - including Astra's 0.5 nm-below-180 nm
+reproduction - raises DomainError. One canonical coordinate set now feeds
+the acceptance KCL AND every returned device point: all twelve device
+coordinates are canonicalized, M1-M5 points are built from them, each point
+is validated, and the acceptance residuals are recomputed FROM the returned
+IDs - the verified point and the returned evidence are one evaluation by
+construction. `_forward_gmid_vgs` canonicalizes L/VDS/VSB before every
+lookup, so bias derivation can no longer extrapolate. Legacy ideal LUT
+behavior untouched.
+
+**F1-R2 (ambiguous roots).** The reverse-estimate proximity selection is
+removed entirely. Exact grid-node hits and strict sign-change intervals are
+counted together (a node root shared by adjacent intervals counts once
+because strict products exclude zero endpoints); zero roots raise as
+unbracketed; more than one root - including a two-node target plateau -
+raises as ambiguous. Astra's three-crossing curve and the `[12, 10, 10, 9,
+...]` plateau now reject; unique endpoint and unique interior roots are
+solved exactly.
+
+**F1-R3 (nonfinite returned data, Jacobian guards).** New
+`_validate_point_finite` validates every returned M1-M5 point (finite
+W/L/VGS/VDS/VSB/ID/gm/gds/VDSAT plus optional keys when present; positive
+W/L/ID) before acceptance, and every M5 acceptance comparison is preceded
+by an explicit finiteness check (NaN can no longer pass a `> tol`
+comparison). The missing explicit Jacobian tests were added: a true
+singular case (VGS-only currents make R3 the exact negative of R2; a
+VDS-dependent table gain prevents the zero-residual shortcut) reports
+"singular KCL Jacobian"; a near-dependent variant reports
+ill-conditioned-or-singular.
+
+**F1-R4 (mode validation).** `OTA5T.evaluate` distinguishes None
+(constructor mode) from an explicit override and validates the effective
+value against {imposed, solved} before dispatch: `'solvde'` and `''` now
+raise ValueError instead of silently falling back to imposed. All valid
+calls preserved.
+
+**F1-R5 (recordation).** The kernel records effective settings:
+`convergence.tolerances` reflects the ACTUAL `tol`, and
+`convergence.effective_settings` carries {tol, max_newton, max_outer}.
+`scripts/probe_finite_kernel.py` rewritten: explicit budget arguments
+(`--max-outer/--max-newton/--tol`); streaming sha256 self-verification of
+both LUT files against `configs/lut_manifest.json` (abort on mismatch);
+source identity (git commit, dirty state, python); full kernel OP records;
+archived per-iteration traces for successful AND failed runs; a
+before/after comparison run (wide design at max_outer=20 and at the
+default) inside ONE invocation with no source edits; strict JSON
+(`allow_nan=False`). Verified evidence:
+`evaluation_results/finite_m5/f1_probe_20260909_031000/` - hashes verified;
+nominal 12 outer iterations / 0.41 s, wide 31 / 0.82 s, boundary 12 /
+0.37 s, zero coordinate snaps; the comparison run fails at budget 20 with
+20 archived trace rows. The interactive convergence-rate claims of the
+original entry (10 synthetic / 31 real wide) are unchanged and now
+reproducible from the archived traces.
+
+**Tests.** Focused file grew 27 -> 46 tests: nextafter both-side
+canonicalization, absolute-excursion rejection (including Astra's 0.5 nm
+case at kernel level), snap recording with canonical returned evidence,
+bitwise KCL-from-returned-points identity, the six R2 root-uniqueness
+cases, nonfinite gm/gds/VDSAT returned-data rejection including final-only
+M5 poisoning, singular + ill-conditioned Jacobian guards, invalid/empty
+op_point rejection, and effective-settings recordation. The flat-ratio
+exact-sizing fixture - which had endorsed the old ambiguity selection - was
+replaced by a unique-root fixture.
+
+**Gates.** Focused 46/46; complete non-real-LUT suite exit 0 (139 baseline
++ 46); real-LUT integration 3/3 exit 0.
+
+**Saturation interpretation recorded (Astra, non-blocking).** All archived
+successful probe cases carry NEGATIVE M5 saturation margins (nominal
+-48.0 mV, wide -58.6 mV, boundary -48.0 mV): they are converged DC points,
+NOT feasible finite-OTA designs. F2's saturation verifier must reject these
+cases, F4 still owes evidence of physically feasible finite designs, and
+the saturation floor must not be adjusted to make probes pass. Flagged
+prominently in HANDOFF.
