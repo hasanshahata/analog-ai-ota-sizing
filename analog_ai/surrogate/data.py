@@ -132,5 +132,11 @@ def build_split(requests: list[dict], designs: dict, split: str,
 
 
 def design_matrix(design_rows: list[dict]) -> np.ndarray:
+    for row in design_rows:
+        if (row.get("tail_device") == "finite" or
+                "finite" in str(row.get("schema_version", "")) or
+                "L5" in row or "gmid5" in row):
+            raise ValueError(
+                "five-output surrogate data cannot consume finite seven-field designs")
     return np.array([[float(r[t]) for t in TARGETS] for r in design_rows],
                     dtype=np.float64)

@@ -23,6 +23,12 @@ from .model import ProposalNet
 OP_POINT = "solved"
 
 
+def _require_ideal_ota(ota) -> None:
+    if getattr(ota, "tail_device", "ideal") != "ideal":
+        raise ValueError(
+            "current surrogate inference supports ideal-tail engines only")
+
+
 def spec_to_features(specs: dict) -> np.ndarray:
     row = {"req_Gain_min": specs.get("Gain_min", 20.0),
            "req_GBW_min": specs.get("GBW_min", 50e6),
@@ -58,6 +64,7 @@ def _verify(ota, design, specs) -> dict:
     """Evaluate one candidate under the FULL request: verdict + residuals
     come from the canonical hard verifier (via the stored-row path), metrics
     stay flat on the returned row."""
+    _require_ideal_ota(ota)
     drow = evaluate_design_row(ota, design, float(specs.get("CL_pF", 1.0)),
                                "surrogate", "eval", OP_POINT, "eval")
     if not drow["valid"]:
@@ -74,6 +81,7 @@ def _verify(ota, design, specs) -> dict:
 def eval_request(ota, model: ProposalNet, specs: dict,
                  feat_lo, feat_hi, device: str = "cpu") -> dict:
     """Propose K designs, verify all, pick by (pass, then min violation)."""
+    _require_ideal_ota(ota)
     designs = propose(model, specs, feat_lo, feat_hi, device)
     recs = [_verify(ota, d, specs) for d in designs]
 
@@ -120,6 +128,7 @@ def constant_design() -> np.ndarray:
 def refine(ota, specs: dict, seed: int = 0, maxiter: int = 20,
            popsize: int = 15) -> dict:
     """DE fallback on the same request (canonical Phase 4 objective)."""
+    _require_ideal_ota(ota)
     rec = optimize_specs(ota, specs, seed=seed, maxiter=maxiter,
                          popsize=popsize, n_starts=1)
     return {"passed": bool(rec["verdict"]),
@@ -135,6 +144,7 @@ def select_champion(ota, ckpt_paths: list[str], requests: list[dict],
                     seed: int = 0) -> dict:
     """Pick the seed with the best verified best-of-K pass rate on a fixed
     validation subsample (the plan requires verified selection, not loss)."""
+    _require_ideal_ota(ota)
     from .train import load_checkpoint
     rng = np.random.default_rng([seed, 11])
     val_rows = [r for r in requests if r["split"] == "val"
@@ -167,6 +177,7 @@ def goal_sensitivity(ota, model: ProposalNet, specs: dict,
                      device: str = "cpu") -> dict:
     """Sweep each request dimension across its normalized range with the
     others fixed (G4): report movement, physical trend, verified verdicts."""
+    _require_ideal_ota(ota)
     base = spec_to_features(specs)
     out = {}
     for j, name in enumerate(sdata.FEATURES):
@@ -221,6 +232,7 @@ def eval_request_staged(ota, model, specs: dict, feat_lo, feat_hi,
     global_fallback_verified -> unresolved. Each stage's oracle cost and
     provenance are recorded; the verifier alone decides every pass.
     """
+    _require_ideal_ota(ota)
     designs = propose(model, specs, feat_lo, feat_hi, device)
     rows = [_verify(ota, d, specs) for d in designs]
 

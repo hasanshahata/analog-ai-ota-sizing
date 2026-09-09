@@ -46,9 +46,15 @@ class OTA5tSizingEnv(gym.Env):
     def __init__(self, ota: OTA5T, bounds=None, max_steps: int = 200,
                  one_shot: bool = False, target_sampler=None):
         super().__init__()
+        if getattr(ota, "tail_device", "ideal") != "ideal":
+            raise ValueError(
+                "OTA5tSizingEnv is a five-output ideal-tail environment; "
+                "finite-tail engines are unsupported")
         self.ota = ota
         self.bounds = np.array(bounds if bounds is not None else config.DESIGN_BOUNDS,
                                dtype=float)
+        if self.bounds.shape != (5, 2):
+            raise ValueError("OTA5tSizingEnv requires exactly five design bounds")
         self.max_steps = 1 if one_shot else max_steps
         self.one_shot = one_shot
         self._target_sampler = target_sampler

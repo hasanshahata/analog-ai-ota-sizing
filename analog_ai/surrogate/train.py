@@ -130,8 +130,14 @@ def save_checkpoint(path: str, proposal: ProposalNet, risk: RiskNet | None,
     }, path)
 
 
-def load_checkpoint(path: str, device: str = "cpu") -> dict:
+def load_checkpoint(path: str, device: str = "cpu",
+                    expected_tail_device: str = "ideal") -> dict:
     ck = torch.load(path, map_location=device, weights_only=False)
+    checkpoint_mode = ck.get("meta", {}).get("tail_device", "ideal")
+    if expected_tail_device != "ideal" or checkpoint_mode != "ideal":
+        raise ValueError(
+            "current checkpoints are five-output ideal-tail models; "
+            f"checkpoint={checkpoint_mode!r}, engine={expected_tail_device!r}")
     proposal = ProposalNet(k_heads=ck["meta"]["k_heads"],
                            hidden=tuple(ck["meta"]["hidden"]))
     proposal.load_state_dict(ck["proposal_state"])

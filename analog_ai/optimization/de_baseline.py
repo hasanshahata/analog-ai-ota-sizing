@@ -22,25 +22,39 @@ from .. import config
 from ..circuit.ota5t import InvalidDesignError
 from ..devices.lut import DomainError
 from ..evaluation.constraints import evaluate_constraints
-from ..evaluation.evaluator import evaluate_design
+from ..evaluation.evaluator import (effective_constraint_limits,
+                                    evaluate_design, validate_finite_specs)
 
 
 def make_objective(ota, specs, cl):
+    finite = getattr(ota, "tail_device", "ideal") == "finite"
+    if finite:
+        specs = validate_finite_specs(specs)
+        limits, _ = effective_constraint_limits(specs)
+    else:
+        limits = None
+
     def objective(x):
         try:
             perf = ota.evaluate(x, CL=cl)
         except (InvalidDesignError, DomainError, ValueError, FloatingPointError):
             return 1e3  # finite, distinctly worse than any feasible design
-        constraints, verdict = evaluate_constraints(perf, specs)
-        violation = sum(max(0.0, c.residual) for c in constraints)
+        constraints, verdict = evaluate_constraints(perf, specs, limits=limits)
+        pos = [max(0.0, c.residual) if np.isfinite(c.residual) else 1e3
+               for c in constraints]
+        violation = sum(pos)
         secondary = perf["Power"] / config.OBS_POWER_NORM  # frugality, tiny weight
         return violation + 1e-3 * secondary
     return objective
 
 
 def optimize_specs(ota, specs, seed=0, maxiter=60, popsize=20, n_starts=2):
-    cl = float(specs.get("CL_pF", 1.0)) * 1e-12
-    objective = make_objective(ota, specs, cl)
+    finite = getattr(ota, "tail_device", "ideal") == "finite"
+    specs_n = validate_finite_specs(specs) if finite else specs
+    if n_starts < 1:
+        raise ValueError("n_starts must be at least one")
+    cl = float(specs_n.get("CL_pF", 1.0)) * 1e-12
+    objective = make_objective(ota, specs_n, cl)
     best, best_val = None, np.inf
     t0 = time.time()
     n_evals = 0
@@ -55,7 +69,9 @@ def optimize_specs(ota, specs, seed=0, maxiter=60, popsize=20, n_starts=2):
         if res.fun < best_val:
             best_val, best = float(res.fun), res.x
     runtime = time.time() - t0
-    record = evaluate_design(ota, best, specs)
+    if best is None:
+        raise RuntimeError("optimizer returned no candidate")
+    record = evaluate_design(ota, best, specs_n)
     record["baseline"] = {
         "method": "differential_evolution",
         "objective": best_val, "n_evals": int(n_evals),

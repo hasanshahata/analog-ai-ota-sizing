@@ -1,0 +1,309 @@
+{
+  "evidence_kind": "phase_f3_synthetic_export_round_trip",
+  "source_fingerprint": {
+    "analog_ai/config.py": "9431f13b85f2d32b8a98d837c8446a9be59b8d38d97345c8097e7e7baa18b061",
+    "analog_ai/circuit/ota5t.py": "aba2557b3d89cab74719edf0fabf4e89108c5c375801bb139f789abcad99d075",
+    "analog_ai/circuit/dc_solver.py": "43da3569d02e6069571f54aa899ddb60363dd00483076978fd9645572f8c15f4",
+    "analog_ai/circuit/mna.py": "6edb90bd21e4e6d79219a558a3fb7c4ffee016437fc9960c0fc461de8986f3a8",
+    "analog_ai/devices/device_model.py": "0d97bbe4b8548870350733329415d07ece28c330d3688aad42ed204b2b060e54",
+    "analog_ai/devices/lut.py": "8c7dfde8aa2eb21cdf640b7d411b03b82565130c034b7781ba2a68e8bc1e2adf",
+    "analog_ai/evaluation/constraints.py": "14ce944fb965dcece6076a8f607e08b5d732f559a3d86172f98e8280461423e6",
+    "analog_ai/evaluation/evaluator.py": "89162ad7028f5f34e21aa91404562aac3f0ff216984538c253d11857c1e8c5a1",
+    "analog_ai/utils/netlist.py": "797c2d2cdb4f7ba458e489ca0e5ab28664d84f05cad5f49e79fe37a57d424147",
+    "scripts/probe_f3_export.py": "2765abcb6de8f053b1450c8e7a266122697def725896161992b3c480bd5c7b68",
+    "tests/conftest.py": "44899477165e4abeb7f57eb230e14913490e11bfe99dbf5dbbcf23053bf95d64"
+  },
+  "request": {
+    "Gain_min": 20.0,
+    "GBW_min": 1000000.0,
+    "CL_pF": 2.5,
+    "Power_max": 0.0004
+  },
+  "finite_record": {
+    "schema_version": "analog_ai-0.2.0-finite-solved-dev",
+    "oracle_identity": {
+      "schema": "analog_ai-0.2.0-finite-solved-dev",
+      "distinct_from_ideal_oracle": "analog_ai-0.1.0-proxy"
+    },
+    "topology": "5t_ota",
+    "tail_device": "finite",
+    "op_point_mode": "solved",
+    "vdd": 1.3,
+    "vicm": 0.65,
+    "supply_context_canonical": false,
+    "request": {
+      "Gain_min": 20.0,
+      "GBW_min": 1000000.0,
+      "CL_pF": 2.5,
+      "Power_max": 0.0004
+    },
+    "external_bias_generator": "gate-bias generator excluded from power/area/noise/mismatch",
+    "capacitance_assumption": "cdd treated as the complete drain self-capacitance for grounded gate/source/body; real-pickle convention unverified (F5 device-level experiment pending)",
+    "design": {
+      "L1": 6e-07,
+      "gmid1": 15.0,
+      "L3": 6e-07,
+      "gmid3": 12.0,
+      "L5": 6e-07,
+      "gmid5": 10.0,
+      "Itail": 5e-05
+    },
+    "effective_constraints": {
+      "limits": {
+        "PM_min": 45.0,
+        "Sat_margin_min": 0.05,
+        "W_nmos_max": 0.00025,
+        "W_pmos_max": 0.00075
+      },
+      "notes": []
+    },
+    "metrics": {
+      "DC_Gain_dB": 46.991822417668594,
+      "GBW": 20426790.301463753,
+      "gbw_valid": true,
+      "PM": 86.88388448409735,
+      "Power_core": 6.499999908191512e-05,
+      "power_requested_vdd_times_itail": 6.500000000000001e-05,
+      "power_kcl_error": 1.4124383119431109e-08,
+      "SR_proxy": 20000000.000000004,
+      "min_sat_margin": -0.03743553489763296,
+      "Area": 7.428288692803502e-11,
+      "Swing": null,
+      "Swing_est": 0.8628973726707885,
+      "Vout_low_est": 0.26710262851761324,
+      "Vout_high_est": 1.1300000011884017,
+      "Vout_in_estimated_range": true,
+      "ICMR_min": null,
+      "ICMR_low_est": 0.687435534897633,
+      "ICMR_upper": null,
+      "sat_m1": 0.46289737267078856,
+      "sat_m2": 0.4628973726707971,
+      "sat_m3": 0.4,
+      "sat_m4": 0.3999999999999915,
+      "sat_m5": -0.03743553489763296
+    },
+    "devices": {
+      "M1": {
+        "W": 1.5175235622891975e-05,
+        "L": 6e-07,
+        "VGS": 0.5253566499026825,
+        "VDS": 0.6053566510910843,
+        "VDSAT": 0.1424592784202957,
+        "ID": 2.4999999532569477e-05,
+        "gm": 0.00033016708223613004,
+        "gds": 7.366224078014576e-07,
+        "VSB": 0.12464335009731753,
+        "type": "nch"
+      },
+      "M2": {
+        "W": 1.5175235622891975e-05,
+        "L": 6e-07,
+        "VGS": 0.5253566499026825,
+        "VDS": 0.6053566510910928,
+        "VDSAT": 0.1424592784202957,
+        "ID": 2.4999999532569484e-05,
+        "gm": 0.0003301670822361301,
+        "gds": 7.366224078014577e-07,
+        "VSB": 0.12464335009731753,
+        "type": "nch"
+      },
+      "M3": {
+        "W": 3.332838962255106e-05,
+        "L": 6e-07,
+        "VGS": 0.5699999988115982,
+        "VDS": 0.5699999988115982,
+        "VDSAT": 0.16999999881159822,
+        "ID": 2.4999999646890434e-05,
+        "gm": 0.0002881355911975945,
+        "gds": 7.373906100550839e-07,
+        "VSB": 0.0,
+        "type": "pch"
+      },
+      "M4": {
+        "W": 3.332838962255106e-05,
+        "L": 6e-07,
+        "VGS": 0.5699999988115982,
+        "VDS": 0.5699999988115897,
+        "VDSAT": 0.16999999881159822,
+        "ID": 2.4999999646890427e-05,
+        "gm": 0.0002881355911975943,
+        "gds": 7.373906100550839e-07,
+        "VSB": 0.0,
+        "type": "pch"
+      },
+      "M5": {
+        "W": 2.6797561055838976e-05,
+        "L": 6e-07,
+        "VGS": 0.5120788849949505,
+        "VDS": 0.12464335009731753,
+        "VDSAT": 0.1620788849949505,
+        "ID": 5e-05,
+        "gm": 0.0005,
+        "gds": 0.00015542837403077525,
+        "VSB": 0.0,
+        "type": "nch",
+        "gmid_forward": 10.0,
+        "gmid_table": 10.370222603645416,
+        "gmid_target": 10.0
+      }
+    },
+    "dc_diagnostics": {
+      "Vtail": 0.12464335009731753,
+      "Vmirror": 0.7300000011884018,
+      "Vout": 0.7300000011884104,
+      "Vbias_tail": 0.5120788849949505,
+      "ID5": 5e-05,
+      "kcl_residuals": {
+        "tail": -9.348610413898416e-13,
+        "mirror": -1.143209570791167e-13,
+        "output": 1.1432094352658954e-13
+      },
+      "m5_current_error_rel": 0.0,
+      "m5_gmid_forward_error": 0.0,
+      "m5_gmid_forward": 10.0,
+      "m5_gmid_table": 10.370222603645416,
+      "pair_current_mismatch": -1.869722069227156e-08,
+      "mirror_current_mismatch": -1.4124382951207978e-08,
+      "convergence": {
+        "outer_iterations": 8,
+        "inner_newton_steps": 15,
+        "final_width_rel_change": 5.0425824328924587e-08,
+        "final_bias_abs_change_v": 3.6157543625847666e-09,
+        "tolerances": {
+          "kcl_newton_target_a": 1e-12,
+          "kcl_acceptance_a": 1e-09,
+          "width_rel_change": 1e-06,
+          "bias_abs_change_v": 1e-08,
+          "id5_rel_error": 0.001,
+          "gmid5_abs_error_inv": 0.001
+        },
+        "effective_settings": {
+          "tol": 1e-12,
+          "max_newton": 60,
+          "max_outer": 60
+        }
+      },
+      "clip_diagnostics": {
+        "lut_axis_clamps": {},
+        "voltage_line_search_clips": 0,
+        "coordinate_snaps": []
+      }
+    },
+    "constraints": [
+      {
+        "name": "Gain_min",
+        "kind": "min",
+        "limit": 20.0,
+        "achieved": 46.991822417668594,
+        "residual": -2.6991822417668594,
+        "scale": 10.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "GBW_min",
+        "kind": "min",
+        "limit": 1000000.0,
+        "achieved": 20426790.301463753,
+        "residual": -19.426790301463754,
+        "scale": 1000000.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Power_max",
+        "kind": "max",
+        "limit": 0.0004,
+        "achieved": 6.499999908191512e-05,
+        "residual": -0.8375000022952123,
+        "scale": 0.0004,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "PM_min",
+        "kind": "min",
+        "limit": 45.0,
+        "achieved": 86.88388448409735,
+        "residual": -0.9307529885354967,
+        "scale": 45.0,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "Sat_margin_min",
+        "kind": "min",
+        "limit": 0.05,
+        "achieved": -0.03743553489763296,
+        "residual": 1.7487106979526592,
+        "scale": 0.05,
+        "passed": false,
+        "detail": ""
+      },
+      {
+        "name": "W_nmos_max",
+        "kind": "max",
+        "limit": 0.00025,
+        "achieved": 2.6797561055838976e-05,
+        "residual": -0.8928097557766441,
+        "scale": 0.00025,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "W_pmos_max",
+        "kind": "max",
+        "limit": 0.00075,
+        "achieved": 3.332838962255106e-05,
+        "residual": -0.9555621471699319,
+        "scale": 0.00075,
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "name": "L_domain",
+        "kind": "domain",
+        "limit": [
+          6e-08,
+          1.5e-06
+        ],
+        "achieved": [
+          6e-07,
+          6e-07,
+          6e-07,
+          6e-07,
+          6e-07
+        ],
+        "residual": 0.0,
+        "scale": 1.0,
+        "passed": true,
+        "detail": ""
+      }
+    ],
+    "verdict": false,
+    "warnings": [
+      "M5 out of saturation at the solved point"
+    ],
+    "ac_model": "corrected_terminal_v1"
+  },
+  "exported_netlist": "// 5T OTA sized by analog_ai\n// Exported CL = 2.5 pF, VDD = 1.3 V, VICM = 0.65000000000000002 V\n// Tail: finite NMOS M5, gate bias from the solved evaluation (Vbias_tail = 0.512079 V).\n// NOTE: exported geometry/bias are rounded to print precision -\n// serialization is checked; exported-circuit verdict is withheld.\n// analog_ai_export_meta={\"schema_version\":\"analog_ai-0.2.0-finite-solved-dev\",\"oracle_identity\":{\"schema\":\"analog_ai-0.2.0-finite-solved-dev\",\"distinct_from_ideal_oracle\":\"analog_ai-0.1.0-proxy\"},\"request\":{\"Gain_min\":20.0,\"GBW_min\":1000000.0,\"CL_pF\":2.5,\"Power_max\":0.0004},\"capacitance_assumption\":\"cdd treated as the complete drain self-capacitance for grounded gate/source/body; real-pickle convention unverified (F5 device-level experiment pending)\",\"pre_export_verdict\":false,\"serialization_verification\":\"required_after_export\",\"exported_circuit_verdict\":null}\n\nsimulator lang=spectre\nglobal 0 vdd!\n\nsubckt OTA5T (inp inm vout vbiastail)\nM1 (vmirror inp vtail 0) nch w=15.1752u l=600.0n\nM2 (vout inm vtail 0) nch w=15.1752u l=600.0n\nM3 (vmirror vmirror vdd! vdd!) pch w=33.3284u l=600.0n\nM4 (vout vmirror vdd! vdd!) pch w=33.3284u l=600.0n\nM5 (vtail vbiastail 0 0) nch w=26.7976u l=600.0n\nVtailbias (vbiastail 0) vsource dc=0.512079\nends OTA5T\n\n// Testbench\nVdd (vdd! 0) vsource dc=1.3\nVcm (vicm 0) vsource dc=0.65\nVinp (inp vicm) vsource dc=0 mag=0.5 phase=0\nVinm (inm vicm) vsource dc=0 mag=0.5 phase=180\nCL (vout 0) capacitor c=2.5p\nX1 (inp inm vout vbiastail) OTA5T\n\n// Analyses\ndcOp dc\nacSweep ac start=1 stop=10G dec=20\nsave vout vtail vmirror vdb(vout) vp(vout)\n",
+  "parsed_verification": {
+    "serialization_verified": true,
+    "exported_circuit_verdict": null,
+    "mismatches": []
+  },
+  "known_failed_diagnostic": {
+    "pre_export_verdict": false,
+    "sat_m5": -0.03743553489763296
+  },
+  "corruption": {
+    "mutation": "VDD 1.3 V -> 0.1 V",
+    "parsed_verification": {
+      "serialization_verified": false,
+      "exported_circuit_verdict": null,
+      "mismatches": [
+        "VDD"
+      ]
+    }
+  }
+}
