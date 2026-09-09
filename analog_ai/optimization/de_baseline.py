@@ -44,9 +44,10 @@ def optimize_specs(ota, specs, seed=0, maxiter=60, popsize=20, n_starts=2):
     best, best_val = None, np.inf
     t0 = time.time()
     n_evals = 0
+    bounds = config.design_bounds(getattr(ota, "tail_device", "ideal"))
     for k in range(n_starts):
         res = differential_evolution(
-            objective, config.DESIGN_BOUNDS,
+            objective, bounds,
             seed=seed + k, maxiter=maxiter, popsize=popsize,
             mutation=(0.5, 1.0), recombination=0.7, tol=1e-6, polish=True,
         )

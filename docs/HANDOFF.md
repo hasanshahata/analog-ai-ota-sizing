@@ -412,3 +412,57 @@ gates: full non-real-LUT suite exit 0, 3/3 real-LUT integration;
 regenerated archive `f2_integration_20260909_114535` (12 verified
 fingerprints, all four failure-path examples). Awaiting Astra's final F2
 acceptance; public finite guards remain closed.
+
+**Update 2026-09-09 (Astra final F2 acceptance at `e0accfe`): F2 development
+integration ACCEPTED; all F2-R1..R5 findings and boundary follow-ups closed.**
+Independently rerun: 270 non-real-LUT tests and 3 real-LUT integration tests
+passed. Both remaining boundary reproductions now return strict-JSON invalid
+records before device work. All 12 hashes in `f2_integration_20260909_114535`
+match delivered source. The solver function bodies and legacy AC are unchanged;
+the narrow overflow guard in the finite design validator is accepted.
+
+**Next work: Opus implements the bounded F3 compatibility package** under the
+[final F2 acceptance/handoff](PHASE_F_FINITE_M5_EXECUTION_PLAN.md#2026-09-09---astra-final-f2-acceptance-at-e0accfe).
+Public guards remain in this revision. Their removal is authorized together
+with safe mode-aware record routing, seven-parameter contract/normalization,
+finite netlist round trip, and explicit rejection by ideal-only consumers.
+The current generic `evaluate_design` still uses five fields and the old
+oracle identity; do not expose that path by removing only the OTA guard.
+
+F1 remains accepted. Keep the 50 mV floor and historical ideal behavior.
+Real capacitance provenance and physical AC validation remain open for F5;
+negative-margin diagnostics are not feasible designs. F4/F5 campaigns, web
+deployment, dataset regeneration, and retraining are not released by this gate.
+
+**Update 2026-09-09 (F3 delivered): compatibility package implemented,
+awaiting Astra review.** Dispatch and records activated TOGETHER per the
+F2 acceptance handoff:
+
+1. **Public dispatch:** `OTA5T(tail_device="finite", op_point="solved")`
+   is supported; `evaluate` routes finite+solved to the accepted finite
+   implementation. Invalid mode strings still reject; ideal+solved keeps
+   five-parameter arity; the finite/imposed historical path is unchanged.
+   Tested through the supported loader entry point.
+2. **Mode-aware record routing:** `evaluate_design` routes finite+solved
+   to the finite schema (`analog_ai-0.2.0-finite-solved-dev` dev identity,
+   seven mode-aware parameter names) and keeps the historical five-
+   parameter record under the frozen ideal identity otherwise; mismatched
+   design lengths raise explicitly - no truncation or padding.
+3. **Seven-parameter contract:** `config.design_bounds(tail_device)`;
+   `optimize_specs`/`local_refine` derive bounds from the object's tail
+   mode. Learning/normalization stay five-output (Phase H).
+4. **Finite netlist export:** returned M5 W/L and the SOLVED `Vbias_tail`
+   are exported (zero-volt gate source removed), effective VICM in the
+   header, rounding warning, refuse-to-export without a solved bias; round-
+   trip test verifies print-precision geometry/bias and an honestly
+   re-derived verdict.
+5. **Compatibility rejections:** dataset `evaluate_design_row` rejects
+   non-five vectors and finite+solved objects; `size_ideal_tail_ota`
+   rejects finite-tail objects; `expected_from_sizing` rejects non-ideal
+   topologies. RL stays 5-dimensional by construction; the web runtime
+   stays ideal-only.
+
+Gates: new `tests/test_f3_compatibility.py` (15 tests); 285-collected
+non-real-LUT suite exit 0; 3/3 real-LUT integration. Open for F5: real
+capacitance provenance and physical AC validation; negative-margin
+diagnostics are still not feasible designs.

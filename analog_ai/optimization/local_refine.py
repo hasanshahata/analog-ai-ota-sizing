@@ -57,8 +57,11 @@ def local_refine(ota, specs, candidates, trust_fracs=(0.02, 0.05, 0.10),
     oracle-call count and runtime; `unresolved` carries the best design and
     violation seen.
     """
-    lo = np.array([b[0] for b in config.DESIGN_BOUNDS])
-    hi = np.array([b[1] for b in config.DESIGN_BOUNDS])
+    # Mode-aware bounds (Phase F3): finite objects optimize the
+    # seven-parameter contract, ideal objects the five-parameter one.
+    bounds = config.design_bounds(getattr(ota, "tail_device", "ideal"))
+    lo = np.array([b[0] for b in bounds])
+    hi = np.array([b[1] for b in bounds])
     cl = float(specs.get("CL_pF", 1.0)) * 1e-12
     objective = make_local_objective(ota, specs, cl)
 

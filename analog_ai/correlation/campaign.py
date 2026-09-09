@@ -86,7 +86,15 @@ def expected_from_perf(perf: dict) -> dict:
 
 
 def expected_from_sizing(record: dict) -> dict:
-    """Convert a guarded sizing record into the private correlation schema."""
+    """Convert a guarded sizing record into the private correlation schema.
+    Ideal-tail only (Phase F3 compatibility): finite sizing records are
+    rejected instead of silently processed; F5 builds the finite path."""
+    if "ideal_tail" not in str(record.get("topology",
+                                          "5t_ota_ideal_tail")):
+        raise ValueError(
+            "the ideal-tail correlation collector cannot process topology "
+            f"{str(record.get('topology'))!r}; finite correlation requires "
+            "the F5 finite-M5 path")
     perf = record["lut_metrics"]
     if perf is None:
         raise ValueError("sizing record has no LUT metrics")

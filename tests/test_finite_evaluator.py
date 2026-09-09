@@ -491,11 +491,15 @@ def test_domain_rejection_produces_invalid_record(finite_ota):
     assert "LUT domain" in r["invalid_reason"]
 
 
-# ---------------------------------------------------- public surface closed --
-def test_public_finite_evaluation_still_closed(engine):
+# ---------------------------------------------------- public surface (F3) ---
+def test_public_finite_evaluation_routes_to_finite_schema(engine):
+    """F3: the public evaluate() dispatch routes finite+solved to the
+    accepted finite implementation (no NotImplementedError, no bypass)."""
     dm, _ = engine
     ota = OTA5T(dm, vdd=1.2, tail_device="finite", op_point="imposed")
-    with pytest.raises(NotImplementedError):
-        ota.evaluate(list(NOMINAL), CL=1e-12, op_point="solved")
-    with pytest.raises(NotImplementedError):
-        OTA5T(dm, vdd=1.2, tail_device="finite", op_point="solved")
+    perf = ota.evaluate(list(NOMINAL), CL=1e-12, op_point="solved")
+    assert perf["tail_device"] == "finite"
+    assert perf["devices"]["M5"]["W"] > 0.0
+    ota_direct = OTA5T(dm, vdd=1.2, tail_device="finite", op_point="solved")
+    perf2 = ota_direct.evaluate(list(NOMINAL), CL=1e-12)
+    assert perf2["Vbias_tail"] == perf["Vbias_tail"]

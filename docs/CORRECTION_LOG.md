@@ -557,14 +557,72 @@ fixes, leaving two P2 record-boundary cases. Delivered exactly those:
   `f2_integration_20260909_114535` (12 verified fingerprints, strict JSON,
   all four failure-path examples). Submitted for final F2 acceptance.
 
+## 2026-09-09 - Astra final F2 acceptance at e0accfe
+
+F2 development integration **ACCEPTED** at
+`e0accfe99721f8b5706ad879601ea78d02a919ae`. All F2 findings, including the
+two boundary follow-ups, are closed. Independently verified: 270 non-real-LUT
+tests and 3 real-LUT integration tests passed; oversized integers and invalid
+supply/common-mode settings yield strict-JSON invalid records before device
+work; all 12 source hashes in `f2_integration_20260909_114535` match.
+
+The solver and historical ideal AC function bodies are unchanged. The finite
+design validator's conversion-overflow guard is accepted. Ordinary archived
+diagnostics still fail the frozen saturation floor. Physical AC acceptance
+and real capacitance provenance remain open under A4/F5.
+
+The bounded F3 compatibility package is released to Opus, including public
+activation only together with mode-aware record routing and round-trip tests.
+The current generic evaluator remains five-field/ideal-versioned, so a bare
+guard deletion is insufficient. See the final Phase F plan handoff. No F3
+implementation, new finite probe, Cadence run, commit, or push was performed
+by Astra during this review.
+
+## 2026-09-09 — Phase F3: compatibility package (public dispatch + records together)
+
+F2 was accepted at `e0accfe`; the bounded F3 package implements the
+activation contract — dispatch and records TOGETHER, never an isolated
+guard deletion:
+
+- **Public dispatch:** `OTA5T(tail_device="finite", op_point="solved")` is
+  supported and `evaluate` routes finite+solved to the accepted finite
+  implementation; invalid mode strings still reject; ideal+solved keeps its
+  five-parameter arity; the finite/imposed historical path is unchanged.
+  Public evaluation is tested through the supported loader entry point.
+- **Mode-aware record routing:** `evaluate_design` routes finite+solved to
+  the finite schema (dev oracle identity, seven mode-aware names) and keeps
+  the historical five-parameter record under the frozen ideal identity for
+  everything else; mismatched design lengths raise explicitly — no
+  truncation, no padding.
+- **Seven-parameter contract:** `config.design_bounds(tail_device)`;
+  `optimize_specs` and `local_refine` derive bounds from the object's tail
+  mode (a finite object optimizes seven parameters and returns a finite
+  record). Learning/normalization stay five-output (Phase H).
+- **Finite netlist export:** returned M5 W/L and the SOLVED `Vbias_tail`
+  are exported (zero-volt gate source removed); effective VICM in the
+  header; rounding warning; refuse-to-export without a solved bias. Round-
+  trip test: parsed geometry/bias match at print precision and the
+  re-evaluated verdict is honestly re-derived.
+- **Compatibility rejections:** dataset `evaluate_design_row` rejects
+  non-five vectors and finite+solved objects; `size_ideal_tail_ota`
+  rejects finite-tail objects; `expected_from_sizing` rejects non-ideal
+  topologies. RL stays 5-dimensional by construction; the web runtime
+  stays ideal-only. Old evidence/models keep their original identities.
+- Gates: new `tests/test_f3_compatibility.py` (15 tests); 285-collected
+  non-real-LUT suite exit 0; real-LUT integration 3/3. Not done (separate
+  unreleased work): F4, F5 + capacitance provenance, web finite mode,
+  Phase H learning.
+
 ## Still open (updated 2026-09-09)
 
-1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; the F2
-   record-boundary follow-up is delivered; awaiting Astra's final F2
-   acceptance. Public finite evaluation remains closed until F2's
-   integrated gate passes; guard removal and later packages remain subject
-   to their own review gates. The ideal-path versioned R1 correction
-   (effective requested limits) is also still open.
+1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; F2
+   development integration accepted at `e0accfe`. The bounded F3
+   compatibility package (public dispatch + mode-aware records + netlist
+   round trip + consumer rejections) is implemented and delivered for
+   Astra F3 review. F3 acceptance and later packages (F4 feasibility, F5
+   finite correlation and capacitance provenance, web finite mode, Phase H
+   learning) still require their review gates. The ideal-path versioned
+   R1 correction (effective requested limits) remains open.
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a

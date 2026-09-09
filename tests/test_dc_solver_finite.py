@@ -672,20 +672,25 @@ def test_normal_record_is_strict_json_compliant(finite_nominal):
 
 
 # ------------------------------------------------- public surface (closed) --
-def test_public_finite_solved_calls_stay_rejected(engine):
+def test_public_finite_solved_dispatch(engine):
+    """Since the F3 compatibility package, finite+solved evaluates publicly
+    through the accepted finite implementation (dispatch, not bypass)."""
     dm, _ = engine
     x5 = [0.6e-6, 15.0, 0.6e-6, 12.0, 50e-6]
     x7 = list(NOMINAL)
-    # Constructor guard.
-    with pytest.raises(NotImplementedError):
-        OTA5T(dm, vdd=VDD, tail_device="finite", op_point="solved")
-    # Per-call override bypass (closed in F1): a finite/imposed object must
-    # never receive ideal-tail solved results.
+    # Constructor combination is now supported.
+    ota = OTA5T(dm, vdd=VDD, tail_device="finite", op_point="solved")
+    perf = ota.evaluate(x7, CL=1e-12)
+    assert perf["tail_device"] == "finite"
+    assert perf["op_point_mode"] == "solved"
+    assert perf["ac_model"] == "corrected_terminal_v1"
+    assert perf["devices"]["M5"]["W"] > 0.0
+    # Per-call override still routes correctly in both directions.
     fin_imp = OTA5T(dm, vdd=VDD, tail_device="finite", op_point="imposed")
-    with pytest.raises(NotImplementedError):
-        fin_imp.evaluate(x5, CL=1e-12, op_point="solved")
-    with pytest.raises(NotImplementedError):
-        fin_imp.evaluate(x7, CL=1e-12, op_point="solved")
+    with pytest.raises(InvalidDesignError):
+        fin_imp.evaluate(x5, CL=1e-12, op_point="solved")  # arity: 5 != 7
+    perf_override = fin_imp.evaluate(x7, CL=1e-12, op_point="solved")
+    assert perf_override["Vbias_tail"] == perf["Vbias_tail"]
     # invalid per-call mode values raise before any dispatch (F1-R4)
     with pytest.raises(ValueError):
         fin_imp.evaluate(x5, CL=1e-12, op_point="")

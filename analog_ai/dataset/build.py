@@ -43,7 +43,21 @@ LABELS = ("feasible", "near_boundary", "beyond_sample_envelope",
 # ------------------------------------------------------------ designs ----
 def evaluate_design_row(ota, x, cl_pf: float, source: str, row_id: str,
                         op_point: str, build_id: str) -> dict:
-    """Evaluate one (design, CL) pair into a flat design row. Never raises."""
+    """Evaluate one (design, CL) pair into a flat design row. Never raises
+    for invalid DESIGNS; unsupported MODES raise explicitly (Phase F3
+    compatibility): the five-parameter dataset path cannot truncate finite
+    designs or route them through the historical ideal record."""
+    if len(x) != 5:
+        raise ValueError(
+            "the ideal-tail dataset path serializes exactly five design "
+            f"parameters, got {len(x)}; finite designs belong to the finite "
+            "schema (Phase F) and are not dataset-compatible until Phase H")
+    if (getattr(ota, "tail_device", "ideal") == "finite"
+            and getattr(ota, "op_point", "imposed") == "solved"):
+        raise ValueError(
+            "the ideal-tail dataset path cannot evaluate finite+solved "
+            "objects; use the finite record schema directly (datasets are "
+            "regenerated only in Phase H)")
     rec = evaluate_design(ota, x, {"CL_pF": float(cl_pf)})
     row = {
         "row_id": row_id, "source": source, "cl_pf": float(cl_pf),

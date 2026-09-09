@@ -34,7 +34,23 @@ def export_netlist(perf: dict, cl: float, vdd: float = config.VDD,
 
     lines = [
         "// 5T OTA sized by analog_ai (proxy-verified design, see docs/DESIGN_CONTRACT.md)",
-        f"// Exported CL = {cl*1e12:.4g} pF, VDD = {vdd:.3g} V",
+        f"// Exported CL = {cl*1e12:.4g} pF, VDD = {vdd:.3g} V, VICM = {vicm:.4g} V",
+    ]
+    if finite_m5:
+        # F3: export the ACTUAL finite circuit - the returned M5 geometry
+        # and the SOLVED gate bias (the historical zero-volt gate source was
+        # not a verifiable circuit).
+        if not perf.get("Vbias_tail"):
+            raise ValueError(
+                "finite netlist export requires a solved Vbias_tail; the "
+                "imposed operating point does not produce one")
+        lines += [
+            f"// Tail: finite NMOS M5, gate bias from the solved evaluation "
+            f"(Vbias_tail = {perf['Vbias_tail']:.6f} V).",
+            "// NOTE: exported geometry/bias are rounded to print precision -",
+            "// re-verify the imported design before relying on any verdict.",
+        ]
+    lines += [
         "",
         "simulator lang=spectre",
         "global 0 vdd!",
@@ -53,7 +69,7 @@ def export_netlist(perf: dict, cl: float, vdd: float = config.VDD,
     lines.append(f"M4 (vout vmirror vdd! vdd!) pch w={m3['W']*1e6:.4f}u l={m3['L']*1e9:.1f}n")
     if finite_m5:
         lines.append(f"M5 (vtail vbiastail 0 0) nch w={m5['W']*1e6:.4f}u l={m5['L']*1e9:.1f}n")
-        lines.append("Vtailbias (vbiastail 0) vsource dc=0")
+        lines.append(f"Vtailbias (vbiastail 0) vsource dc={perf['Vbias_tail']:.6f}")
     else:
         # Ideal tail: bias the tail node directly at the proxy's operating point.
         lines.append(f"Vtailbias (vtail 0) vsource dc={perf['Vtail']:.4f}")

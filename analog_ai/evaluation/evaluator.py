@@ -22,9 +22,26 @@ from .constraints import evaluate_constraints
 def evaluate_design(ota: OTA5T, design, specs: dict) -> dict:
     """Evaluate one design against one request and return a full record.
 
-    Never raises for invalid designs: they produce `verdict=False` with an
-    `invalid_reason`, so batch evaluation cannot crash on a single bad design.
+    Mode-aware routing (Phase F3): finite+solved objects route to the
+    finite schema (:func:`evaluate_design_finite` - seven mode-aware
+    parameter names, distinct development oracle identity); every other
+    combination keeps the historical five-parameter record under the
+    frozen ideal oracle identity. Design vectors whose length does not
+    match the routed mode raise explicitly - never truncate or pad.
+
+    Invalid DESIGNS never raise: they produce `verdict=False` with an
+    `invalid_reason`, so batch evaluation cannot crash on a single bad
+    design.
     """
+    tail = getattr(ota, "tail_device", "ideal")
+    op = getattr(ota, "op_point", "imposed")
+    if tail == "finite" and op == "solved":
+        return evaluate_design_finite(ota, design, specs)
+    if len(design) != 5:
+        raise ValueError(
+            "the historical record path serializes exactly five ideal-tail "
+            f"parameters, got {len(design)}; finite designs require "
+            "tail_device='finite' with op_point='solved' (finite schema)")
     record = {
         "request": dict(specs),
         "design": {name: float(v) for name, v in zip(

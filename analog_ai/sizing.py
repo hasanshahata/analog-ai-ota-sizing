@@ -33,6 +33,10 @@ def size_ideal_tail_ota(ota, model, user_specs: dict, feat_lo, feat_hi,
     ``tiered_band=True`` selects the validated v2 policy: the band depends
     on the request frequency (18% inside the 300 MHz app domain, 25% beyond).
     """
+    if getattr(ota, "tail_device", "ideal") == "finite":
+        raise ValueError(
+            "size_ideal_tail_ota sizes the ideal-tail abstraction only; "
+            "finite designs use the finite evaluator path (Phase F)")
     missing = [name for name in SPEC_KEYS if name not in user_specs]
     if missing:
         raise ValueError("user specification is missing: " + ", ".join(missing))

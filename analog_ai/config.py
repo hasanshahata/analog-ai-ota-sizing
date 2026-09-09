@@ -31,6 +31,18 @@ DESIGN_BOUNDS_7 = DESIGN_BOUNDS[:4] + (
     (5.0, 25.0),       # gmid5 NMOS tail device gm/Id          [1/V]
 ) + DESIGN_BOUNDS[4:]  # Itail shares the five-parameter bound
 
+
+def design_bounds(tail_device: str = "ideal") -> tuple:
+    """Mode-aware design bounds (Phase F3): the five-parameter bounds for
+    the ideal-tail abstraction, the seven-parameter bounds for the physical
+    finite tail. Optimizers must never mix a mode's design vector with the
+    other mode's bounds."""
+    if tail_device == "finite":
+        return DESIGN_BOUNDS_7
+    if tail_device == "ideal":
+        return DESIGN_BOUNDS
+    raise ValueError("tail_device must be 'ideal' or 'finite'")
+
 # ------------------------------------------------- hard constraint limits --
 # Defaults; a request may tighten but not silently relax them (docs/DESIGN_CONTRACT.md).
 PM_MIN_DEFAULT = 45.0          # degrees

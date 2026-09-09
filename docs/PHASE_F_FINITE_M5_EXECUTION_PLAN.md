@@ -4,13 +4,14 @@
 
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
-**Status:** **F1 ACCEPTED** at `db6db4a`; **F2 final acceptance pending**
-after Astra's re-review of `a700ae7` (F2-R1/R4/R5 accepted; original R2/R3
-reproductions fixed). The two remaining P2 record-boundary cases -
-numeric conversion overflow and nonfinite supply metadata - are now fixed
-with targeted tests and a regenerated source-bound archive. Public finite
-guards remain closed and F3 is not released. See the boundary follow-up
-entry at the end of this file.
+**Status:** **F1 ACCEPTED** at `db6db4a`; **F2 development integration
+ACCEPTED** by Astra at `e0accfe` on 2026-09-09 (all F2-R1..R5 closed). The
+bounded F3 compatibility package is now implemented: public finite/solved
+dispatch activated TOGETHER with mode-aware record routing, seven-parameter
+optimizer bounds, finite netlist export with the solved gate bias, and
+explicit rejections at the ideal-only consumers. Real capacitance
+provenance and physical AC acceptance remain open for F5. Awaiting Astra
+F3 review. See the F3 execution-log entry at the end of this file.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -21,10 +22,11 @@ tests, experiments, and evidence). Hassan owns scope and deployment decisions.
 not as an unqualified implementation specification. See also
 [`astra_review.md`](../astra_review.md).
 
-**Current authorization:** Hassan authorized F1 and assigned Astra its gate
-review. Astra has accepted F1 and released the bounded F2 implementation
-handoff to Opus. This does not release F3 or authorize web exposure, deployment,
-dataset regeneration, retraining, or changes to the frozen ideal-tail oracle.
+**Current authorization:** Hassan assigned Astra the technical gate reviews.
+F1 and F2 development integration are accepted; Astra releases the bounded F3
+contract/round-trip handoff below to Opus. This does not authorize web exposure,
+deployment, dataset regeneration, retraining, changes to the frozen ideal-tail
+oracle, or execution of the later F4/F5 campaigns.
 
 **Current production mode:** solved ideal-tail OTA remains frozen and supported
 
@@ -1028,7 +1030,10 @@ Opus has already executed the amended plan.
 | 2026-09-09 | F2 correction package delivered: junction-decomposed stamps, request validation, strict-JSON failure paths, supply context, F2 fingerprints + new archive; awaiting re-review | Opus | F2 correction entry; evidence `f2_integration_20260909_112307` |
 | 2026-09-09 | Astra corrective re-review of `a700ae7`: F2-R1/R4/R5 accepted; two P2 record-boundary items open (conversion overflow, nonfinite supply echo) | Astra | Corrective re-review entry; independent reproductions |
 | 2026-09-09 | F2 record-boundary follow-up delivered: overflow-safe numeric conversion naming the field, supply-context validation before device work with JSON-safe echoes, regenerated source-bound archive; submitted for final F2 acceptance | Opus | Boundary follow-up entry; evidence `f2_integration_20260909_114535` |
+| 2026-09-09 | Astra final F2 acceptance at `e0accfe`; bounded F3 compatibility package released | Astra | Final F2 acceptance entry |
+| 2026-09-09 | F3 implemented: public finite/solved dispatch activated together with mode-aware record routing, seven-parameter optimizer bounds, finite netlist export with solved bias, explicit ideal-only-consumer rejections; awaiting Astra F3 review | Opus | F3 execution-log entry |
 | 2026-09-09 | Astra re-review of `a700ae7`: F2-R1/R4/R5 accepted; original R2/R3 failures fixed, two P2 record-boundary cases remain; guards stay closed | Astra | Final re-review entry; 261 non-real-LUT and 3 real-LUT tests passed independently; all 12 source hashes match |
+| 2026-09-09 | F2 development integration ACCEPTED at `e0accfe`; all F2 findings closed; bounded F3 compatibility handoff released | Astra | Final F2 acceptance entry; 270 non-real-LUT and 3 real-LUT tests passed independently, 12 matching source hashes, boundary reproductions closed; physical AC gate remains open |
 | 2026-09-09 | Astra F2 review at `acfb995`: CHANGES REQUIRED (F2-R1..R5); keep public guards and F3 closed; F1 remains accepted | Astra | Independent capacitor-only, malformed-request, strict-JSON, supply-identity, and source-coverage reproductions in the final gate-review entry |
 | 2026-09-09 | F1 technical review: CHANGES REQUIRED; F2 remains closed | Astra | Independently reproduced domain/extrapolation, ambiguous-root, and nonfinite-output failures; corrections below |
 | 2026-09-09 | Accept max_outer=60 as a bounded default; reject the common 1e-9 edge tolerance and inconsistent final evaluation | Astra | Synthetic nominal requires 10 iterations; archived wide real case needs 31; domain deviation contradicts A2 and permits out-of-grid geometry |
@@ -2266,3 +2271,185 @@ the evaluator, constraints, and the F2 probe), strict JSON, and all four
 failure-path examples - range-failure, malformed power, oversized request
 integer (reason carries the offending field), and nonfinite supply (vdd
 echoed as null, reason names VDD). Earlier archives retained as history.
+
+### 2026-09-09 - Astra final F2 acceptance at e0accfe
+
+**Decision: F2 development integration ACCEPTED. All F2 review findings
+F2-R1 through F2-R5, including both remaining P2 boundary cases, are closed.**
+Reviewed revision: `e0accfe99721f8b5706ad879601ea78d02a919ae`.
+F1 remains accepted. Opus may proceed with the bounded F3 compatibility
+package under A8, with the public-activation conditions below.
+
+This is acceptance of the implemented DC/AC integration, finite constraints,
+minimal development records, and their software evidence under the declared
+lumped capacitance assumption. It is not acceptance of a physically validated
+finite OTA, real-LUT capacitance definitions, or the later feasibility and
+Cadence campaigns. A4's physical-AC stop condition remains in force.
+
+#### Independently verified evidence
+
+- Complete non-real-LUT suite: **270 passed**, exit 0. Real-LUT integration
+  suite: **3 passed**, exit 0. The finite evaluator now collects 54 cases,
+  up from 45; this follow-up adds nine parameterized cases. Existing warning
+  output is non-failing.
+- Positive and negative `Gain_min=10**400` requests now produce invalid
+  records with a field-specific representability reason. Their integer echoes
+  serialize strictly without another conversion. A sentinel device object
+  confirmed no device access.
+- Oversized integers independently injected into L1, gmid1, L5, gmid5, and
+  Itail produce invalid records, null offending design values, and strict JSON.
+  The previous escaping `OverflowError` is closed.
+- NaN/Infinity VDD, NaN/Infinity VICM, malformed supply/common-mode strings,
+  nonpositive supply, and common mode at or outside the supply endpoints all
+  reject before device access. Every independently returned record serializes
+  with `json.dumps(record, allow_nan=False)` and names the invalid setting.
+- Independent valid synthetic evaluations at 1.2/0.6 V and 1.3/0.65 V retain
+  their actual context and supply-based power. The public finite/solved
+  override still raises as expected in the reviewed revision.
+- All **12** SHA-256 entries in `source_fingerprint_f2` of
+  `f2_integration_20260909_114535/f2_integration_probe.json` match independently
+  hashed delivered source files. The archive parses as strict JSON and records
+  successful verification of both LUT hashes.
+- The archive contains both ordinary diagnostic designs plus all four required
+  failure examples: unavailable ranges, malformed power, oversized request
+  integer, and nonfinite supply. Ordinary designs still fail exactly
+  `Sat_margin_min`, with sat_m5 approximately -48.043 mV. Their provisional
+  GBWs remain 57.4899/11.6752 MHz. These are converged diagnostics, not feasible
+  designs. For all three records with device data, KCL recomputed from the
+  returned IDs exactly matches the stored residuals using the kernel's signs.
+- Function source text for `solve_operating_point_finite`, ideal
+  `solve_operating_point`, ideal `_evaluate_solved`, and legacy `solve_ac`
+  remains unchanged from `db6db4a`. To be precise, `dc_solver.py` itself did
+  change: the narrow overflow guard in `validate_finite_design` is accepted
+  as the requested input-boundary correction. No Newton, sizing, convergence,
+  tolerance, saturation-floor, or legacy AC algorithm was changed.
+
+Regression commands completed independently:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests --ignore=tests/test_integration_real_luts.py -q
+.\.venv\Scripts\python.exe -m pytest tests/test_integration_real_luts.py -q
+```
+
+No fresh real finite probe or Cadence campaign was run during this review;
+the submitted archive was verified against source and its internal evidence,
+and the real-LUT integration suite was rerun.
+
+#### Bounded F3 handoff to Opus
+
+Implement the existing F3 contract/round-trip package. The remaining public
+activation work from F2 task 9 belongs in this same compatibility delivery;
+it is authorized after this acceptance, subject to the following contract:
+
+1. **Activate dispatch and records together.** Route finite/solved constructor
+   and per-call evaluation to the accepted finite implementation. Before
+   removing guards, make the generic record entry point route finite/solved
+   calls to the finite schema, or reject them explicitly if an entry point
+   remains ideal-only. Today `evaluate_design` still uses five names and the
+   historical oracle identity; merely removing the OTA guard would expose
+   that mismatch. Test public evaluation through the supported loader and
+   record entry points, including invalid requests and seven-parameter names.
+   Preserve default ideal behavior and explicit invalid-mode rejection.
+2. **Complete the seven-parameter contract.** Make optimizer bounds and
+   normalization mode-aware; preserve L5, gmid5, Itail, solved Vbias_tail,
+   effective supply, CL, optional requests, constraints, and finite provenance
+   across the request-to-result round trip. Keep finite schema/oracle identity
+   distinct from the frozen ideal oracle and visibly provisional while its
+   physical gate is open. Do not regenerate datasets or train models.
+3. **Export the actual finite circuit.** Carry returned M5 W/L and gate bias
+   into the netlist, with the intended source/body connections and effective
+   supply/load context. Verify precision and geometry survive the round trip;
+   do not silently round a design and reuse the pre-rounding verdict.
+4. **Make compatibility explicit.** Five-output checkpoints and ideal-only
+   dataset, RL, web, or correlation consumers must reject unsupported finite
+   records/designs instead of truncating or padding. Preserve old evidence,
+   models, and ideal outputs under their original identities.
+5. **Deliver one bounded diff for Astra review.** Include public dispatch,
+   complete finite record and netlist round trips, compatibility failures,
+   strict-JSON valid/invalid examples, provenance, and applicable full
+   regression evidence. A converged-but-saturation-failing design is a valid
+   round-trip fixture if its failed verdict remains explicit. A fresh global
+   feasibility search is not needed for this compatibility gate.
+
+The public guards have not been removed by this review. Their removal must
+be implemented with the supported record path and its tests, not as an
+isolated deletion. F3 acceptance remains subject to Astra's review of the
+concrete delivery. F4 feasibility, F5 physical correlation, web deployment,
+and seven-output learning remain separate unreleased work.
+
+Plan, HANDOFF, CORRECTION_LOG, and `astra_review.md` updated for this gate.
+No implementation edits, commit, or push were performed by Astra. Earlier
+review decisions and archives are retained as history and are superseded
+by this acceptance for the reviewed F2 revision.
+
+### 2026-09-09 - F3 compatibility package implemented
+
+One bounded package per the F2 acceptance handoff: public activation and
+record routing delivered TOGETHER, seven-parameter contract, finite
+netlist round trip, and explicit compatibility rejections.
+
+**1. Dispatch and records activated together.**
+- `OTA5T`: the finite+solved constructor combination is now supported and
+  `evaluate` routes finite+solved to the accepted finite implementation
+  (`_evaluate_solved_finite`, unchanged since F2 acceptance). Invalid mode
+  strings still raise ValueError; ideal+solved still requires five
+  parameters; the finite/imposed historical path is unchanged.
+- `evaluate_design` is mode-aware: finite+solved objects route to the
+  finite schema (`evaluate_design_finite`, distinct dev oracle identity,
+  seven mode-aware parameter names); all other combinations keep the
+  historical five-parameter record under the frozen ideal oracle identity.
+  A design vector whose length does not match the routed mode raises
+  explicitly - never truncated or padded (the imposed-finite historical
+  path included).
+- Public evaluation tested through the SUPPORTED loader entry point
+  (`load_engine_from_paths(tail_device="finite", op_point="solved")`) and
+  through the generic record entry point, with invalid-mode and
+  invalid-request cases; default loader behavior stays ideal.
+
+**2. Seven-parameter contract completed.**
+- `config.design_bounds(tail_device)` returns the mode-correct bounds;
+  `de_baseline.optimize_specs` and `optimization/local_refine` derive their
+  search domains from the OBJECT's tail mode (a finite object optimizes
+  seven parameters and returns a finite record; ideal objects keep the
+  frozen five-parameter bounds). Normalization/learning remain five-output
+  by design (finite surrogate work is Phase H).
+
+**3. Finite netlist export.**
+- The finite branch now exports the ACTUAL circuit: returned M5 W/L and
+  the SOLVED `Vbias_tail` as the gate-source dc value (the historical
+  zero-volt gate source is removed), the effective VICM in the header, a
+  rounding warning, and an explicit refuse-to-export for evaluations
+  without a solved bias (imposed-finite). Print precision: W/L at 0.1 nm,
+  gate bias at 1 uV. Round-trip test: parsed exported geometry/bias match
+  the returned values at print precision and the re-evaluated record
+  re-derives the saturation verdict explicitly (the convergence-diagnostic
+  fixture stays honestly failing).
+
+**4. Compatibility made explicit.**
+- `dataset/build.evaluate_design_row` raises for non-five design vectors
+  and for finite+solved objects (the dataset path cannot truncate finite
+  designs; datasets regenerate only in Phase H).
+- `sizing.size_ideal_tail_ota` rejects finite-tail objects explicitly.
+- `correlation.campaign.expected_from_sizing` rejects non-ideal-tail
+  topologies (finite correlation belongs to the F5 finite path);
+  historical ideal records keep working.
+- The RL environment stays five-dimensional by construction; the web
+  runtime stays hard-wired to the ideal tail and the guarded
+  `size_ideal_tail_ota` entry.
+- Old evidence, models, and ideal outputs keep their original identities;
+  the finite schema stays visibly provisional (dev identity, saturation
+  diagnostics) while the physical gate is open.
+
+**Gates.** New `tests/test_f3_compatibility.py` (15 tests): public
+dispatch via loader and direct construction, record routing both ways,
+mismatched-length rejection, mode-aware bounds (config + DE smoke + local
+refine), netlist geometry/bias precision round trip and refuse-to-export,
+dataset/sizing/correlation rejections, and strict-JSON valid/invalid
+public record examples. Updated the two former guard tests to assert the
+new public dispatch while retaining invalid-mode rejection coverage.
+Complete non-real-LUT suite: 285 collected, exit 0. Real-LUT integration:
+3/3, exit 0.
+
+**Not done (separate unreleased work):** F4 feasibility baseline, F5
+finite correlation (and the capacitance provenance experiment), web
+deployment of finite mode, and seven-output learning (Phase H).

@@ -46,11 +46,6 @@ class OTA5T:
             raise ValueError("tail_device must be 'ideal' or 'finite'")
         if op_point not in ("imposed", "solved"):
             raise ValueError("op_point must be 'imposed' or 'solved'")
-        if tail_device == "finite" and op_point == "solved":
-            raise NotImplementedError(
-                "finite-tail solved evaluation is not available yet; "
-                "public finite metrics open at the Phase F2 gate "
-                "(docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md)")
         self.dm = device_model
         self.mna = MNAEngine()
         self.VDD = vdd
@@ -78,16 +73,13 @@ class OTA5T:
                       currents actually balance.
 
         Raises InvalidDesignError / DomainError for designs with no consistent
-        operating point or out-of-LUT-domain parameters, ValueError for an
-        invalid explicit ``op_point`` value (only None falls back to the
-        constructor mode), and NotImplementedError for every finite+solved
-        combination - including per-call ``op_point`` overrides, which
-        previously bypassed the constructor guard and returned ideal-tail
-        results for a finite-tail object (closed in Phase F1; public finite
-        evaluation opens only at the F2 integration gate - see
-        docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md).
-        Callers (RL env, optimizer) treat invalid designs as invalid
-        evaluations with a finite penalty.
+        operating point or out-of-LUT-domain parameters, and ValueError for
+        an invalid explicit ``op_point`` value (only None falls back to the
+        constructor mode). Dispatch is mode-aware (Phase F3): finite+solved
+        routes to the accepted finite implementation (seven parameters,
+        corrected AC model); every other combination keeps its historical
+        behavior. Callers (RL env, optimizer) treat invalid designs as
+        invalid evaluations with a finite penalty.
         """
         if op_point is None:
             op_point = self.op_point
@@ -96,10 +88,7 @@ class OTA5T:
                 f"op_point must be 'imposed' or 'solved', got {op_point!r}")
         if op_point == "solved":
             if self.tail_device == "finite":
-                raise NotImplementedError(
-                    "finite-tail solved evaluation is not available yet; "
-                    "public finite metrics open at the Phase F2 gate "
-                    "(docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md)")
+                return self._evaluate_solved_finite(x, CL, freqs)
             return self._evaluate_solved(x, CL, freqs)
         return self._evaluate_imposed(x, CL, freqs)
 
@@ -326,14 +315,11 @@ class OTA5T:
             "devices": {"M1": m1, "M2": m2, "M3": m3, "M4": m4, "M5": m5},
         }
 
-    # --------------------------------------- solved finite (F2, DEV ONLY) ---
+    # --------------------------------------- solved finite (F2/F3 public) ---
     def _evaluate_solved_finite(self, x, CL: float, freqs) -> dict:
-        """Integrated finite-M5 evaluation (Phase F2 - development access
-        only; PUBLIC FINITE EVALUATION IS STILL CLOSED).
-
-        evaluate() raises NotImplementedError for every finite+solved call
-        until the F2 integration gate is accepted by Astra; this private
-        method exists for the focused suite and the finite record path.
+        """Integrated finite-M5 evaluation (accepted at the F2 gate; public
+        since the F3 compatibility package routes finite+solved dispatch
+        here).
 
         Semantics:
         - DC operating point from the accepted F1 kernel
