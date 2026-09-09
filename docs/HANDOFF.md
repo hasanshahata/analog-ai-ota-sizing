@@ -303,3 +303,58 @@ dirty flag with a `git diff HEAD` hash, and a comparison run that isolates
 `evaluation_results/finite_m5/f1_probe_20260909_045513/`; gates 62/62
 focused, full non-real-LUT suite exit 0, 3/3 real-LUT integration.
 Awaiting Astra's final F1 acceptance; F2 remains closed.
+
+**Update 2026-09-09 (current): Astra accepted F1 at `db6db4a`.** All F1-R1
+through F1-R5 findings are closed. Astra independently reran **201 non-real-LUT
+tests and 3 real-LUT integration tests**, verified all nine archived source
+fingerprints against delivered files, checked pre-lookup invalid-control
+rejection, and validated archived KCL/trace consistency. See the final F1
+acceptance entry in `docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md`.
+
+**Next owner/action:** Opus may begin the bounded F2 package; Astra reviews
+its independent MNA derivation, capacitance evidence, metrics/constraints,
+and minimal finite record schema. Public finite evaluation stays closed until
+that integrated gate passes. The archived negative M5 saturation margins remain
+diagnostics and must fail F2 acceptance; the ideal-tail runtime stays frozen.
+F2 implementation, later packages, and deployment were not performed by this
+review.
+
+**Update 2026-09-09 (F2 delivered): bounded F2 implemented, awaiting Astra
+review.** Delivered in the handoff's order, with PUBLIC FINITE EVALUATION
+STILL CLOSED (`OTA5T.evaluate` still rejects finite+solved; tested):
+
+1. **Independent MNA audit (R7):** all five reported legacy-stamp
+   discrepancies reproduce. A corrected terminal-equation model
+   (`MNAEngine.assemble_ac_corrected`/`solve_ac_corrected`) is added for the
+   finite path; the legacy `solve_ac` is byte-frozen for the historical
+   ideal oracle. `tests/test_mna_audit.py` (10 tests) verifies the corrected
+   assembly entry-for-entry against an independent element-stamp reference
+   assembler, body-current conservation at both terminals, RHS-only
+   driven-gate excitation, M4's cgd as a true two-terminal capacitor, M3's
+   same-node overlap never stamped, M5 as pure drain loading, the ideal
+   limit inside the corrected model, full nodal-current closure (< 1e-18),
+   and the exact pinned legacy-vs-corrected differences. The audit caught a
+   sign error in the first corrected-RHS draft before delivery.
+2. **Capacitance convention (A4): recorded limitation.** No characterization
+   material exists in-repo (LUTs are Google Drive downloads). New data-level
+   observation: real cdd/cgd spans 1.21-2.39 (n=12) - consistent with a
+   total drain capacitance, but the DEFINITION is unresolved; stamping uses
+   cdd alone under a documented assumption and the physical AC gate stays
+   open pending F5's device-level Spectre experiment.
+3. **Integrated metrics/constraints/schema:** private
+   `_evaluate_solved_finite` (corrected-AC metrics with the solved M5;
+   Power = VDD*(ID3+ID4) KCL-cross-checked; SR labeled ID5/CL proxy;
+   five-device saturation under the FROZEN 50 mV floor; A5-labeled headroom
+   estimates with acceptance keys NaN so requested range constraints fail
+   closed); effective constraint limits scoped to the finite path (requests
+   tighten, never relax; invalid requests fail closed); minimal dev finite
+   schema `analog_ai-0.2.0-finite-solved-dev` with seven mode-aware
+   parameter names and strict-JSON nulls. The ideal-path versioned R1
+   correction remains a separate open task.
+
+Gates: 10 audit + 19 evaluator + 62 F1 focused tests green; 230-collected
+non-real-LUT suite exit 0; 3/3 real-LUT integration. Real-LUT F2 probe
+(`evaluation_results/finite_m5/f2_integration_20260909_054929/`): both
+designs verdict=False with exactly Sat_margin_min failing (sat_m5 -48.0 mV)
+- the negative-saturation diagnostic points are rejected as feasible
+designs, as required.

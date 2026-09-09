@@ -4,12 +4,13 @@
 
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
-**Status:** Astra re-reviewed corrective commit `ece10e5` on 2026-09-09:
-F1-R1 through F1-R4 accepted. The remaining R5 follow-up (numerical-setting
-validation R5a + source-content binding R5b) is now implemented and a new
-immutable probe archive generated; awaiting final F1 acceptance. F2 remains
-closed. See the corrective re-review and the R5 follow-up entry at the end
-of this file.
+**Status:** **F1 ACCEPTED** by Astra on 2026-09-09 at commit `db6db4a`
+(all R1-R5 closed). The bounded F2 package is now implemented per the F2
+handoff - independent MNA audit + corrected finite AC model, capacitance
+convention evidence with a recorded limitation, integrated finite
+metrics/hard constraints/effective limits, and the minimal dev finite
+schema - with PUBLIC FINITE EVALUATION STILL CLOSED. Awaiting Astra F2
+review. See the F2 execution-log entry at the end of this file.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -20,9 +21,10 @@ tests, experiments, and evidence). Hassan owns scope and deployment decisions.
 not as an unqualified implementation specification. See also
 [`astra_review.md`](../astra_review.md).
 
-**Current authorization:** Hassan authorized F1 implementation on 2026-09-09
-(bounded package per Astra A6). F2 and later packages remain unauthorized
-until Astra accepts the F1 evidence.
+**Current authorization:** Hassan authorized F1 and assigned Astra its gate
+review. Astra has accepted F1 and released the bounded F2 implementation
+handoff to Opus. This does not release F3 or authorize web exposure, deployment,
+dataset regeneration, retraining, or changes to the frozen ideal-tail oracle.
 
 **Current production mode:** solved ideal-tail OTA remains frozen and supported
 
@@ -1019,8 +1021,13 @@ Opus has already executed the amended plan.
 | 2026-09-09 | Probe saturation margins are diagnostics only: F2's saturation verifier must reject the probe cases; no floor adjustment | Astra direction, recorded by Opus | Astra F1 gate review, saturation interpretation |
 | 2026-09-09 | Astra corrective re-review: F1-R1..R4 accepted; R5a (controls validation) + R5b (source binding) open | Astra | Corrective re-review entry; 185 passed + 3 passed independently verified |
 | 2026-09-09 | R5 follow-up delivered: controls validated before solving, probe evidence bound to source fingerprints/diff hash, new immutable archive; submitted for final F1 acceptance | Opus | R5 follow-up entry; evidence `f1_probe_20260909_045513` |
+| 2026-09-09 | F1 ACCEPTED at `db6db4a`; bounded F2 released to Opus under A8 | Astra | Final F1 acceptance entry |
+| 2026-09-09 | Corrected finite AC model added alongside the frozen legacy stamps (audit found the five R7 discrepancies); cdd convention recorded as UNRESOLVED with the cdd-only stamp under a documented assumption | Opus | F2 execution-log entry; `tests/test_mna_audit.py`; `f2_integration_20260909_054929` |
+| 2026-09-09 | F2 implemented (audit + capacitance evidence + metrics/constraints/schema); public finite evaluation still closed; awaiting Astra F2 review | Opus | F2 execution-log entry |
 | 2026-09-09 | F1 technical review: CHANGES REQUIRED; F2 remains closed | Astra | Independently reproduced domain/extrapolation, ambiguous-root, and nonfinite-output failures; corrections below |
 | 2026-09-09 | Accept max_outer=60 as a bounded default; reject the common 1e-9 edge tolerance and inconsistent final evaluation | Astra | Synthetic nominal requires 10 iterations; archived wide real case needs 31; domain deviation contradicts A2 and permits out-of-grid geometry |
+| 2026-09-09 | FINAL F1 ACCEPTANCE: APPROVED at db6db4a; R1-R5 closed | Astra | Independently passed 201 non-real-LUT + 3 real-LUT tests; all 9 archived source fingerprints match delivered files; pre-lookup control rejection and archived KCL/trace checks pass |
+| 2026-09-09 | Bounded F2 implementation handoff released to Opus; public finite evaluation stays closed until its integrated gate passes | Astra, under A8 | F1 prerequisite satisfied; F2 scope and acceptance requirements remain as amended in A3-A6 |
 
 ## Execution log
 
@@ -1631,3 +1638,181 @@ immutable archive: `evaluation_results/finite_m5/f1_probe_20260909_045513/`
   max_outer=20 with 20 archived trace rows). Earlier archives preserved as
   history. Submitted revision for final F1 acceptance: the commit carrying
   this entry (see decision record).
+
+### 2026-09-09 - Astra final F1 acceptance at db6db4a
+
+**Decision: F1 ACCEPTED. All F1 review findings R1-R5 are closed.**
+Reviewed revision: `db6db4a5d1607f066289d44a6b1aa9ae50c438fa`.
+Opus may proceed with the bounded F2 work package under A8. This is acceptance
+of the finite DC kernel and its development evidence, not acceptance of a
+complete physical finite OTA or of F2 metrics/AC behavior.
+
+#### Independently verified acceptance evidence
+
+- Full non-real-LUT suite: **201 passed**, exit 0, comprising the 139-test
+  baseline and 62 finite-kernel/probe cases. Real-LUT integration: **3 passed**,
+  exit 0. Existing dependency deprecation warnings are non-failing.
+- Invalid numerical controls reject before any device access. An independent
+  sentinel device object that fails on every attribute access confirmed
+  rejection of infinite/NaN/zero/boolean tolerance, fractional outer budget,
+  and infinite Newton budget. The original `tol=inf` reproduction is closed.
+- Valid effective settings are recorded; ordinary returned records serialize
+  as strict JSON. Final KCL acceptance remains 1e-9 A, independent of the
+  configurable inner target. Solver structure and max_outer=60 are unchanged.
+- All **nine** SHA-256 values in the source fingerprint of
+  `f1_probe_20260909_045513/f1_real_lut_probe.json` match the delivered files
+  independently hashed during this review. The archive's parent revision and
+  dirty state therefore no longer leave the executed source unspecified.
+  Acceptance rests on these verified content hashes; the diff hash is
+  supplementary identification, not a substitute for recoverable source.
+- The archive parses as strict JSON and records successful LUT hash checks.
+  It contains consecutive trace lengths **12/31/12** for nominal/wide/boundary
+  cases and **20** for the intentionally exhausted comparison run.
+- For each successful archived case, KCL recomputed from its returned M1-M5
+  IDs exactly equals its stored residual dictionary. The maximum archived
+  residual is approximately **1.683e-11 A**.
+- Independent comparison-helper check: supplied `tol=5e-13` and
+  `max_newton=7` are preserved, only max_outer changes to 20, and the caller's
+  settings dictionary remains unchanged.
+- Parsed definitions of every pre-existing function/class in `dc_solver.py`
+  still match `f9798cd`. No implementation source changed during this review.
+
+Commands used for the regression gates:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests --ignore=tests/test_integration_real_luts.py -q
+.\.venv\Scripts\python.exe -m pytest tests/test_integration_real_luts.py -q
+```
+
+No fresh finite real-LUT probe or Cadence campaign was run during this final
+review; the submitted archive was checked against the delivered source and
+its internal device/trace evidence. The real-LUT integration suite was rerun.
+
+#### Bounded F2 handoff to Opus
+
+1. Begin with the independent complete MNA terminal-equation/stamp audit and
+   the real-LUT capacitance convention evidence required by A4. Do not reduce
+   F2 to inserting M5 into the old matrix. Preserve the historical ideal path
+   if corrected finite AC semantics differ.
+2. Implement finite metrics and M1-M5 hard checks, including effective requested
+   PM/saturation minima, complete finite evidence, and the A5 policy for
+   headroom estimates versus validated range metrics. The archived probe
+   margins remain -48.0/-58.6/-48.0 mV: F2's saturation verifier must reject
+   these diagnostic points without relaxing the floor.
+3. Integrate the minimal seven-parameter finite schema and distinct provenance
+   before exposing public finite evaluation. Keep the constructor and per-call
+   guards until metrics, constraints, AC, and record handling pass together.
+4. Deliver the bounded F2 diff, independent tests, declared capacitance/metric
+   assumptions, example valid and invalid records, and regression evidence for
+   Astra review. If real capacitance semantics remain unresolved, record that
+   limitation and do not claim the physical AC gate has passed.
+
+F1 acceptance does not release later packages or web deployment. F4 still owes
+physically feasible finite designs; F5 still owes independent finite-M5 Cadence
+correlation. Earlier review decisions and archives remain as history and are
+superseded by this acceptance for the current F1 revision.
+
+Plan, HANDOFF, and CORRECTION_LOG updated for this gate. No production fixes,
+F2 implementation, commit, or push were performed by Astra during the review;
+the pre-existing untracked `astra_review.md` remains unchanged.
+
+### 2026-09-09 - F2 implemented (bounded package per the F1 acceptance handoff)
+
+Order followed the handoff exactly: (1) independent MNA terminal-stamp
+audit, (2) real-LUT capacitance-convention evidence, (3) integrated finite
+metrics, constraints, and minimal schema. Public finite evaluation REMAINS
+CLOSED: `OTA5T.evaluate` still rejects every finite+solved call (guard
+tests included), and the negative-saturation probe points are rejected as
+feasible designs.
+
+**1. Independent MNA audit (Astra R7).** The complete terminal equations
+were derived from scratch and audited against the legacy 3x3 stamps; all
+five reported discrepancies reproduce. A corrected assembly
+(`MNAEngine.assemble_ac_corrected` / `solve_ac_corrected`) is added for the
+finite path; the legacy `solve_ac` is byte-frozen for the historical ideal
+oracle. Audited and corrected: (i) M1/M2 body transconductance now acts at
+BOTH terminals (legacy had it only in the tail diagonal); (ii) the spurious
+tail->drain cgs couplings are replaced by right-hand-side gate excitation;
+(iii) the spurious tail->drain cgd couplings (driven gates) are removed and
+their excitation moved to the RHS; (iv) M4's gate-drain capacitance is
+stamped as a true two-terminal capacitor (legacy had a single +sC
+off-diagonal); (v) M3's same-node gate-drain overlap is never stamped
+(double-counted under the fixture convention). `tests/test_mna_audit.py`
+(10 tests) verifies the corrected assembly ENTRY-FOR-ENTRY against an
+independent element-stamp reference assembler on asymmetric devices with
+all capacitances and body effect present, body-current conservation at both
+terminals, RHS-only driven-gate excitation, the M4 two-terminal stamp, the
+M3 no-op, M5 drain-loading-only (gm5/gmbs5 provably ignored), the ideal
+limit inside the corrected model, the textbook DC limit with legacy
+equality at zero capacitance, full nodal-current closure of the solved
+response (< 1e-18), and pins the exact legacy-vs-corrected entry
+differences. Honest note: during the audit the independent reference caught
+a sign error in the first draft of the corrected RHS (cgs excitation sign) -
+fixed before delivery; this is the failure class the audit exists to catch.
+
+**2. Real-LUT capacitance convention (Astra A4) - evidence recorded,
+limitation explicit.** In-repository provenance is exhausted: the pickles
+originate from a Google Drive download (`archive/kaggle`) with no
+characterization deck or save expressions, so the DEFINITION of `cdd`
+cannot be established in-repo. A new data-level observation on the real
+pickle (nch, VSB=0, 12 samples): cdd/cgd spans 1.21-2.39 (median 1.97) -
+consistent with a total drain capacitance (overlap + junction), which
+CONSTRAINS but does not establish the convention. The corrected finite
+model therefore stamps drain loading as `gds + s*cdd` alone under the
+explicitly recorded assumption that Cdd is the complete drain
+self-capacitance for grounded gate/source/body; the limitation is carried
+in the mna.py module contract, in every finite record
+(`capacitance_assumption` field), and in the archived probe. The physical
+AC gate is NOT claimed passed; the F5 device-level Spectre experiment
+remains the arbiter.
+
+**3. Integrated finite metrics, hard constraints, minimal schema.**
+- `OTA5T._evaluate_solved_finite` (private, dev/test access only): DC from
+  the accepted F1 kernel; AC from the corrected model with the solved M5 as
+  pure drain loading; Power = VDD*(ID3+ID4) with a KCL cross-check against
+  VDD*ID5 (measured 6.9e-8 relative on the nominal case, bounded by the
+  accepted KCL residuals) and the requested VDD*Itail recorded separately;
+  SR recorded as the ID5/CL PROXY with an explicit note; saturation
+  evidence for all five devices under the FROZEN 50 mV floor; area
+  including M5; A5 headroom ESTIMATES labeled as estimates (Swing_est,
+  Vout bounds, ICMR_low_est, in-bounds indicator) with the acceptance keys
+  Swing/ICMR_min NaN so any requested range constraint FAILS CLOSED, and
+  the upper ICMR limit unreported.
+- Effective constraint limits (Astra R1, scoped to the finite path):
+  requests may TIGHTEN the PM/saturation floors, never relax them -
+  attempted relaxations are clamped up to the frozen default and recorded;
+  nonfinite/negative requested minima fail closed. The shared ideal-path
+  R1 correction remains a separate versioned task and was NOT silently
+  changed here.
+- Minimal finite schema (Astra A3): `FINITE_SCHEMA_VERSION`
+  ("analog_ai-0.2.0-finite-solved-dev", development identity, distinct from
+  the ideal oracle), seven mode-aware parameter names (R4 regression
+  covered), VDD/VICM/request echo, complete M1-M5 OP + saturation +
+  forward-vs-table gm/Id evidence, KCL/current/ratio errors, convergence
+  and clipping diagnostics, effective limits, bias-generator exclusion,
+  and the capacitance assumption; strict-JSON nulls for unavailable
+  optional metrics; fail-closed invalid records with no truncation.
+- `tests/test_finite_evaluator.py` (19 tests): schema identity, seven-name
+  serialization, strict JSON, complete evidence, the negative-saturation
+  rejection with the frozen floor, the complementary all-saturated PASS
+  case, PM/saturation tightening and relaxation clamping, range-request
+  fail-closed behavior, power cross-check, corrected-AC provenance
+  (reported gain equals an independent corrected-model recomputation and
+  DIFFERS from the legacy model), estimate labeling, area/M5 inclusion,
+  arity/nonfinite/domain/invalid-spec invalid records, and the still-closed
+  public surface.
+
+**Gates and evidence.** Focused: 10 audit + 19 evaluator + 62 F1 tests all
+green; complete non-real-LUT suite: 230 collected, exit 0; real-LUT
+integration: 3/3, exit 0. Real-LUT F2 integration probe
+(`scripts/probe_finite_evaluator.py`, archived under
+`evaluation_results/finite_m5/f2_integration_20260909_054929/`): LUT
+hashes verified, 9-source fingerprint, strict JSON; both designs integrate
+end-to-end (~0.4 s) with gain 31.2 dB, GBW 57.2/11.7 MHz, PM 86.7/90.6 deg
+and EXACTLY ONE failed constraint row - Sat_margin_min (sat_m5 -48.0 mV) -
+i.e. the archived diagnostic points are rejected as feasible designs, as
+required.
+
+**Not done (out of F2 scope, for Astra's attention):** guard removal (F2
+task 9 awaits this review), F3 optimizer/export/dataset compatibility, and
+the ideal-path versioned R1 correction.

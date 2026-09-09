@@ -9,8 +9,10 @@ from __future__ import annotations
 
 import datetime
 import json
+import math
 
-from .. import ORACLE_VERSION
+from .. import ORACLE_VERSION, config
+from ..circuit.dc_solver import validate_finite_design
 from ..circuit.ota5t import InvalidDesignError, OTA5T
 from ..devices.device_model import DeviceModel
 from ..devices.lut import DomainError
@@ -134,3 +136,179 @@ def _fmt_gbw(g):
 
 def _fmt_w(w):
     return "-" if w is None else f"{w*1e6:.1f}u"
+
+
+# ------------------------------------------------------------ finite (F2) ---
+# Distinct development schema/oracle identity for finite-M5 records. This is
+# NOT the canonical ideal oracle identity and carries no canonical weight
+# until the F2 integration gate (and later F3 versioning) is accepted.
+FINITE_SCHEMA_VERSION = "analog_ai-0.2.0-finite-solved-dev"
+
+
+def _finite_num(v):
+    """Strict-JSON-safe metric: nonfinite -> explicit null (the
+    unavailability is carried by constraint rows and warnings)."""
+    v = float(v)
+    return v if math.isfinite(v) else None
+
+
+def effective_constraint_limits(specs: dict) -> tuple[dict, list[str]]:
+    """Effective hard floors for a finite evaluation (Astra R1/A3): a
+    request may TIGHTEN the frozen defaults, never relax them; attempted
+    relaxations are clamped up to the frozen default and recorded. Raises
+    ValueError for nonfinite/negative requested minima."""
+    notes: list[str] = []
+    limits = {
+        "PM_min": config.PM_MIN_DEFAULT,
+        "Sat_margin_min": config.SAT_MARGIN_MIN_DEFAULT,
+        "W_nmos_max": config.W_NMOS_MAX,
+        "W_pmos_max": config.W_PMOS_MAX,
+    }
+    for key, default in (("PM_min", config.PM_MIN_DEFAULT),
+                         ("Sat_margin_min", config.SAT_MARGIN_MIN_DEFAULT)):
+        if key in specs:
+            req = float(specs[key])
+            if not math.isfinite(req) or req < 0:
+                raise ValueError(
+                    f"requested {key} must be finite and non-negative, "
+                    f"got {specs[key]!r}")
+            if req > default:
+                limits[key] = req
+            elif req < default:
+                notes.append(
+                    f"requested {key}={req:.4g} below the frozen default "
+                    f"{default:.4g}; frozen default enforced (no relaxation)")
+    return limits, notes
+
+
+def _finite_device_summary(d: dict) -> dict:
+    summary = _device_summary(d)
+    summary["VSB"] = _num(d.get("VSB"))
+    summary["type"] = d.get("type")
+    if d.get("gmid_forward") is not None:
+        summary["gmid_forward"] = _num(d.get("gmid_forward"))
+        summary["gmid_table"] = _num(d.get("gmid_table"))
+        summary["gmid_target"] = _num(d.get("gmid_target"))
+    return summary
+
+
+def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
+    """Complete finite-M5 evaluation record (Phase F2 - development,
+    non-canonical).
+
+    Distinct schema/oracle identity from the ideal oracle; serializes all
+    SEVEN design parameters under mode-aware names, the solved tail bias,
+    full M1-M5 operating-point and saturation evidence, KCL/current/ratio
+    errors, convergence and clipping diagnostics, effective constraint
+    limits, and the external-bias-generator exclusion. Public finite
+    evaluation is still closed (OTA5T.evaluate rejects finite+solved); this
+    record path is exercised by the focused suite and later packages.
+
+    Invalid designs or specs produce fail-closed records: null metrics and
+    devices, an explicit invalid_reason, and no five-parameter truncation.
+    Unavailable optional metrics serialize as strict-JSON nulls.
+    """
+    record = {
+        "schema_version": FINITE_SCHEMA_VERSION,
+        "oracle_identity": {
+            "schema": FINITE_SCHEMA_VERSION,
+            "distinct_from_ideal_oracle": ORACLE_VERSION,
+        },
+        "topology": "5t_ota",
+        "tail_device": "finite",
+        "op_point_mode": "solved",
+        "vdd": config.VDD,
+        "vicm": config.VICM,
+        "request": dict(specs),
+        "external_bias_generator": (
+            "gate-bias generator excluded from power/area/noise/mismatch"),
+        "capacitance_assumption": (
+            "cdd treated as the complete drain self-capacitance for "
+            "grounded gate/source/body; real-pickle convention unverified "
+            "(F5 device-level experiment pending)"),
+    }
+    try:
+        values = validate_finite_design(design)
+        record["design"] = {name: float(v)
+                            for name, v in zip(config.DESIGN_PARAM_NAMES_7,
+                                               values)}
+        cl = float(specs.get("CL_pF", 1.0)) * 1e-12
+        if not (math.isfinite(cl) and cl > 0):
+            raise ValueError("CL_pF must be positive and finite")
+        limits, notes = effective_constraint_limits(specs)
+        record["effective_constraints"] = {"limits": limits, "notes": notes}
+
+        perf = ota._evaluate_solved_finite(list(values), cl, None)
+        constraints, verdict = evaluate_constraints(perf, specs,
+                                                    limits=limits)
+        record.update(
+            metrics={
+                "DC_Gain_dB": _finite_num(perf["DC_Gain_dB"]),
+                "GBW": _finite_num(perf["GBW"]),
+                "gbw_valid": bool(perf["gbw_valid"]),
+                "PM": _finite_num(perf["PM"]),
+                "Power_core": _finite_num(perf["Power"]),
+                "power_requested_vdd_times_itail": _finite_num(
+                    perf["power_requested_vdd_times_itail"]),
+                "power_kcl_error": _finite_num(perf["power_kcl_error"]),
+                "SR_proxy": _finite_num(perf["SR"]),
+                "min_sat_margin": _finite_num(perf["min_sat_margin"]),
+                "Area": _finite_num(perf["Area"]),
+                # Acceptance keys for optional range requests: null (fail
+                # closed); only labeled nominal estimates are reported.
+                "Swing": None,
+                "Swing_est": _finite_num(perf["Swing_est"]),
+                "Vout_low_est": _finite_num(perf["Vout_low_est"]),
+                "Vout_high_est": _finite_num(perf["Vout_high_est"]),
+                "Vout_in_estimated_range": bool(
+                    perf["Vout_in_estimated_range"]),
+                "ICMR_min": None,
+                "ICMR_low_est": _finite_num(perf["ICMR_low_est"]),
+                "ICMR_upper": None,
+                "sat_m1": _finite_num(perf["sat_m1"]),
+                "sat_m2": _finite_num(perf["sat_m2"]),
+                "sat_m3": _finite_num(perf["sat_m3"]),
+                "sat_m4": _finite_num(perf["sat_m4"]),
+                "sat_m5": _finite_num(perf["sat_m5"]),
+            },
+            devices={name: _finite_device_summary(d)
+                     for name, d in perf["devices"].items()},
+            dc_diagnostics={
+                "Vtail": _finite_num(perf["Vtail"]),
+                "Vmirror": _finite_num(perf["Vmirror"]),
+                "Vout": _finite_num(perf["Vout"]),
+                "Vbias_tail": _finite_num(perf["Vbias_tail"]),
+                "ID5": _finite_num(perf["ID5"]),
+                "kcl_residuals": {k: _finite_num(v) for k, v
+                                  in perf["kcl_residuals"].items()},
+                "m5_current_error_rel": _finite_num(
+                    perf["m5_current_error_rel"]),
+                "m5_gmid_forward_error": _finite_num(
+                    perf["m5_gmid_forward_error"]),
+                "m5_gmid_forward": _finite_num(perf["m5_gmid_forward"]),
+                "m5_gmid_table": _finite_num(perf["m5_gmid_table"]),
+                "pair_current_mismatch": _finite_num(
+                    perf["pair_current_mismatch"]),
+                "mirror_current_mismatch": _finite_num(
+                    perf["mirror_current_mismatch"]),
+                "convergence": perf["convergence"],
+                "clip_diagnostics": perf["clip_diagnostics"],
+            },
+            constraints=[c.as_dict() for c in constraints],
+            verdict=bool(verdict),
+            warnings=list(perf.get("warnings", [])) + notes,
+        )
+    except (InvalidDesignError, DomainError, ValueError,
+            FloatingPointError) as exc:
+        raw_design = None
+        try:
+            raw = [float(v) for v in design]
+            if len(raw) == 7:
+                raw_design = raw
+        except (TypeError, ValueError):
+            raw_design = None
+        record.update(
+            design=raw_design, metrics=None, devices=None, constraints=[],
+            dc_diagnostics=None, effective_constraints=None,
+            verdict=False, warnings=[], invalid_reason=str(exc))
+    return record

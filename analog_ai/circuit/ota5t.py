@@ -30,7 +30,8 @@ import numpy as np
 from ..config import VDD, VICM, VOCM
 from ..devices.device_model import DeviceModel
 from ..devices.lut import DomainError
-from .dc_solver import DCConvergenceError, solve_operating_point
+from .dc_solver import (DCConvergenceError, solve_operating_point,
+                        solve_operating_point_finite)
 from .mna import MNAEngine
 
 
@@ -323,6 +324,157 @@ class OTA5T:
                             for n in ("M1", "M3")},
             "warnings": warnings,
             "devices": {"M1": m1, "M2": m2, "M3": m3, "M4": m4, "M5": m5},
+        }
+
+    # --------------------------------------- solved finite (F2, DEV ONLY) ---
+    def _evaluate_solved_finite(self, x, CL: float, freqs) -> dict:
+        """Integrated finite-M5 evaluation (Phase F2 - development access
+        only; PUBLIC FINITE EVALUATION IS STILL CLOSED).
+
+        evaluate() raises NotImplementedError for every finite+solved call
+        until the F2 integration gate is accepted by Astra; this private
+        method exists for the focused suite and the finite record path.
+
+        Semantics:
+        - DC operating point from the accepted F1 kernel
+          (solve_operating_point_finite: strict fixed-device verification,
+          forward gm/Id5 gate, canonical LUT domain).
+        - AC small-signal from the CORRECTED terminal-stamp model
+          (MNAEngine.solve_ac_corrected) with the solved M5 as pure drain
+          loading - see mna.py for the audit and the recorded Cdd
+          convention limitation.
+        - Power is the finite core power VDD*(ID3+ID4), cross-checked
+          against VDD*ID5 by KCL; the external gate-bias generator's power
+          is excluded (outside the sized boundary).
+        - SR is the slew-rate PROXY ID5/CL, not a transient measurement.
+        - Swing/ICMR: nominal frozen-operating-point ESTIMATES only
+          (Astra A5); the acceptance keys Swing/ICMR_min are NaN so any
+          requested range constraint fails closed instead of passing on an
+          estimate. The upper ICMR limit is not derivable and stays
+          unreported.
+        - Saturation evidence covers all five devices; the frozen
+          Sat_margin_min floor applies unchanged (converged DC diagnostics
+          with negative sat_m5 are NOT feasible designs).
+        """
+        if len(x) != 7:
+            raise InvalidDesignError(
+                f"finite solved evaluation requires 7 parameters, got {len(x)}")
+        L1, gmid1, L3, gmid3, L5, gmid5, Itail = map(float, x)
+        if not (Itail > 0.0) or CL <= 0.0:
+            raise InvalidDesignError("Itail and CL must be positive")
+
+        try:
+            op = solve_operating_point_finite(self.dm, L1, gmid1, L3, gmid3,
+                                              L5, gmid5, Itail,
+                                              vdd=self.VDD, vicm=self.Vicm)
+        except DCConvergenceError as exc:
+            raise InvalidDesignError(str(exc)) from exc
+        # DomainError propagates: deterministic invalid record upstream.
+
+        warnings: list[str] = []
+
+        def dev(point, name):
+            d = dict(point)
+            d.update(type="nch" if name in ("M1", "M2", "M5") else "pch",
+                     id_at_bias=point["ID"])
+            d.setdefault("gmbs", 0.2 * point["gm"])
+            d.setdefault("cgs", 0.0)
+            d.setdefault("cgd", 0.0)
+            d.setdefault("cdd", 0.0)
+            return d
+
+        m1 = dev(op["M1"], "M1")
+        m2 = dev(op["M2"], "M2")
+        m3 = dev(op["M3"], "M3")
+        m4 = dev(op["M4"], "M4")
+        m5 = dev(op["M5"], "M5")
+        devices = {"M1": m1, "M2": m2, "M3": m3, "M4": m4, "M5": m5}
+
+        vt, vm, vo = op["Vtail"], op["Vmirror"], op["Vout"]
+        id5 = op["M5"]["ID"]
+
+        # ---- large-signal quantities --------------------------------------
+        power_core = self.VDD * (op["M3"]["ID"] + op["M4"]["ID"])
+        power_requested = self.VDD * Itail
+        power_kcl_error = abs(power_core - self.VDD * id5) / power_core
+        sr_proxy = id5 / CL
+
+        sat = {name: d["VDS"] - d["VDSAT"] for name, d in devices.items()}
+        min_sat_margin = float(min(sat.values()))
+        if min_sat_margin < 0.0:
+            worst = min(sat, key=sat.get)
+            warnings.append(f"{worst} out of saturation at the solved point")
+        gmid_dev = max(abs(op[n]["gmid_error"]) for n in ("M1", "M3"))
+        if gmid_dev > 2.0:
+            warnings.append(
+                f"achieved gm/Id deviates up to {gmid_dev:.1f} from target "
+                "(op-point feedback through channel-length modulation)")
+
+        # ---- AC small-signal (corrected terminal-stamp model) -------------
+        if freqs is None:
+            freqs = self.mna.default_freqs()
+        v_out = self.mna.solve_ac_corrected(m1, m2, m3, m4, m5, CL, freqs)
+        ac = self.mna.extract_metrics(freqs, v_out)
+        if not ac["gbw_valid"]:
+            warnings.append("no 0 dB crossing below sweep maximum")
+
+        # ---- nominal headroom ESTIMATES (Astra A5; not validated ranges) --
+        vout_low_est = vt + op["M2"]["VDSAT"]
+        vout_high_est = self.VDD - op["M4"]["VDSAT"]
+        swing_est = vout_high_est - vout_low_est   # never clamped
+        icmr_low_est = op["M1"]["VGS"] + op["M5"]["VDSAT"]
+
+        area = (2 * m1["W"] * m1["L"] + 2 * m3["W"] * m3["L"]
+                + m5["W"] * m5["L"])
+
+        return {
+            "op_point_mode": "solved",
+            "tail_device": "finite",
+            "ac_model": "corrected_terminal_v1",
+            "capacitance_assumption": (
+                "cdd treated as the complete drain self-capacitance for "
+                "grounded gate/source/body; real-pickle convention "
+                "unverified (F5 device-level experiment pending)"),
+            "Power": power_core,
+            "power_requested_vdd_times_itail": power_requested,
+            "power_kcl_error": float(power_kcl_error),
+            "SR": sr_proxy,
+            "SR_note": "slew-rate proxy ID5/CL, not a transient measurement",
+            "Swing": float("nan"),            # acceptance key: fails closed
+            "ICMR_min": float("nan"),         # acceptance key: fails closed
+            "Swing_est": float(swing_est),
+            "Vout_low_est": float(vout_low_est),
+            "Vout_high_est": float(vout_high_est),
+            "Vout_in_estimated_range": bool(vout_low_est <= vo <= vout_high_est),
+            "ICMR_low_est": float(icmr_low_est),
+            "ICMR_upper": None,               # not derivable: unreported
+            "min_sat_margin": min_sat_margin,
+            "sat_m1": sat["M1"], "sat_m2": sat["M2"], "sat_m3": sat["M3"],
+            "sat_m4": sat["M4"], "sat_m5": sat["M5"],
+            "DC_Gain_dB": ac["DC_Gain_dB"],
+            "GBW": ac["GBW"],
+            "gbw_valid": ac["gbw_valid"],
+            "PM": ac["PM"],
+            "Area": area,
+            "CL": CL,
+            "Vtail": vt, "Vmirror": vm, "Vout": vo,
+            "Vbias_tail": op["Vbias_tail"],
+            "ID5": id5,
+            "pair_current_mismatch": float(
+                (m2["ID"] - Itail / 2.0) / (Itail / 2.0)),
+            "mirror_current_mismatch": float(
+                (m4["ID"] - Itail / 2.0) / (Itail / 2.0)),
+            "kcl_residuals": op["kcl_residuals"],
+            "m5_current_error_rel": op["m5_current_error_rel"],
+            "m5_gmid_forward_error": op["m5_gmid_forward_error"],
+            "m5_gmid_forward": op["M5"]["gmid_forward"],
+            "m5_gmid_table": op["M5"]["gmid_table"],
+            "convergence": op["convergence"],
+            "clip_diagnostics": op["clip_diagnostics"],
+            "external_bias_generator": (
+                "gate-bias generator excluded from power/area/noise/mismatch"),
+            "warnings": warnings,
+            "devices": devices,
         }
 
 

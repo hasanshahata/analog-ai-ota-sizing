@@ -429,12 +429,73 @@ open. Delivered:
   archives preserved); measured outcomes unchanged. Submitted for final F1
   acceptance; F2 remains closed.
 
+## 2026-09-09 - Astra final F1 acceptance
+
+Astra accepted revision `db6db4a5d1607f066289d44a6b1aa9ae50c438fa` after
+independently rerunning **201 non-real-LUT tests and 3 real-LUT integration
+tests**, both exit 0. R1-R4 remained closed; R5 numerical-control validation
+and exact source-content binding now pass. All nine source fingerprints in
+the `f1_probe_20260909_045513` archive match delivered files. Its strict JSON,
+12/31/12 successful traces, 20-iteration failed comparison trace, and KCL
+recomputed from returned device IDs were checked. No fresh finite probe or
+Cadence campaign was run in this review.
+
+The bounded F2 handoff is released to Opus under Astra review. Public finite
+evaluation remains closed until the integrated F2 AC/metrics/constraints and
+minimal finite schema gate passes. The historical ideal solver remains
+unchanged, and the real probe cases remain saturation-failing DC diagnostics.
+Full decision and next-package requirements are recorded in the Phase F plan.
+
+## 2026-09-09 — Phase F2 implemented: MNA audit, corrected finite AC, integrated metrics/constraints/schema
+
+F1 was accepted at `db6db4a`; the bounded F2 package followed the handoff
+order exactly. Public finite evaluation REMAINS CLOSED.
+
+- **Independent MNA audit (R7).** All five reported legacy-stamp
+  discrepancies reproduce. A corrected terminal-equation assembly
+  (`assemble_ac_corrected`/`solve_ac_corrected`) is added for the finite
+  path — body transconductance at both terminals, driven-gate capacitors
+  excited through the RHS, M4's cgd as a true two-terminal capacitor, M3's
+  same-node overlap never stamped, M5 as pure drain loading. The legacy
+  `solve_ac` is byte-frozen for the historical ideal oracle.
+  `tests/test_mna_audit.py` verifies the assembly entry-for-entry against
+  an independent element-stamp reference, plus nodal-current closure
+  (< 1e-18) and pinned legacy-vs-corrected differences. The audit caught a
+  sign error in Opus's own first corrected-RHS draft before delivery.
+- **Capacitance convention (A4): recorded limitation.** No characterization
+  material exists in-repo (LUTs are Google Drive downloads). New data-level
+  observation on the real pickle: cdd/cgd spans 1.21–2.39 (n=12) —
+  consistent with a total drain capacitance, but the DEFINITION stays
+  unresolved; stamping uses cdd alone under a documented assumption and the
+  physical AC gate remains open pending F5's device-level experiment.
+- **Integrated finite metrics/hard checks.** Private
+  `_evaluate_solved_finite`: corrected-AC metrics with the solved M5;
+  Power = VDD·(ID3+ID4) cross-checked against VDD·ID5; SR as a labeled
+  ID5/CL proxy; five-device saturation under the FROZEN 50 mV floor;
+  A5-labeled headroom estimates with acceptance keys NaN (requested range
+  constraints fail closed); upper ICMR unreported. Effective constraint
+  limits scoped to the finite path: requests may tighten PM/saturation
+  floors, never relax (clamped + recorded); invalid requests fail closed.
+  The ideal-path R1 correction stays a separate versioned task.
+- **Minimal finite schema:** dev identity `analog_ai-0.2.0-finite-solved-dev`
+  (distinct from the ideal oracle), seven mode-aware parameter names,
+  complete evidence, strict-JSON nulls, fail-closed invalid records.
+- **Gates/evidence:** 19 evaluator + 10 audit tests new; 230-collected
+  non-real-LUT suite exit 0; real-LUT integration 3/3. Real-LUT probe
+  (`f2_integration_20260909_054929`): both designs verdict=False with
+  exactly Sat_margin_min failing (sat_m5 −48.0 mV) — the diagnostic points
+  are rejected as feasible designs, as required.
+
 ## Still open (updated 2026-09-09)
 
-1. **Finite-M5 solved mode (Phase F)** — F1 R5 follow-up delivered;
-   awaiting Astra final F1 acceptance. F2 (finite metrics, MNA plumbing,
-   constraints, minimal finite records) and later packages remain closed
-   until then.
+1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; the
+   bounded F2 package (independent MNA audit, capacitance-convention
+   evidence with recorded limitation, finite metrics/constraints, minimal
+   dev finite schema) is implemented and delivered for Astra F2 review.
+   Public finite evaluation remains closed until F2's integrated gate
+   passes; guard removal and later packages remain subject to their own
+   review gates. The ideal-path versioned R1 correction (effective
+   requested limits) is also still open.
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a

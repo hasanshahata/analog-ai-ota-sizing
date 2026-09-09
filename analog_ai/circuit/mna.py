@@ -18,6 +18,36 @@ Known, documented approximations (see docs/DESIGN_CONTRACT.md):
 - DC operating point is imposed, not solved.
 - Source-bulk capacitances are neglected (not characterized in the LUT keys used).
 - First 0 dB crossing only; higher-order crossing handling is out of scope.
+
+Phase F2 terminal-stamp audit (Astra R7, 2026-09-09): the legacy
+:meth:`MNAEngine.solve_ac` is FROZEN for the historical ideal oracle. A
+corrected assembly :meth:`MNAEngine.solve_ac_corrected` - derived
+independently from the device terminal equations - is provided for the
+finite path. Audited discrepancies of the legacy stamps, all reproduced in
+tests/test_mna_audit.py:
+  1. M1/M2 body transconductance entered the tail diagonal but was absent
+     from the drain rows (Y[1,0], Y[2,0]); one controlled current must act
+     at both terminals.
+  2. M1/M2 cgs was stamped as a tail->drain coupling instead of a
+     gate-driven capacitor with its excitation on the right-hand side.
+  3. M1/M2 cgd was stamped as a tail->drain coupling although their gates
+     are externally driven (those caps connect gates to drains).
+  4. M4's gate-drain capacitance was stamped as a single +s*C off-diagonal
+     (inductor-like) instead of a true two-terminal capacitor.
+  5. M3's gate-drain overlap was added on top of cdd although its gate and
+     drain are the same node (no inter-node admittance under any
+     convention; double-counts under the fixture convention where
+     cdd = cgd + junction).
+
+Capacitance convention assumption (Astra A4, recorded limitation): the
+corrected model stamps M5 drain loading as `gds5 + s*Cdd5` under the
+assumption that `Cdd` is the complete drain self-capacitance for
+gate/source/body at AC ground. The repo's synthetic fixture follows this
+convention, but the real TSMC pickle's characterization is not available
+in-repository (the files originate from a Google Drive download with no
+deck/save expressions), so the convention is UNRESOLVED for real data; the
+device-level Spectre experiment that would settle it belongs to F5. No
+physical AC claim is made until then.
 """
 
 from __future__ import annotations
@@ -68,6 +98,88 @@ class MNAEngine:
         I[:, 1, 0] = -0.5 * m1["gm"]
         I[:, 2, 0] = 0.5 * m2["gm"]
 
+        V = np.linalg.solve(Y, I)
+        return V[:, 2, 0]
+
+    # --------------------------------------------- corrected (F2, finite) ---
+    def assemble_ac_corrected(self, m1, m2, m3, m4, m5, CL: float, freqs):
+        """Assemble the corrected finite (Y, I) per frequency (F2 audit).
+
+        Returns (Y, I) with shapes (n, 3, 3) and (n, 3, 1): the admittance
+        matrix and the driven-gate excitation vector of the corrected
+        terminal-equation model. Exposed for independent audit tests.
+        See :meth:`solve_ac_corrected` for the model description.
+        """
+        freqs = np.atleast_1d(np.asarray(freqs, dtype=float))
+        s = 1j * 2.0 * np.pi * freqs
+        n = len(s)
+
+        gmb1 = m1.get("gmbs", 0.2 * m1["gm"])
+        gmb2 = m2.get("gmbs", 0.2 * m2["gm"])
+
+        Y = np.zeros((n, 3, 3), dtype=np.complex128)
+        I = np.zeros((n, 3, 1), dtype=np.complex128)
+
+        # Node 1 (V_tail): M1/M2 sources, M5 drain.
+        Y[:, 0, 0] = (m5["gds"] + m1["gds"] + m2["gds"]
+                      + m1["gm"] + m2["gm"] + gmb1 + gmb2
+                      + s * (m1["cgs"] + m2["cgs"] + m5["cdd"]))
+        Y[:, 0, 1] = -m1["gds"]
+        Y[:, 0, 2] = -m2["gds"]
+
+        # Node 2 (V_mirror): M1 drain, M3 gate+drain, M4 gate.
+        Y[:, 1, 0] = -(m1["gm"] + gmb1 + m1["gds"])
+        Y[:, 1, 1] = (m1["gds"] + m3["gds"] + m3["gm"]
+                      + s * (m1["cdd"] + m1["cgd"] + m3["cdd"]
+                             + m3["cgs"] + m4["cgs"] + m4["cgd"]))
+        Y[:, 1, 2] = -s * m4["cgd"]
+
+        # Node 3 (V_out): M2 drain, M4 drain, C_L.
+        Y[:, 2, 0] = -(m2["gm"] + gmb2 + m2["gds"])
+        Y[:, 2, 1] = m4["gm"] - s * m4["cgd"]
+        Y[:, 2, 2] = (m2["gds"] + m4["gds"]
+                      + s * (m2["cdd"] + m2["cgd"] + m4["cdd"]
+                             + m4["cgd"] + CL))
+
+        # Right-hand side: the two driven gates inject transconductance AND
+        # capacitive currents. Cap terms vanish at DC and cancel between
+        # matched devices under differential drive; they matter for
+        # asymmetric pairs.
+        I[:, 0, 0] = (0.5 * m1["gm"] - 0.5 * m2["gm"]
+                      + 0.5 * s * (m1["cgs"] - m2["cgs"]))
+        I[:, 1, 0] = -0.5 * m1["gm"] + 0.5 * s * m1["cgd"]
+        I[:, 2, 0] = 0.5 * m2["gm"] - 0.5 * s * m2["cgd"]
+        return Y, I
+
+    def solve_ac_corrected(self, m1, m2, m3, m4, m5, CL: float, freqs,
+                           ) -> np.ndarray:
+        """Corrected finite AC assembly (Phase F2 terminal-stamp audit).
+
+        Same 3-node topology and differential drive as :meth:`solve_ac`, but
+        with every device stamped from its terminal equations:
+
+        NMOS (M1/M2, current drain->source, |V| magnitudes):
+            i_d = gm*(vg-vs) + gmbs*(vb-vs) + gds*(vd-vs)   [+ caps]
+        PMOS (M3/M4, source at the AC-grounded vdd rail, |V| magnitudes):
+            current into the drain node = -gm*vg - gds*vd   [+ caps]
+
+        Capacitor connectivity (source-bulk neglected, documented):
+          - gate-driven caps (M1/M2 cgs, cgd) contribute a diagonal term at
+            their drain/source node AND a right-hand-side excitation from
+            the drive; they never couple two circuit nodes;
+          - M4's cgd (gate at mirror, drain at output) is a true two-terminal
+            capacitor: +s*C on both diagonals, -s*C on both off-diagonals;
+          - M3's cgd (gate = drain = mirror) is a same-node no-op and is not
+            stamped under any convention;
+          - drain self-caps cdd ground locally at their drain node;
+          - M5 (gate/source/body AC-ground) contributes drain loading
+            gds5 + s*Cdd5 only - no transconductance term exists.
+
+        The legacy :meth:`solve_ac` is untouched and remains the frozen
+        historical ideal oracle; see the module docstring for the audited
+        differences and the recorded Cdd convention limitation.
+        """
+        Y, I = self.assemble_ac_corrected(m1, m2, m3, m4, m5, CL, freqs)
         V = np.linalg.solve(Y, I)
         return V[:, 2, 0]
 
