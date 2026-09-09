@@ -1,19 +1,17 @@
 # Astra project review
 
 **Date:** 2026-09-09  
-**Reviewed revision:** `f9798cda312b701b6ee3870ea238c849b74db86d`  
+**Reviewed revision:** `43e934b`  
 **Reviewer:** Astra  
 **Scope:** active implementation, tests, stored evidence, and the Sol 5.6 / Opus 5 Phase F proposal. This review changes documentation only.
 
-**Latest gate review (2026-09-09):** F1 remains accepted at `db6db4a`.
-**F2 development integration is accepted at `e0accfe`; all F2 findings are
-closed.** F3 at `2684166` requires corrections (F3-R1..R5); F4 is not
-released. Public finite dispatch/schema routing is accepted, but export,
-search-contract integration, normalization, and compatibility remain
-incomplete. Real capacitance provenance and physical AC acceptance remain
-open. The original project-wide findings below describe the baseline revision
-and are retained as history; current details are in the final addendum and
-Phase F gate entry.
+**Latest gate review (2026-09-09):** F1-F3 remain accepted and **F4 is accepted
+at `43e934b` with 5/5 frozen requests verified feasible.** F5 independent
+Cadence correlation is the next bounded package. Real capacitance provenance
+and physical AC acceptance remain open; finite web deployment and Phase H
+learning remain closed. The original project-wide findings below describe the
+baseline revision and are retained as history; current details are in the final
+addenda and Phase F gate entries.
 
 ## Assessment
 
@@ -373,3 +371,22 @@ Independent gates passed: 301 non-real-LUT tests and 3/3 real-LUT integration
 tests. The accepted F1/F2 numerical kernels and legacy ideal executable bodies
 remain unchanged. F3 is accepted and F4 feasibility may begin. F5 correlation,
 finite web deployment, and Phase H learning remain closed.
+
+## Final F4 gate review — accepted at `43e934b` (2026-09-09)
+
+The non-canonical real-LUT baseline covers all five frozen regression requests
+without changing requests, bounds, or the 50 mV saturation floor. Every final
+seven-parameter record passes all eight hard-constraint rows. Minimum device
+saturation margins range from 124.459 to 162.139 mV.
+
+I independently verified all 11 source hashes, all five request hashes, both LUT
+hashes, strict JSON, design bounds, constraint rows, and exact call accounting.
+I also replayed the five archived winners through the real LUT evaluator; all
+five verdicts, constraint rows, and principal metrics reproduced. The campaign
+used 4,162 optimizer evaluations plus five final checks in 1,204.473 seconds.
+Generation-cap termination is recorded separately from final hard-verifier PASS.
+
+Independent gates passed: 4/4 focused F4 tests, 305/305 non-real-LUT tests, and
+3/3 real-LUT integration tests. F4 is accepted. F5 independent Cadence
+correlation and capacitance provenance may begin as the next bounded package;
+finite web deployment, dataset regeneration, and Phase H training remain closed.

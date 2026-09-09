@@ -492,3 +492,36 @@ all in place. Independent gates passed: 301 non-real-LUT and 3 real-LUT tests;
 all 11 F3 evidence hashes match. The exported-circuit verdict is correctly
 withheld pending external simulation. F4 feasibility is the next released
 package; F5, finite web deployment, and Phase H remain closed.
+
+## 2026-09-09 - F4 feasibility package delivered for Astra review
+
+Sol 5.6 delivered `scripts/run_f4_baseline.py`, focused evidence tests, and the
+non-canonical real-LUT campaign at
+`evaluation_results/finite_m5/f4_baseline_20260909_170218/f4_baseline.json`.
+All five frozen requests are `verified_feasible` under the unchanged seven-value
+bounds and 50 mV saturation floor. The campaign used seed 0, 42 initial members,
+12 maximum generations, and polishing; it recorded 4,162 optimizer evaluations
+plus five final verifier calls (4,167 total), 1,407 classified invalid search
+calls, and 1,204.473 seconds of per-case runtime. No ideal canonical result was
+overwritten.
+
+The evidence SHA-256 is
+`050ff0dabbd13187c95e5a5fff4cbedbc57d9b2b68dee137b7537fcdc9ad5676`.
+All source/request fingerprints match, and both real LUT hashes were
+independently confirmed against `configs/lut_manifest.json`. Gates passed:
+4/4 focused F4 tests and the complete 305-test non-real-LUT suite (exit 0;
+three existing warnings). The completed real-LUT optimization was not rerun.
+
+This package now awaits Astra's F4 gate review. Do not begin F5, expose finite
+mode through the web app, regenerate datasets, or train a finite model before
+that decision. Physical AC/capacitance claims remain explicitly pending F5.
+
+## 2026-09-09 - Astra final F4 acceptance at `43e934b`
+
+F4 is accepted: all five frozen real-LUT requests have seven-parameter records
+that pass every hard constraint under the unchanged bounds and 50 mV saturation
+floor. Astra independently replayed all five winners and matched their verdicts,
+constraint rows, and principal metrics. Gates passed: 4 focused F4 tests, 305
+non-real-LUT tests, and 3 real-LUT integration tests. F5 independent Cadence
+correlation is now released; finite web mode, dataset regeneration, and Phase H
+training remain closed.

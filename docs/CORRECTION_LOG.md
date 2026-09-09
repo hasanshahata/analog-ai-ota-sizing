@@ -662,3 +662,38 @@ local refinement; and explicit finite rejection at five-output RL/surrogate
 boundaries. Astra independently passed 301 non-real-LUT tests and 3 real-LUT
 tests, reproduced the evidence byte-for-byte, and verified all 11 source hashes.
 F4 feasibility is released; F5 and later phases remain gated.
+
+## 2026-09-09 - F4 real-LUT feasibility baseline delivered
+
+- Added the bounded `scripts/run_f4_baseline.py` campaign runner and
+  `tests/test_f4_baseline.py` evidence/accounting checks.
+- Verified both 2.76 GB LUTs against the checked-in manifest before loading;
+  independently confirmed all archived source and frozen-request fingerprints.
+- Archived strict, non-canonical evidence in
+  `evaluation_results/finite_m5/f4_baseline_20260909_170218/f4_baseline.json`
+  (SHA-256
+  `050ff0dabbd13187c95e5a5fff4cbedbc57d9b2b68dee137b7537fcdc9ad5676`).
+- Ran the five frozen requests with seed 0, 42 initial population members,
+  12 maximum generations, polishing, unchanged `DESIGN_BOUNDS_7`, and the
+  frozen 50 mV saturation floor. All 5/5 final finite records are verified
+  feasible with no failed constraints.
+- Recorded 4,162 optimizer evaluations plus five final verifier calls, 1,407
+  `InvalidDesignError` search calls, and 1,204.473 seconds total per-case
+  runtime. Generation-cap termination remains recorded separately from the
+  successful final hard-verifier verdicts.
+- Passed 4/4 focused F4 tests and the complete 305-test non-real-LUT suite
+  (exit 0, three existing warnings). The completed real-LUT optimization was
+  not rerun.
+- Scope remains bounded: no production-code, request, bound, canonical ideal
+  evidence, web, dataset, or training change. F4 awaits Astra review; F5 and
+  later work remain closed.
+
+## 2026-09-09 - F4 accepted at `43e934b`
+
+Astra independently validated the complete F4 artifact and replayed all five
+archived winners through the real LUT evaluator. All five frozen requests pass
+all hard constraints with minimum saturation margins between 124.459 and
+162.139 mV. Focused F4 tests passed 4/4, the non-real suite passed 305/305, and
+real-LUT integration passed 3/3. F4 is accepted and F5 is released under its
+existing independent Cadence-correlation gate; web and learning work remain
+closed.

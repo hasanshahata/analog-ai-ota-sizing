@@ -2704,3 +2704,84 @@ frozen 50 mV saturation floor. Do not reinterpret the existing negative-margin
 diagnostics as feasible designs. Capacitance provenance and physical AC
 correlation remain F5 gates; finite web deployment and Phase H learning remain
 unreleased.
+
+## 2026-09-09 - Sol F4 feasibility-baseline delivery for Astra review
+
+Sol 5.6 completed the bounded F4 real-LUT feasibility package. This is a
+delivery record, not gate acceptance: Astra must independently review it before
+F5 can be released. No production oracle behavior, frozen request, seven-value
+bound, ideal-tail canonical evidence, web path, dataset, or model was changed.
+
+The new runner `scripts/run_f4_baseline.py` verifies both real LUT files against
+`configs/lut_manifest.json` before loading them, validates each request before
+search, uses the accepted finite objective and final hard verifier, records
+invalid exception categories and exact call counts, and writes strict JSON to a
+new non-canonical directory. The frozen campaign used seed 0, 42 initial
+population members, 12 maximum generations, polishing enabled, and the existing
+`DESIGN_BOUNDS_7` plus 50 mV default saturation floor. The historical ideal
+solutions were used only as four seed rows for their five shared coordinates;
+L5/gmid5 were explicitly varied and the finite verifier alone decided status.
+
+Machine-readable evidence is archived at
+`evaluation_results/finite_m5/f4_baseline_20260909_170218/f4_baseline.json`
+(SHA-256
+`050ff0dabbd13187c95e5a5fff4cbedbc57d9b2b68dee137b7537fcdc9ad5676`).
+Its source and five request fingerprints match the delivered workspace. Both
+2,763,639,830-byte LUTs were independently checked against the manifest:
+NCH `20c15dd9215789d94a438ffd14229f8ab09459474bb965371077a5435ed87e01`
+and PCH `ea80ded3113fb3b701b5bbca9fc4f854c1b1742bb716e668dc95fe92ac169a6c`.
+
+All five frozen requests have `verified_feasible` final records with no failed
+constraints:
+
+| Request | Full oracle calls | Invalid calls | Runtime (s) | Gain (dB) | GBW (Hz) | PM (deg) | Power (W) | Min sat. margin (V) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| test1_low_power | 555 | 310 | 236.159 | 32.050244 | 20,160,662.268 | 88.947234 | 1.260021e-05 | 0.162139 |
+| test2_high_gain | 1,003 | 253 | 252.890 | 35.100066 | 52,755,273.792 | 82.113643 | 3.618571e-05 | 0.152501 |
+| test3_heavy_load | 715 | 308 | 248.000 | 26.768564 | 50,119,724.603 | 90.859109 | 1.283411e-04 | 0.124459 |
+| test4_light_load | 1,179 | 259 | 259.258 | 28.296307 | 250,000,111.671 | 83.740861 | 3.411768e-05 | 0.129217 |
+| test5_balanced | 715 | 277 | 208.166 | 31.251382 | 102,642,533.422 | 82.508426 | 6.779855e-05 | 0.125137 |
+
+Totals are 4,162 optimizer evaluations, five separate final-verification
+evaluations, 4,167 full oracle calls, 1,407 classified `InvalidDesignError`
+calls during search, and 1,204.473 seconds of per-case runtime. Optimizer
+termination by the declared generation cap is retained in the evidence and is
+not presented as optimizer convergence; the separately evaluated best designs
+nevertheless pass every finite hard constraint.
+
+Delivery gates:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests\test_f4_baseline.py -q
+# 4 passed
+
+.\.venv\Scripts\python.exe -m pytest tests --ignore=tests/test_integration_real_luts.py -q
+# 305 collected tests, exit 0; three existing warnings
+```
+
+`tests/test_f4_baseline.py` checks strict/source-bound evidence, all five hard
+verdicts and 50 mV saturation floor, seven-coordinate initialization, and exact
+call accounting. The expensive real-LUT optimization was not repeated after
+the completed campaign. F5 Cadence correlation and capacitance provenance,
+finite web deployment, dataset regeneration, and Phase H training remain
+closed pending Astra's F4 gate decision.
+
+## 2026-09-09 - Astra final F4 acceptance at `43e934b`
+
+**F4 is accepted.** The five frozen requests are all `verified_feasible` under
+the unchanged `DESIGN_BOUNDS_7` and frozen 50 mV saturation floor. Astra
+independently verified the source/request/LUT bindings, strict JSON, all hard
+constraint rows, seven-value bounds, and the 4,167-call accounting, then replayed
+all five archived winners through the real LUT evaluator with matching verdicts,
+constraints, and principal metrics.
+
+Independent gates passed: 4/4 focused F4 tests, 305/305 non-real-LUT tests, and
+3/3 real-LUT integration tests. The accepted F1-F3 executable paths are
+unchanged. The non-canonical artifact remains a real-LUT proxy feasibility
+baseline; it is not physical AC validation.
+
+F5 is released as the next bounded package under its existing independent
+Cadence-correlation contract. Begin with the device-level manual reference,
+operating-point extraction, capacitance provenance experiment, and tolerances
+frozen before measured validation. Do not expose finite mode through the web,
+regenerate datasets, or start Phase H training until F5 passes its own gate.
