@@ -117,6 +117,37 @@ class MNAEngine:
         gmb1 = m1.get("gmbs", 0.2 * m1["gm"])
         gmb2 = m2.get("gmbs", 0.2 * m2["gm"])
 
+        # Capacitance convention (declared lumped model, F2-R1): each Cdd is
+        # the TOTAL drain capacitance = gate-drain overlap (Cgd) + junction
+        # (Cdb = Cdd - Cgd). The gate-drain ELEMENT is stamped per its true
+        # connectivity; only the derived JUNCTION lands on the drain
+        # diagonal - never the total plus the element (which would count the
+        # overlap twice). Inconsistent inputs (Cdd < Cgd) are rejected, not
+        # clipped. Per device:
+        #   M1/M2 (driven gate): overlap -> drain diagonal + RHS excitation;
+        #                        junction -> drain diagonal. Drain diagonal
+        #                        total equals Cdd either way; the RHS uses
+        #                        the overlap element only.
+        #   M3   (gate = drain): overlap is a same-node no-op; junction only.
+        #   M4   (gate = mirror): overlap -> true two-terminal element
+        #                         (mirror<->output); junction -> output.
+        #   M5   (gate/source/body AC ground): overlap and junction both
+        #                        terminate at AC ground -> the TOTAL Cdd is
+        #                        the drain loading; no decomposition needed.
+        def junction(total, overlap, name):
+            c = float(total) - float(overlap)
+            if c < 0.0:
+                raise ValueError(
+                    f"{name}: inconsistent capacitance convention (Cdd "
+                    f"{total:.6g} F < Cgd {overlap:.6g} F under the declared "
+                    "cdd = cgd + junction lumped model)")
+            return c
+
+        cdb1 = junction(m1["cdd"], m1["cgd"], "M1")
+        cdb2 = junction(m2["cdd"], m2["cgd"], "M2")
+        cdb3 = junction(m3["cdd"], m3["cgd"], "M3")
+        cdb4 = junction(m4["cdd"], m4["cgd"], "M4")
+
         Y = np.zeros((n, 3, 3), dtype=np.complex128)
         I = np.zeros((n, 3, 1), dtype=np.complex128)
 
@@ -130,16 +161,18 @@ class MNAEngine:
         # Node 2 (V_mirror): M1 drain, M3 gate+drain, M4 gate.
         Y[:, 1, 0] = -(m1["gm"] + gmb1 + m1["gds"])
         Y[:, 1, 1] = (m1["gds"] + m3["gds"] + m3["gm"]
-                      + s * (m1["cdd"] + m1["cgd"] + m3["cdd"]
-                             + m3["cgs"] + m4["cgs"] + m4["cgd"]))
+                      + s * m1["cdd"]                  # M1 overlap + junction
+                      + s * (cdb3 + m3["cgs"])         # M3 junction + cgs
+                      + s * (m4["cgs"] + m4["cgd"]))   # M4 cgs + overlap el.
         Y[:, 1, 2] = -s * m4["cgd"]
 
         # Node 3 (V_out): M2 drain, M4 drain, C_L.
         Y[:, 2, 0] = -(m2["gm"] + gmb2 + m2["gds"])
         Y[:, 2, 1] = m4["gm"] - s * m4["cgd"]
         Y[:, 2, 2] = (m2["gds"] + m4["gds"]
-                      + s * (m2["cdd"] + m2["cgd"] + m4["cdd"]
-                             + m4["cgd"] + CL))
+                      + s * m2["cdd"]                  # M2 overlap + junction
+                      + s * (m4["cgd"] + cdb4)         # M4 overlap el. + jct
+                      + s * CL)
 
         # Right-hand side: the two driven gates inject transconductance AND
         # capacitive currents. Cap terms vanish at DC and cancel between
@@ -163,17 +196,26 @@ class MNAEngine:
         PMOS (M3/M4, source at the AC-grounded vdd rail, |V| magnitudes):
             current into the drain node = -gm*vg - gds*vd   [+ caps]
 
-        Capacitor connectivity (source-bulk neglected, documented):
-          - gate-driven caps (M1/M2 cgs, cgd) contribute a diagonal term at
-            their drain/source node AND a right-hand-side excitation from
-            the drive; they never couple two circuit nodes;
+        Capacitor connectivity and convention (source-bulk neglected,
+        documented; F2-R1): each Cdd is treated as the TOTAL drain
+        capacitance under the declared lumped model Cdd = Cgd + Cdb. The
+        gate-drain ELEMENT (Cgd) is stamped per its true connectivity and
+        the derived junction (Cdb = Cdd - Cgd) lands on the drain diagonal;
+        the two are never both added at the same node. Inconsistent inputs
+        (Cdd < Cgd) raise ValueError.
+          - M1/M2 (driven gates): their cgs/cgd elements contribute a
+            diagonal term at the drain/source node AND a right-hand-side
+            excitation; they never couple two circuit nodes. The drain
+            diagonal carries Cgd + Cdb = Cdd.
           - M4's cgd (gate at mirror, drain at output) is a true two-terminal
             capacitor: +s*C on both diagonals, -s*C on both off-diagonals;
-          - M3's cgd (gate = drain = mirror) is a same-node no-op and is not
-            stamped under any convention;
-          - drain self-caps cdd ground locally at their drain node;
+            its junction Cdb lands on the output diagonal. Net output
+            contribution: Cgd + Cdb = Cdd.
+          - M3 (gate = drain = mirror): the overlap is a same-node no-op;
+            only the junction Cdd - Cgd reaches the mirror diagonal.
           - M5 (gate/source/body AC-ground) contributes drain loading
-            gds5 + s*Cdd5 only - no transconductance term exists.
+            gds5 + s*Cdd5 only - overlap and junction both terminate at AC
+            ground, so the total is correct; no transconductance exists.
 
         The legacy :meth:`solve_ac` is untouched and remains the frozen
         historical ideal oracle; see the module docstring for the audited

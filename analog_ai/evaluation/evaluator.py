@@ -156,7 +156,10 @@ def effective_constraint_limits(specs: dict) -> tuple[dict, list[str]]:
     """Effective hard floors for a finite evaluation (Astra R1/A3): a
     request may TIGHTEN the frozen defaults, never relax them; attempted
     relaxations are clamped up to the frozen default and recorded. Raises
-    ValueError for nonfinite/negative requested minima."""
+    ValueError for nonfinite/negative requested minima. Every residual
+    scale stays positive: thresholds that may legitimately be zero
+    (Sat_margin_min) are clamped to at least the frozen default, which the
+    constraint module uses as its normalization scale."""
     notes: list[str] = []
     limits = {
         "PM_min": config.PM_MIN_DEFAULT,
@@ -168,10 +171,9 @@ def effective_constraint_limits(specs: dict) -> tuple[dict, list[str]]:
                          ("Sat_margin_min", config.SAT_MARGIN_MIN_DEFAULT)):
         if key in specs:
             req = float(specs[key])
-            if not math.isfinite(req) or req < 0:
+            if not math.isfinite(req):
                 raise ValueError(
-                    f"requested {key} must be finite and non-negative, "
-                    f"got {specs[key]!r}")
+                    f"requested {key} must be finite, got {specs[key]!r}")
             if req > default:
                 limits[key] = req
             elif req < default:
@@ -179,6 +181,88 @@ def effective_constraint_limits(specs: dict) -> tuple[dict, list[str]]:
                     f"requested {key}={req:.4g} below the frozen default "
                     f"{default:.4g}; frozen default enforced (no relaxation)")
     return limits, notes
+
+
+# Supported finite request fields: True = strictly positive (zero would
+# make the constraint's normalization scale zero); False = zero allowed
+# (the constraint module applies fixed positive scales for those).
+_FINITE_SPEC_RULES = {
+    "Gain_min": False,        # dB, >= 0
+    "GBW_min": True,          # Hz, > 0
+    "CL_pF": True,            # pF, > 0
+    "Power_max": True,        # W, > 0 (a nonpositive power limit is
+                              # nonphysical and would invert its residual)
+    "PM_min": False,          # deg, (0, 180]
+    "Sat_margin_min": False,  # V, >= 0
+    "SR_min": True,           # V/s, > 0
+    "Swing_min": False,       # V, >= 0
+    "ICMR_max": False,        # V, >= 0
+}
+
+
+def validate_finite_specs(specs: dict) -> dict:
+    """Validate/normalize every supported finite request field BEFORE any
+    device work (Astra F2-R2). Returns a float-normalized copy; raises
+    ValueError for booleans, non-numeric values, non-finite values,
+    out-of-range values, and unsupported fields - deterministic messages,
+    fail-closed, finite-scoped (the ideal path is untouched)."""
+    out: dict = {}
+    for key, value in dict(specs).items():
+        if key not in _FINITE_SPEC_RULES:
+            raise ValueError(
+                f"unsupported request field {key!r} for finite evaluation")
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(
+                f"request field {key} must be a real number, got {value!r}")
+        v = float(value)
+        if not math.isfinite(v):
+            raise ValueError(
+                f"request field {key} must be finite, got {value!r}")
+        if _FINITE_SPEC_RULES[key] and not v > 0.0:
+            raise ValueError(
+                f"request field {key} must be positive, got {value!r}")
+        if key == "Gain_min" and v < 0.0:
+            raise ValueError("request field Gain_min must be >= 0 dB")
+        if key == "PM_min" and not 0.0 < v <= 180.0:
+            raise ValueError("request field PM_min must lie in (0, 180] deg")
+        if key in ("Sat_margin_min", "Swing_min", "ICMR_max") and v < 0.0:
+            raise ValueError(f"request field {key} must be >= 0")
+        out[key] = v
+    return out
+
+
+def _json_safe_scalar(v):
+    """JSON-safe request echo: nonfinite numerics become null; strings and
+    booleans are preserved (they are valid JSON and carry the reason)."""
+    if isinstance(v, bool):
+        return v
+    if isinstance(v, (int, float)):
+        v = float(v)
+        return v if math.isfinite(v) else None
+    if isinstance(v, str):
+        return v
+    return None
+
+
+def _finite_num_or_list(v):
+    """Numeric scalar or tuple of numerics -> JSON-safe (nulls for
+    nonfinite values, list for tuples)."""
+    if isinstance(v, (list, tuple)):
+        return [_finite_num(x) for x in v]
+    return _finite_num(v)
+
+
+def _finite_constraint_row(c) -> dict:
+    """JSON-safe constraint row: nonfinite achieved/residual serialize as
+    explicit nulls (L_domain's tuple limit/achieved become lists); the
+    pass/fail verdict, name, and reason text are preserved verbatim
+    (failures are never turned into passes)."""
+    row = c.as_dict()
+    row["limit"] = _finite_num_or_list(row["limit"])
+    row["achieved"] = _finite_num_or_list(row["achieved"])
+    row["residual"] = _finite_num(row["residual"])
+    row["scale"] = _finite_num(row["scale"])
+    return row
 
 
 def _finite_device_summary(d: dict) -> dict:
@@ -217,9 +301,13 @@ def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
         "topology": "5t_ota",
         "tail_device": "finite",
         "op_point_mode": "solved",
-        "vdd": config.VDD,
-        "vicm": config.VICM,
-        "request": dict(specs),
+        # Effective supply/common mode of the evaluated object (F2-R4): the
+        # record must reproduce its own operating point, not the defaults.
+        "vdd": float(ota.VDD),
+        "vicm": float(ota.Vicm),
+        "supply_context_canonical": (float(ota.VDD) == config.VDD
+                                     and float(ota.Vicm) == config.VICM),
+        "request": None,
         "external_bias_generator": (
             "gate-bias generator excluded from power/area/noise/mismatch"),
         "capacitance_assumption": (
@@ -228,18 +316,18 @@ def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
             "(F5 device-level experiment pending)"),
     }
     try:
+        specs_n = validate_finite_specs(specs)
+        record["request"] = specs_n
         values = validate_finite_design(design)
         record["design"] = {name: float(v)
                             for name, v in zip(config.DESIGN_PARAM_NAMES_7,
                                                values)}
-        cl = float(specs.get("CL_pF", 1.0)) * 1e-12
-        if not (math.isfinite(cl) and cl > 0):
-            raise ValueError("CL_pF must be positive and finite")
-        limits, notes = effective_constraint_limits(specs)
+        cl = specs_n.get("CL_pF", 1.0) * 1e-12
+        limits, notes = effective_constraint_limits(specs_n)
         record["effective_constraints"] = {"limits": limits, "notes": notes}
 
         perf = ota._evaluate_solved_finite(list(values), cl, None)
-        constraints, verdict = evaluate_constraints(perf, specs,
+        constraints, verdict = evaluate_constraints(perf, specs_n,
                                                     limits=limits)
         record.update(
             metrics={
@@ -294,19 +382,23 @@ def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
                 "convergence": perf["convergence"],
                 "clip_diagnostics": perf["clip_diagnostics"],
             },
-            constraints=[c.as_dict() for c in constraints],
+            constraints=[_finite_constraint_row(c) for c in constraints],
             verdict=bool(verdict),
             warnings=list(perf.get("warnings", [])) + notes,
+            ac_model=perf["ac_model"],
         )
     except (InvalidDesignError, DomainError, ValueError,
             FloatingPointError) as exc:
         raw_design = None
         try:
-            raw = [float(v) for v in design]
+            raw = [_finite_num(v) for v in design]
             if len(raw) == 7:
                 raw_design = raw
         except (TypeError, ValueError):
             raw_design = None
+        if record["request"] is None:
+            record["request"] = {k: _json_safe_scalar(v)
+                                 for k, v in dict(specs).items()}
         record.update(
             design=raw_design, metrics=None, devices=None, constraints=[],
             dc_diagnostics=None, effective_constraints=None,

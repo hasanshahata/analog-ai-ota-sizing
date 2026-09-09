@@ -17,7 +17,8 @@ from analog_ai.circuit.ota5t import OTA5T
 from analog_ai.evaluation.constraints import evaluate_constraints
 from analog_ai.evaluation.evaluator import (FINITE_SCHEMA_VERSION,
                                             effective_constraint_limits,
-                                            evaluate_design_finite)
+                                            evaluate_design_finite,
+                                            validate_finite_specs)
 
 NOMINAL = (0.6e-6, 15.0, 0.6e-6, 12.0, 0.6e-6, 10.0, 50e-6)
 LOOSE_SPECS = {"Gain_min": 20.0, "GBW_min": 1e6, "CL_pF": 1.0,
@@ -147,8 +148,11 @@ def test_effective_sat_margin_tightening(finite_ota):
 def test_effective_constraint_limits_validation():
     with pytest.raises(ValueError):
         effective_constraint_limits({"PM_min": float("inf")})
-    with pytest.raises(ValueError):
-        effective_constraint_limits({"Sat_margin_min": -1.0})
+    # A sub-default request is clamped to the frozen default (the record
+    # path's validate_finite_specs rejects invalid types before this).
+    limits, notes = effective_constraint_limits({"Sat_margin_min": -1.0})
+    assert limits["Sat_margin_min"] == config.SAT_MARGIN_MIN_DEFAULT
+    assert any("no relaxation" in n for n in notes)
 
 
 def test_requested_range_metrics_fail_closed(finite_ota):
@@ -258,6 +262,135 @@ def test_invalid_specs_produce_invalid_record(finite_ota):
         finite_ota, NOMINAL, dict(LOOSE_SPECS, PM_min=float("inf")))
     assert r["verdict"] is False
     assert "PM_min" in r["invalid_reason"]
+    assert r["request"]["PM_min"] is None      # strict-JSON-safe echo
+
+
+# ---------------------------------- F2-R2: malformed request validation -----
+@pytest.mark.parametrize("field, bad", [
+    ("Power_max", -1e-6),        # negative limit inverted its residual
+    ("Power_max", 0.0),          # zero would zero the normalization scale
+    ("GBW_min", 0.0),
+    ("GBW_min", -1e6),
+    ("SR_min", 0.0),
+    ("CL_pF", 0.0),
+    ("PM_min", 0.0),
+    ("PM_min", 181.0),
+    ("Gain_min", -5.0),
+    ("Sat_margin_min", -0.01),
+    ("Swing_min", -0.1),
+    ("ICMR_max", -0.2),
+    ("PM_min", None),            # type validation
+    ("Gain_min", "20"),          # string must not slip through arithmetic
+    ("Power_max", True),         # booleans are not numbers
+    ("Gain_min", float("nan")),
+    ("Power_max", float("inf")),
+])
+def test_malformed_request_fields_rejected_before_device_work(
+        finite_ota, field, bad):
+    specs = dict(LOOSE_SPECS)
+    specs[field] = bad
+    r = evaluate_design_finite(finite_ota, NOMINAL, specs)
+    assert r["verdict"] is False
+    assert field in r["invalid_reason"]
+    # fail-closed at the record boundary: no constraint rows were computed
+    # against the malformed field (a passing power row is NOT possible)
+    assert r["constraints"] == []
+    assert r["metrics"] is None
+    assert r["effective_constraints"] is None
+
+
+def test_unsupported_request_field_rejected(finite_ota):
+    r = evaluate_design_finite(finite_ota, NOMINAL,
+                               dict(LOOSE_SPECS, Mystery=1.0))
+    assert r["verdict"] is False
+    assert "Mystery" in r["invalid_reason"]
+
+
+def test_validate_finite_specs_normalizes_valid_request():
+    out = validate_finite_specs({"Gain_min": 20, "GBW_min": 1e6,
+                                 "CL_pF": 1.0, "Power_max": 400e-6,
+                                 "PM_min": 60.0, "Sat_margin_min": 0.0,
+                                 "Swing_min": 0.0, "ICMR_max": 0.0})
+    assert out["Gain_min"] == 20.0 and isinstance(out["Gain_min"], float)
+    assert out["Sat_margin_min"] == 0.0        # zero-meaningful, allowed
+    with pytest.raises(ValueError):
+        validate_finite_specs({"Sat_margin_min": True})
+
+
+def test_zero_sat_margin_request_keeps_positive_scale(finite_ota):
+    """A zero saturation threshold is meaningful; the frozen default is
+    clamped in as limit AND normalization scale, so no division by zero."""
+    r = evaluate_design_finite(finite_ota, NOMINAL,
+                               dict(LOOSE_SPECS, Sat_margin_min=0.0))
+    row = next(c for c in r["constraints"] if c["name"] == "Sat_margin_min")
+    assert row["scale"] == config.SAT_MARGIN_MIN_DEFAULT > 0
+    assert r["verdict"] is False   # frozen 50 mV floor still rejects
+
+
+# ------------------------------------ F2-R3: strict JSON on failure paths ---
+def test_strict_json_on_range_failure_record(finite_ota):
+    r = evaluate_design_finite(
+        finite_ota, NOMINAL, dict(LOOSE_SPECS, Swing_min=0.3, ICMR_max=0.9))
+    text = json.dumps(r, allow_nan=False)      # must not raise
+    assert "NaN" not in text and "Infinity" not in text
+    swing_row = next(c for c in r["constraints"] if c["name"] == "Swing_min")
+    assert swing_row["achieved"] is None
+    assert swing_row["residual"] is None
+    assert swing_row["passed"] is False        # failure preserved, not null
+
+
+def test_strict_json_on_nan_design_invalid_record(finite_ota):
+    bad = list(NOMINAL)
+    bad[5] = float("nan")
+    r = evaluate_design_finite(finite_ota, bad, dict(LOOSE_SPECS))
+    text = json.dumps(r, allow_nan=False)
+    assert "NaN" not in text
+    assert r["design"][5] is None              # sanitized echo
+    assert "gmid5" in r["invalid_reason"]      # reason carries the field
+
+
+def test_strict_json_on_infinite_request_invalid_record(finite_ota):
+    r = evaluate_design_finite(
+        finite_ota, NOMINAL, dict(LOOSE_SPECS, PM_min=float("inf")))
+    text = json.dumps(r, allow_nan=False)
+    assert "Infinity" not in text
+    assert r["request"]["PM_min"] is None
+
+
+def test_strict_json_on_no_crossing_ac_record(finite_ota):
+    """A sweep with no 0 dB crossing leaves GBW NaN: the record must
+    serialize it as an explicit null with the warning retained."""
+    r = evaluate_design_finite(
+        finite_ota, NOMINAL, dict(LOOSE_SPECS, CL_pF=1e9))  # 1 mF load
+    assert r["metrics"]["gbw_valid"] is False
+    assert r["metrics"]["GBW"] is None
+    assert any("no 0 dB crossing" in w for w in r["warnings"])
+    json.dumps(r, allow_nan=False)
+
+
+# ------------------------------------- F2-R4: effective supply context ------
+def test_record_reports_effective_supply_not_defaults(engine):
+    dm, _ = engine
+    ota = OTA5T(dm, vdd=1.3, tail_device="finite", op_point="imposed")
+    r = evaluate_design_finite(ota, NOMINAL, dict(LOOSE_SPECS))
+    assert r["vdd"] == 1.3
+    assert r["vicm"] == 0.65
+    assert r["supply_context_canonical"] is False
+    # power definition is consistent with the ACTUAL supply
+    id3 = r["devices"]["M3"]["ID"]
+    id4 = r["devices"]["M4"]["ID"]
+    assert r["metrics"]["Power_core"] == pytest.approx(1.3 * (id3 + id4),
+                                                       rel=1e-12)
+    assert r["metrics"]["power_requested_vdd_times_itail"] == \
+        pytest.approx(1.3 * NOMINAL[6], rel=1e-12)
+
+
+def test_record_reports_canonical_supply_flag(finite_ota):
+    r = evaluate_design_finite(finite_ota, NOMINAL, dict(LOOSE_SPECS))
+    assert r["vdd"] == config.VDD
+    assert r["vicm"] == config.VICM
+    assert r["supply_context_canonical"] is True
+    assert r["ac_model"] == "corrected_terminal_v1"
 
 
 def test_domain_rejection_produces_invalid_record(finite_ota):

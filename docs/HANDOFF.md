@@ -358,3 +358,41 @@ non-real-LUT suite exit 0; 3/3 real-LUT integration. Real-LUT F2 probe
 designs verdict=False with exactly Sat_margin_min failing (sat_m5 -48.0 mV)
 - the negative-saturation diagnostic points are rejected as feasible
 designs, as required.
+
+**Update 2026-09-09 (F2 corrections delivered): Astra's F2 review returned
+CHANGES REQUIRED (F2-R1..R5); the bounded correction package addresses all
+five.** F1 stays accepted; public finite guards stay closed.
+
+1. **F2-R1 (capacitance double counting):** under the declared
+   `Cdd = Cgd + Cdb` convention the corrected assembly now derives the
+   junction per device and stamps the gate-drain ELEMENT per its true
+   connectivity plus ONLY the junction at the drain - Astra's lone-1pF
+   limiting cases (M1: 1 pF not 2 pF; M3: nothing; M4 `[[1,-1],[-1,1]]`)
+   are enforced by tests, with junction-only complements and `Cdd < Cgd`
+   rejection. `tests/test_mna_audit.py` rebuilt on a PRIMITIVE reference
+   assembler (the engine's total Cdd is constructed FROM Cgs/Cgd/Cdb
+   primitives), replacing tests that had encoded the defect.
+2. **F2-R2 (malformed requests):** `validate_finite_specs` type-, finite-,
+   and range-checks every supported finite request field before any device
+   work (strictly-positive quantities reject zero so no normalization
+   scale can be zero or inverted); 17 malformed-field tests assert
+   record-level fail-closed behavior.
+3. **F2-R3 (strict JSON):** the complete record is JSON-safe - constraint
+   rows with nonfinite values as explicit nulls (verdicts preserved),
+   normalized/sanitized request echoes, sanitized invalid-design values -
+   asserted on range-failure, NaN-design, infinite-request, and
+   no-crossing-AC records.
+4. **F2-R4 (supply context):** records carry the effective
+   `ota.VDD`/`ota.Vicm`, a `supply_context_canonical` flag, and the
+   `ac_model` identifier; tested at vdd=1.3.
+5. **F2-R5 (fingerprints):** `source_fingerprint_f2()` extends the
+   accepted F1 set with the evaluator/constraints modules and the actual
+   F2 entry point (12 files), with independent-hash coverage tests.
+
+New immutable archive:
+`evaluation_results/finite_m5/f2_integration_20260909_112307/` (LUT
+hashes verified, strict JSON, required range-failure and malformed-request
+examples; both diagnostic designs still verdict=False with exactly
+Sat_margin_min failing). Earlier archive retained as history. The 50 mV
+floor, F1 kernel, legacy ideal oracle, and public finite guards are
+unchanged; capacitance provenance remains open for F5.

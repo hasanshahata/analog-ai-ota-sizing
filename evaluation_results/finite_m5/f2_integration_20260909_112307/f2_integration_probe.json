@@ -1,0 +1,1108 @@
+{
+  "probe": "phase_f2_integrated_finite_evaluator_real_lut",
+  "timestamp": "2026-09-09T11:23:07",
+  "source_identity": {
+    "git_commit": "acfb995f95810b4d2f1174eed9ece914a23facfd",
+    "git_tracked_changes": true,
+    "python": "3.11.9",
+    "source_fingerprint": {
+      "analog_ai": {
+        "file": "__init__.py",
+        "sha256": "0caafd08ba9f7b78fc81167b3815416ef84541d27f987737b9c74fab16c0de44"
+      },
+      "analog_ai.config": {
+        "file": "config.py",
+        "sha256": "1eaea76069760db5b487658e5dff378a97ead34da8bb7562b1bcc3a29a84d49d"
+      },
+      "analog_ai.devices.lut": {
+        "file": "lut.py",
+        "sha256": "8c7dfde8aa2eb21cdf640b7d411b03b82565130c034b7781ba2a68e8bc1e2adf"
+      },
+      "analog_ai.devices.device_model": {
+        "file": "device_model.py",
+        "sha256": "0d97bbe4b8548870350733329415d07ece28c330d3688aad42ed204b2b060e54"
+      },
+      "analog_ai.circuit.dc_solver": {
+        "file": "dc_solver.py",
+        "sha256": "d9208be2c2745ab884c9dd1e4a2dcc5f77deb9596af75f23e135ccacce6a6ef8"
+      },
+      "analog_ai.circuit.mna": {
+        "file": "mna.py",
+        "sha256": "6edb90bd21e4e6d79219a558a3fb7c4ffee016437fc9960c0fc461de8986f3a8"
+      },
+      "analog_ai.circuit.ota5t": {
+        "file": "ota5t.py",
+        "sha256": "d8a76a46989b2665d6c269939fa9fb085cf2e7c2b43cf29f28a4a70570957593"
+      },
+      "analog_ai.loader": {
+        "file": "loader.py",
+        "sha256": "212fccc7c0d4d9356cb2a9a612a9ac7b41d3f58adbe73ca0fc3f2f3da277e708"
+      },
+      "scripts.probe_finite_kernel": {
+        "file": "probe_finite_kernel.py",
+        "sha256": "7d087198b3db164a8ce1aa50ba4cd4e6bd7793a68aa329c8131e3962e78934d8"
+      }
+    },
+    "git_diff_sha256": "ae9ead250412ab5309eaef470ad23612abf3e6746166439b8e673204ac56ba56"
+  },
+  "source_fingerprint_f2": {
+    "analog_ai": {
+      "file": "__init__.py",
+      "sha256": "0caafd08ba9f7b78fc81167b3815416ef84541d27f987737b9c74fab16c0de44"
+    },
+    "analog_ai.config": {
+      "file": "config.py",
+      "sha256": "1eaea76069760db5b487658e5dff378a97ead34da8bb7562b1bcc3a29a84d49d"
+    },
+    "analog_ai.devices.lut": {
+      "file": "lut.py",
+      "sha256": "8c7dfde8aa2eb21cdf640b7d411b03b82565130c034b7781ba2a68e8bc1e2adf"
+    },
+    "analog_ai.devices.device_model": {
+      "file": "device_model.py",
+      "sha256": "0d97bbe4b8548870350733329415d07ece28c330d3688aad42ed204b2b060e54"
+    },
+    "analog_ai.circuit.dc_solver": {
+      "file": "dc_solver.py",
+      "sha256": "d9208be2c2745ab884c9dd1e4a2dcc5f77deb9596af75f23e135ccacce6a6ef8"
+    },
+    "analog_ai.circuit.mna": {
+      "file": "mna.py",
+      "sha256": "6edb90bd21e4e6d79219a558a3fb7c4ffee016437fc9960c0fc461de8986f3a8"
+    },
+    "analog_ai.circuit.ota5t": {
+      "file": "ota5t.py",
+      "sha256": "d8a76a46989b2665d6c269939fa9fb085cf2e7c2b43cf29f28a4a70570957593"
+    },
+    "analog_ai.loader": {
+      "file": "loader.py",
+      "sha256": "212fccc7c0d4d9356cb2a9a612a9ac7b41d3f58adbe73ca0fc3f2f3da277e708"
+    },
+    "analog_ai.evaluation.evaluator": {
+      "file": "evaluator.py",
+      "sha256": "283abf032bb44e6b2802dceaba0532aa0ebcfb3c629adda73049307bd2aacab8"
+    },
+    "analog_ai.evaluation.constraints": {
+      "file": "constraints.py",
+      "sha256": "14ce944fb965dcece6076a8f607e08b5d732f559a3d86172f98e8280461423e6"
+    },
+    "scripts.probe_finite_kernel": {
+      "file": "probe_finite_kernel.py",
+      "sha256": "7d087198b3db164a8ce1aa50ba4cd4e6bd7793a68aa329c8131e3962e78934d8"
+    },
+    "scripts/probe_finite_evaluator.py": {
+      "file": "probe_finite_evaluator.py",
+      "sha256": "798fc32e92d7ca03a5464e06e4447c5e8e0035e0c42e755d59a802d438119fe8"
+    }
+  },
+  "note": "development probe only; public finite evaluation stays closed; finite records carry the dev schema identity",
+  "designs": [
+    {
+      "schema_version": "analog_ai-0.2.0-finite-solved-dev",
+      "oracle_identity": {
+        "schema": "analog_ai-0.2.0-finite-solved-dev",
+        "distinct_from_ideal_oracle": "analog_ai-0.1.0-proxy"
+      },
+      "topology": "5t_ota",
+      "tail_device": "finite",
+      "op_point_mode": "solved",
+      "vdd": 1.2,
+      "vicm": 0.6,
+      "supply_context_canonical": true,
+      "request": {
+        "Gain_min": 20.0,
+        "GBW_min": 1000000.0,
+        "CL_pF": 1.0,
+        "Power_max": 0.0004
+      },
+      "external_bias_generator": "gate-bias generator excluded from power/area/noise/mismatch",
+      "capacitance_assumption": "cdd treated as the complete drain self-capacitance for grounded gate/source/body; real-pickle convention unverified (F5 device-level experiment pending)",
+      "design": {
+        "L1": 5e-07,
+        "gmid1": 15.0,
+        "L3": 6e-07,
+        "gmid3": 12.0,
+        "L5": 5e-07,
+        "gmid5": 10.0,
+        "Itail": 5e-05
+      },
+      "effective_constraints": {
+        "limits": {
+          "PM_min": 45.0,
+          "Sat_margin_min": 0.05,
+          "W_nmos_max": 0.00025,
+          "W_pmos_max": 0.00075
+        },
+        "notes": []
+      },
+      "metrics": {
+        "DC_Gain_dB": 31.179744198812926,
+        "GBW": 57489869.499021284,
+        "gbw_valid": true,
+        "PM": 86.87567265583446,
+        "Power_core": 5.9999996204321115e-05,
+        "power_requested_vdd_times_itail": 6e-05,
+        "power_kcl_error": 6.326131877225231e-08,
+        "SR_proxy": 50000000.0,
+        "min_sat_margin": -0.048042915671901484,
+        "Area": 3.3072216051670614e-11,
+        "Swing": null,
+        "Swing_est": 0.9006279157166844,
+        "Vout_low_est": 0.17563096188075003,
+        "Vout_high_est": 1.0762588775974344,
+        "Vout_in_estimated_range": true,
+        "ICMR_min": null,
+        "ICMR_low_est": 0.6480429156719014,
+        "ICMR_upper": null,
+        "sat_m1": 0.47465747390950996,
+        "sat_m2": 0.47465747390951374,
+        "sat_m3": 0.4259704418071745,
+        "sat_m4": 0.4259704418071708,
+        "sat_m5": -0.048042915671901484
+      },
+      "devices": {
+        "M1": {
+          "W": 9.922290486078753e-06,
+          "L": 5e-07,
+          "VGS": 0.5209340421994917,
+          "VDS": 0.5712224779897517,
+          "VDSAT": 0.09656500408024171,
+          "ID": 2.499999840277732e-05,
+          "gm": 0.00037382040750176174,
+          "gds": 6.192198814305333e-06,
+          "VSB": 0.0790659578005083,
+          "type": "nch"
+        },
+        "M2": {
+          "W": 9.922290486078753e-06,
+          "L": 5e-07,
+          "VGS": 0.5209340421994917,
+          "VDS": 0.5712224779897555,
+          "VDSAT": 0.09656500408024173,
+          "ID": 2.4999998402777342e-05,
+          "gm": 0.00037382040750176196,
+          "gds": 6.192198814305316e-06,
+          "VSB": 0.0790659578005083,
+          "type": "nch"
+        },
+        "M3": {
+          "W": 1.3920980514473675e-05,
+          "L": 6e-07,
+          "VGS": 0.54971156420974,
+          "VDS": 0.54971156420974,
+          "VDSAT": 0.12374112240256545,
+          "ID": 2.499999841846714e-05,
+          "gm": 0.0002999473903870559,
+          "gds": 4.029571654647494e-06,
+          "VSB": 0.0,
+          "type": "pch"
+        },
+        "M4": {
+          "W": 1.3920980514473675e-05,
+          "L": 6e-07,
+          "VGS": 0.54971156420974,
+          "VDS": 0.5497115642097362,
+          "VDSAT": 0.12374112240256543,
+          "ID": 2.4999998418467123e-05,
+          "gm": 0.00029994739038705575,
+          "gds": 4.0295716546475095e-06,
+          "VSB": 0.0,
+          "type": "pch"
+        },
+        "M5": {
+          "W": 1.28894978964469e-05,
+          "L": 5e-07,
+          "VGS": 0.5676023709966532,
+          "VDS": 0.0790659578005083,
+          "VDSAT": 0.1271088734724098,
+          "ID": 5e-05,
+          "gm": 0.0004999999999999953,
+          "gds": 0.0003580535862911712,
+          "VSB": 0.0,
+          "type": "nch",
+          "gmid_forward": 9.999999999999906,
+          "gmid_table": 10.007987000400158,
+          "gmid_target": 10.0
+        }
+      },
+      "dc_diagnostics": {
+        "Vtail": 0.0790659578005083,
+        "Vmirror": 0.65028843579026,
+        "Vout": 0.6502884357902637,
+        "Vbias_tail": 0.5676023709966532,
+        "ID5": 5e-05,
+        "kcl_residuals": {
+          "tail": -3.1944453389464757e-12,
+          "mirror": -1.568981828682127e-14,
+          "output": 1.568978101737159e-14
+        },
+        "m5_current_error_rel": 0.0,
+        "m5_gmid_forward_error": 9.414691248821327e-14,
+        "m5_gmid_forward": 9.999999999999906,
+        "m5_gmid_table": 10.007987000400158,
+        "pair_current_mismatch": -6.38889063723537e-08,
+        "mirror_current_mismatch": -6.326131513165884e-08,
+        "convergence": {
+          "outer_iterations": 12,
+          "inner_newton_steps": 19,
+          "final_width_rel_change": 1.1276555745162508e-07,
+          "final_bias_abs_change_v": 4.957812382855309e-09,
+          "tolerances": {
+            "kcl_newton_target_a": 1e-12,
+            "kcl_acceptance_a": 1e-09,
+            "width_rel_change": 1e-06,
+            "bias_abs_change_v": 1e-08,
+            "id5_rel_error": 0.001,
+            "gmid5_abs_error_inv": 0.001
+          },
+          "effective_settings": {
+            "tol": 1e-12,
+            "max_newton": 60,
+            "max_outer": 60
+          }
+        },
+        "clip_diagnostics": {
+          "lut_axis_clamps": {},
+          "voltage_line_search_clips": 0,
+          "coordinate_snaps": []
+        }
+      },
+      "constraints": [
+        {
+          "name": "Gain_min",
+          "kind": "min",
+          "limit": 20.0,
+          "achieved": 31.179744198812926,
+          "residual": -1.1179744198812926,
+          "scale": 10.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "GBW_min",
+          "kind": "min",
+          "limit": 1000000.0,
+          "achieved": 57489869.499021284,
+          "residual": -56.48986949902128,
+          "scale": 1000000.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Power_max",
+          "kind": "max",
+          "limit": 0.0004,
+          "achieved": 5.9999996204321115e-05,
+          "residual": -0.8500000094891972,
+          "scale": 0.0004,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "PM_min",
+          "kind": "min",
+          "limit": 45.0,
+          "achieved": 86.87567265583446,
+          "residual": -0.9305705034629881,
+          "scale": 45.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Sat_margin_min",
+          "kind": "min",
+          "limit": 0.05,
+          "achieved": -0.048042915671901484,
+          "residual": 1.9608583134380297,
+          "scale": 0.05,
+          "passed": false,
+          "detail": ""
+        },
+        {
+          "name": "W_nmos_max",
+          "kind": "max",
+          "limit": 0.00025,
+          "achieved": 1.28894978964469e-05,
+          "residual": -0.9484420084142124,
+          "scale": 0.00025,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "W_pmos_max",
+          "kind": "max",
+          "limit": 0.00075,
+          "achieved": 1.3920980514473675e-05,
+          "residual": -0.9814386926473684,
+          "scale": 0.00075,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "L_domain",
+          "kind": "domain",
+          "limit": [
+            6e-08,
+            1.5e-06
+          ],
+          "achieved": [
+            5e-07,
+            5e-07,
+            6e-07,
+            6e-07,
+            5e-07
+          ],
+          "residual": 0.0,
+          "scale": 1.0,
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "verdict": false,
+      "warnings": [
+        "M5 out of saturation at the solved point"
+      ],
+      "ac_model": "corrected_terminal_v1",
+      "runtime_s": 0.32
+    },
+    {
+      "schema_version": "analog_ai-0.2.0-finite-solved-dev",
+      "oracle_identity": {
+        "schema": "analog_ai-0.2.0-finite-solved-dev",
+        "distinct_from_ideal_oracle": "analog_ai-0.1.0-proxy"
+      },
+      "topology": "5t_ota",
+      "tail_device": "finite",
+      "op_point_mode": "solved",
+      "vdd": 1.2,
+      "vicm": 0.6,
+      "supply_context_canonical": true,
+      "request": {
+        "Gain_min": 20.0,
+        "GBW_min": 1000000.0,
+        "CL_pF": 1.0,
+        "Power_max": 0.0004
+      },
+      "external_bias_generator": "gate-bias generator excluded from power/area/noise/mismatch",
+      "capacitance_assumption": "cdd treated as the complete drain self-capacitance for grounded gate/source/body; real-pickle convention unverified (F5 device-level experiment pending)",
+      "design": {
+        "L1": 5e-07,
+        "gmid1": 15.0,
+        "L3": 6e-07,
+        "gmid3": 12.0,
+        "L5": 5e-07,
+        "gmid5": 10.0,
+        "Itail": 1e-05
+      },
+      "effective_constraints": {
+        "limits": {
+          "PM_min": 45.0,
+          "Sat_margin_min": 0.05,
+          "W_nmos_max": 0.00025,
+          "W_pmos_max": 0.00075
+        },
+        "notes": []
+      },
+      "metrics": {
+        "DC_Gain_dB": 31.17974419877063,
+        "GBW": 11675202.851340663,
+        "gbw_valid": true,
+        "PM": 90.60712162506573,
+        "Power_core": 1.1999999240945951e-05,
+        "power_requested_vdd_times_itail": 1.2e-05,
+        "power_kcl_error": 6.325450809004052e-08,
+        "SR_proxy": 10000000.000000002,
+        "min_sat_margin": -0.048042915672139586,
+        "Area": 6.614443210340841e-12,
+        "Swing": null,
+        "Swing_est": 0.9006279157164568,
+        "Vout_low_est": 0.17563096188059787,
+        "Vout_high_est": 1.0762588775970547,
+        "Vout_in_estimated_range": true,
+        "ICMR_min": null,
+        "ICMR_low_est": 0.6480429156721396,
+        "ICMR_upper": null,
+        "sat_m1": 0.4746574739090858,
+        "sat_m2": 0.4746574739090905,
+        "sat_m3": 0.42597044180737115,
+        "sat_m4": 0.4259704418073664,
+        "sat_m5": -0.048042915672139586
+      },
+      "devices": {
+        "M1": {
+          "W": 1.984458097215768e-06,
+          "L": 5e-07,
+          "VGS": 0.5209340421998713,
+          "VDS": 0.5712224779895549,
+          "VDSAT": 0.09656500408046913,
+          "ID": 4.999999680589853e-06,
+          "gm": 7.476408150073176e-05,
+          "gds": 1.2384397628679383e-06,
+          "VSB": 0.0790659578001287,
+          "type": "nch"
+        },
+        "M2": {
+          "W": 1.984458097215768e-06,
+          "L": 5e-07,
+          "VGS": 0.5209340421998713,
+          "VDS": 0.5712224779895597,
+          "VDSAT": 0.09656500408046917,
+          "ID": 4.999999680589859e-06,
+          "gm": 7.476408150073185e-05,
+          "gds": 1.238439762867934e-06,
+          "VSB": 0.0790659578001287,
+          "type": "nch"
+        },
+        "M3": {
+          "W": 2.784196102894836e-06,
+          "L": 6e-07,
+          "VGS": 0.5497115642103163,
+          "VDS": 0.5497115642103163,
+          "VDSAT": 0.12374112240294516,
+          "ID": 4.999999683727481e-06,
+          "gm": 5.9989478077652544e-05,
+          "gds": 8.059143309334942e-07,
+          "VSB": 0.0,
+          "type": "pch"
+        },
+        "M4": {
+          "W": 2.784196102894836e-06,
+          "L": 6e-07,
+          "VGS": 0.5497115642103163,
+          "VDS": 0.5497115642103115,
+          "VDSAT": 0.12374112240294514,
+          "ID": 4.999999683727478e-06,
+          "gm": 5.99894780776525e-05,
+          "gds": 8.059143309334982e-07,
+          "VSB": 0.0,
+          "type": "pch"
+        },
+        "M5": {
+          "W": 2.5778995793025396e-06,
+          "L": 5e-07,
+          "VGS": 0.5676023709964289,
+          "VDS": 0.0790659578001287,
+          "VDSAT": 0.1271088734722683,
+          "ID": 1e-05,
+          "gm": 9.999999999999904e-05,
+          "gds": 7.161071725886751e-05,
+          "VSB": 0.0,
+          "type": "nch",
+          "gmid_forward": 9.999999999999904,
+          "gmid_table": 10.00798700039999,
+          "gmid_target": 10.0
+        }
+      },
+      "dc_diagnostics": {
+        "Vtail": 0.0790659578001287,
+        "Vmirror": 0.6502884357896836,
+        "Vout": 0.6502884357896884,
+        "Vbias_tail": 0.5676023709964289,
+        "ID5": 1e-05,
+        "kcl_residuals": {
+          "tail": -6.38820290408044e-13,
+          "mirror": -3.13762857113032e-15,
+          "output": 3.1376192537679003e-15
+        },
+        "m5_current_error_rel": 0.0,
+        "m5_gmid_forward_error": 9.592326932761353e-14,
+        "m5_gmid_forward": 9.999999999999904,
+        "m5_gmid_table": 10.00798700039999,
+        "pair_current_mismatch": -6.388202836317804e-08,
+        "mirror_current_mismatch": -6.325450451242446e-08,
+        "convergence": {
+          "outer_iterations": 12,
+          "inner_newton_steps": 17,
+          "final_width_rel_change": 1.1275341736635548e-07,
+          "final_bias_abs_change_v": 4.957278587625069e-09,
+          "tolerances": {
+            "kcl_newton_target_a": 1e-12,
+            "kcl_acceptance_a": 1e-09,
+            "width_rel_change": 1e-06,
+            "bias_abs_change_v": 1e-08,
+            "id5_rel_error": 0.001,
+            "gmid5_abs_error_inv": 0.001
+          },
+          "effective_settings": {
+            "tol": 1e-12,
+            "max_newton": 60,
+            "max_outer": 60
+          }
+        },
+        "clip_diagnostics": {
+          "lut_axis_clamps": {},
+          "voltage_line_search_clips": 0,
+          "coordinate_snaps": []
+        }
+      },
+      "constraints": [
+        {
+          "name": "Gain_min",
+          "kind": "min",
+          "limit": 20.0,
+          "achieved": 31.17974419877063,
+          "residual": -1.1179744198770631,
+          "scale": 10.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "GBW_min",
+          "kind": "min",
+          "limit": 1000000.0,
+          "achieved": 11675202.851340663,
+          "residual": -10.675202851340662,
+          "scale": 1000000.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Power_max",
+          "kind": "max",
+          "limit": 0.0004,
+          "achieved": 1.1999999240945951e-05,
+          "residual": -0.9700000018976351,
+          "scale": 0.0004,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "PM_min",
+          "kind": "min",
+          "limit": 45.0,
+          "achieved": 90.60712162506573,
+          "residual": -1.0134915916681273,
+          "scale": 45.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Sat_margin_min",
+          "kind": "min",
+          "limit": 0.05,
+          "achieved": -0.048042915672139586,
+          "residual": 1.9608583134427917,
+          "scale": 0.05,
+          "passed": false,
+          "detail": ""
+        },
+        {
+          "name": "W_nmos_max",
+          "kind": "max",
+          "limit": 0.00025,
+          "achieved": 2.5778995793025396e-06,
+          "residual": -0.9896884016827899,
+          "scale": 0.00025,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "W_pmos_max",
+          "kind": "max",
+          "limit": 0.00075,
+          "achieved": 2.784196102894836e-06,
+          "residual": -0.9962877385294736,
+          "scale": 0.00075,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "L_domain",
+          "kind": "domain",
+          "limit": [
+            6e-08,
+            1.5e-06
+          ],
+          "achieved": [
+            5e-07,
+            5e-07,
+            6e-07,
+            6e-07,
+            5e-07
+          ],
+          "residual": 0.0,
+          "scale": 1.0,
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "verdict": false,
+      "warnings": [
+        "M5 out of saturation at the solved point"
+      ],
+      "ac_model": "corrected_terminal_v1",
+      "runtime_s": 0.3
+    },
+    {
+      "schema_version": "analog_ai-0.2.0-finite-solved-dev",
+      "oracle_identity": {
+        "schema": "analog_ai-0.2.0-finite-solved-dev",
+        "distinct_from_ideal_oracle": "analog_ai-0.1.0-proxy"
+      },
+      "topology": "5t_ota",
+      "tail_device": "finite",
+      "op_point_mode": "solved",
+      "vdd": 1.2,
+      "vicm": 0.6,
+      "supply_context_canonical": true,
+      "request": {
+        "Gain_min": 20.0,
+        "GBW_min": 1000000.0,
+        "CL_pF": 1.0,
+        "Power_max": 0.0004,
+        "Swing_min": 0.3,
+        "ICMR_max": 0.9
+      },
+      "external_bias_generator": "gate-bias generator excluded from power/area/noise/mismatch",
+      "capacitance_assumption": "cdd treated as the complete drain self-capacitance for grounded gate/source/body; real-pickle convention unverified (F5 device-level experiment pending)",
+      "design": {
+        "L1": 5e-07,
+        "gmid1": 15.0,
+        "L3": 6e-07,
+        "gmid3": 12.0,
+        "L5": 5e-07,
+        "gmid5": 10.0,
+        "Itail": 5e-05
+      },
+      "effective_constraints": {
+        "limits": {
+          "PM_min": 45.0,
+          "Sat_margin_min": 0.05,
+          "W_nmos_max": 0.00025,
+          "W_pmos_max": 0.00075
+        },
+        "notes": []
+      },
+      "metrics": {
+        "DC_Gain_dB": 31.179744198812926,
+        "GBW": 57489869.499021284,
+        "gbw_valid": true,
+        "PM": 86.87567265583446,
+        "Power_core": 5.9999996204321115e-05,
+        "power_requested_vdd_times_itail": 6e-05,
+        "power_kcl_error": 6.326131877225231e-08,
+        "SR_proxy": 50000000.0,
+        "min_sat_margin": -0.048042915671901484,
+        "Area": 3.3072216051670614e-11,
+        "Swing": null,
+        "Swing_est": 0.9006279157166844,
+        "Vout_low_est": 0.17563096188075003,
+        "Vout_high_est": 1.0762588775974344,
+        "Vout_in_estimated_range": true,
+        "ICMR_min": null,
+        "ICMR_low_est": 0.6480429156719014,
+        "ICMR_upper": null,
+        "sat_m1": 0.47465747390950996,
+        "sat_m2": 0.47465747390951374,
+        "sat_m3": 0.4259704418071745,
+        "sat_m4": 0.4259704418071708,
+        "sat_m5": -0.048042915671901484
+      },
+      "devices": {
+        "M1": {
+          "W": 9.922290486078753e-06,
+          "L": 5e-07,
+          "VGS": 0.5209340421994917,
+          "VDS": 0.5712224779897517,
+          "VDSAT": 0.09656500408024171,
+          "ID": 2.499999840277732e-05,
+          "gm": 0.00037382040750176174,
+          "gds": 6.192198814305333e-06,
+          "VSB": 0.0790659578005083,
+          "type": "nch"
+        },
+        "M2": {
+          "W": 9.922290486078753e-06,
+          "L": 5e-07,
+          "VGS": 0.5209340421994917,
+          "VDS": 0.5712224779897555,
+          "VDSAT": 0.09656500408024173,
+          "ID": 2.4999998402777342e-05,
+          "gm": 0.00037382040750176196,
+          "gds": 6.192198814305316e-06,
+          "VSB": 0.0790659578005083,
+          "type": "nch"
+        },
+        "M3": {
+          "W": 1.3920980514473675e-05,
+          "L": 6e-07,
+          "VGS": 0.54971156420974,
+          "VDS": 0.54971156420974,
+          "VDSAT": 0.12374112240256545,
+          "ID": 2.499999841846714e-05,
+          "gm": 0.0002999473903870559,
+          "gds": 4.029571654647494e-06,
+          "VSB": 0.0,
+          "type": "pch"
+        },
+        "M4": {
+          "W": 1.3920980514473675e-05,
+          "L": 6e-07,
+          "VGS": 0.54971156420974,
+          "VDS": 0.5497115642097362,
+          "VDSAT": 0.12374112240256543,
+          "ID": 2.4999998418467123e-05,
+          "gm": 0.00029994739038705575,
+          "gds": 4.0295716546475095e-06,
+          "VSB": 0.0,
+          "type": "pch"
+        },
+        "M5": {
+          "W": 1.28894978964469e-05,
+          "L": 5e-07,
+          "VGS": 0.5676023709966532,
+          "VDS": 0.0790659578005083,
+          "VDSAT": 0.1271088734724098,
+          "ID": 5e-05,
+          "gm": 0.0004999999999999953,
+          "gds": 0.0003580535862911712,
+          "VSB": 0.0,
+          "type": "nch",
+          "gmid_forward": 9.999999999999906,
+          "gmid_table": 10.007987000400158,
+          "gmid_target": 10.0
+        }
+      },
+      "dc_diagnostics": {
+        "Vtail": 0.0790659578005083,
+        "Vmirror": 0.65028843579026,
+        "Vout": 0.6502884357902637,
+        "Vbias_tail": 0.5676023709966532,
+        "ID5": 5e-05,
+        "kcl_residuals": {
+          "tail": -3.1944453389464757e-12,
+          "mirror": -1.568981828682127e-14,
+          "output": 1.568978101737159e-14
+        },
+        "m5_current_error_rel": 0.0,
+        "m5_gmid_forward_error": 9.414691248821327e-14,
+        "m5_gmid_forward": 9.999999999999906,
+        "m5_gmid_table": 10.007987000400158,
+        "pair_current_mismatch": -6.38889063723537e-08,
+        "mirror_current_mismatch": -6.326131513165884e-08,
+        "convergence": {
+          "outer_iterations": 12,
+          "inner_newton_steps": 19,
+          "final_width_rel_change": 1.1276555745162508e-07,
+          "final_bias_abs_change_v": 4.957812382855309e-09,
+          "tolerances": {
+            "kcl_newton_target_a": 1e-12,
+            "kcl_acceptance_a": 1e-09,
+            "width_rel_change": 1e-06,
+            "bias_abs_change_v": 1e-08,
+            "id5_rel_error": 0.001,
+            "gmid5_abs_error_inv": 0.001
+          },
+          "effective_settings": {
+            "tol": 1e-12,
+            "max_newton": 60,
+            "max_outer": 60
+          }
+        },
+        "clip_diagnostics": {
+          "lut_axis_clamps": {},
+          "voltage_line_search_clips": 0,
+          "coordinate_snaps": []
+        }
+      },
+      "constraints": [
+        {
+          "name": "Gain_min",
+          "kind": "min",
+          "limit": 20.0,
+          "achieved": 31.179744198812926,
+          "residual": -1.1179744198812926,
+          "scale": 10.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "GBW_min",
+          "kind": "min",
+          "limit": 1000000.0,
+          "achieved": 57489869.499021284,
+          "residual": -56.48986949902128,
+          "scale": 1000000.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Power_max",
+          "kind": "max",
+          "limit": 0.0004,
+          "achieved": 5.9999996204321115e-05,
+          "residual": -0.8500000094891972,
+          "scale": 0.0004,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "PM_min",
+          "kind": "min",
+          "limit": 45.0,
+          "achieved": 86.87567265583446,
+          "residual": -0.9305705034629881,
+          "scale": 45.0,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Sat_margin_min",
+          "kind": "min",
+          "limit": 0.05,
+          "achieved": -0.048042915671901484,
+          "residual": 1.9608583134380297,
+          "scale": 0.05,
+          "passed": false,
+          "detail": ""
+        },
+        {
+          "name": "Swing_min",
+          "kind": "min",
+          "limit": 0.3,
+          "achieved": null,
+          "residual": null,
+          "scale": 0.3,
+          "passed": false,
+          "detail": "metric not available"
+        },
+        {
+          "name": "ICMR_max",
+          "kind": "max",
+          "limit": 0.9,
+          "achieved": null,
+          "residual": null,
+          "scale": 0.3,
+          "passed": false,
+          "detail": "metric not available"
+        },
+        {
+          "name": "W_nmos_max",
+          "kind": "max",
+          "limit": 0.00025,
+          "achieved": 1.28894978964469e-05,
+          "residual": -0.9484420084142124,
+          "scale": 0.00025,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "W_pmos_max",
+          "kind": "max",
+          "limit": 0.00075,
+          "achieved": 1.3920980514473675e-05,
+          "residual": -0.9814386926473684,
+          "scale": 0.00075,
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "L_domain",
+          "kind": "domain",
+          "limit": [
+            6e-08,
+            1.5e-06
+          ],
+          "achieved": [
+            5e-07,
+            5e-07,
+            6e-07,
+            6e-07,
+            5e-07
+          ],
+          "residual": 0.0,
+          "scale": 1.0,
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "verdict": false,
+      "warnings": [
+        "M5 out of saturation at the solved point"
+      ],
+      "ac_model": "corrected_terminal_v1",
+      "runtime_s": 0.31,
+      "example": "example_range_request_fail_closed"
+    },
+    {
+      "schema_version": "analog_ai-0.2.0-finite-solved-dev",
+      "oracle_identity": {
+        "schema": "analog_ai-0.2.0-finite-solved-dev",
+        "distinct_from_ideal_oracle": "analog_ai-0.1.0-proxy"
+      },
+      "topology": "5t_ota",
+      "tail_device": "finite",
+      "op_point_mode": "solved",
+      "vdd": 1.2,
+      "vicm": 0.6,
+      "supply_context_canonical": true,
+      "request": {
+        "Gain_min": 20.0,
+        "GBW_min": 1000000.0,
+        "CL_pF": 1.0,
+        "Power_max": -1e-06
+      },
+      "external_bias_generator": "gate-bias generator excluded from power/area/noise/mismatch",
+      "capacitance_assumption": "cdd treated as the complete drain self-capacitance for grounded gate/source/body; real-pickle convention unverified (F5 device-level experiment pending)",
+      "design": [
+        5e-07,
+        15.0,
+        6e-07,
+        12.0,
+        5e-07,
+        10.0,
+        5e-05
+      ],
+      "metrics": null,
+      "devices": null,
+      "constraints": [],
+      "dc_diagnostics": null,
+      "effective_constraints": null,
+      "verdict": false,
+      "warnings": [],
+      "invalid_reason": "request field Power_max must be positive, got -1e-06",
+      "runtime_s": 0.0,
+      "example": "example_malformed_request_invalid"
+    }
+  ],
+  "lut_verification": {
+    "manifest_found": true,
+    "files": {
+      "nch": {
+        "file": "TSMC_fast_65nm_nch.pkl",
+        "bytes": 2763639830,
+        "sha256": "20c15dd9215789d94a438ffd14229f8ab09459474bb965371077a5435ed87e01",
+        "expected_sha256": "20c15dd9215789d94a438ffd14229f8ab09459474bb965371077a5435ed87e01",
+        "verified": true,
+        "hash_seconds": 8.5
+      },
+      "pch": {
+        "file": "TSMC_fast_65nm_pch.pkl",
+        "bytes": 2763639830,
+        "sha256": "ea80ded3113fb3b701b5bbca9fc4f854c1b1742bb716e668dc95fe92ac169a6c",
+        "expected_sha256": "ea80ded3113fb3b701b5bbca9fc4f854c1b1742bb716e668dc95fe92ac169a6c",
+        "verified": true,
+        "hash_seconds": 8.3
+      }
+    }
+  },
+  "capacitance_magnitude_observation": {
+    "side": "nch",
+    "summary": {
+      "n": 12,
+      "cdd_over_cgd_min": 1.2134734581362547,
+      "cdd_over_cgd_median": 1.969975177557699,
+      "cdd_over_cgd_max": 2.3891668397901693
+    },
+    "samples": [
+      {
+        "L": 5e-07,
+        "VGS": 0.7,
+        "VDS": 0.2,
+        "cgd_F_per_refW": 2.7731913469970027e-15,
+        "cdd_F_per_refW": 5.708032611012693e-15,
+        "cdd_over_cgd": 2.0582902139781063,
+        "gm_over_2pi_cdd_Hz": 16249102127.519878
+      },
+      {
+        "L": 5e-07,
+        "VGS": 0.7,
+        "VDS": 0.6,
+        "cgd_F_per_refW": 9.296554299060583e-16,
+        "cdd_F_per_refW": 1.128112189403251e-15,
+        "cdd_over_cgd": 1.2134734581362547,
+        "gm_over_2pi_cdd_Hz": 102953983288.5683
+      },
+      {
+        "L": 5e-07,
+        "VGS": 0.9,
+        "VDS": 0.2,
+        "cgd_F_per_refW": 7.892927551030932e-15,
+        "cdd_F_per_refW": 1.8129020851358414e-14,
+        "cdd_over_cgd": 2.2968690304259156,
+        "gm_over_2pi_cdd_Hz": 5205935931.120947
+      },
+      {
+        "L": 5e-07,
+        "VGS": 0.9,
+        "VDS": 0.6,
+        "cgd_F_per_refW": 9.870467392201443e-16,
+        "cdd_F_per_refW": 1.2896331985452121e-15,
+        "cdd_over_cgd": 1.3065573769729875,
+        "gm_over_2pi_cdd_Hz": 148877609540.2319
+      },
+      {
+        "L": 5e-07,
+        "VGS": 1.1,
+        "VDS": 0.2,
+        "cgd_F_per_refW": 1.1416887021250373e-14,
+        "cdd_F_per_refW": 2.6667547532369056e-14,
+        "cdd_over_cgd": 2.335798495923842,
+        "gm_over_2pi_cdd_Hz": 2903839095.618177
+      },
+      {
+        "L": 5e-07,
+        "VGS": 1.1,
+        "VDS": 0.6,
+        "cgd_F_per_refW": 1.2183953092411252e-15,
+        "cdd_F_per_refW": 1.862115546721505e-15,
+        "cdd_over_cgd": 1.5283344679661641,
+        "gm_over_2pi_cdd_Hz": 121808195256.19931
+      },
+      {
+        "L": 1e-06,
+        "VGS": 0.7,
+        "VDS": 0.2,
+        "cgd_F_per_refW": 5.398638472960598e-15,
+        "cdd_F_per_refW": 1.2396126615198102e-14,
+        "cdd_over_cgd": 2.29615794376394,
+        "gm_over_2pi_cdd_Hz": 3966121265.6789484
+      },
+      {
+        "L": 1e-06,
+        "VGS": 0.7,
+        "VDS": 0.6,
+        "cgd_F_per_refW": 8.57052342575653e-16,
+        "cdd_F_per_refW": 1.210727313306526e-15,
+        "cdd_over_cgd": 1.412664376679717,
+        "gm_over_2pi_cdd_Hz": 49897813077.77034
+      },
+      {
+        "L": 1e-06,
+        "VGS": 0.9,
+        "VDS": 0.2,
+        "cgd_F_per_refW": 1.5912346247003124e-14,
+        "cdd_F_per_refW": 3.782886872754226e-14,
+        "cdd_over_cgd": 2.377328153896024,
+        "gm_over_2pi_cdd_Hz": 1300967143.310145
+      },
+      {
+        "L": 1e-06,
+        "VGS": 0.9,
+        "VDS": 0.6,
+        "cgd_F_per_refW": 9.924489621119585e-16,
+        "cdd_F_per_refW": 1.5723943038211392e-15,
+        "cdd_over_cgd": 1.5843578499745128,
+        "gm_over_2pi_cdd_Hz": 64266425897.387
+      },
+      {
+        "L": 1e-06,
+        "VGS": 1.1,
+        "VDS": 0.2,
+        "cgd_F_per_refW": 2.2659358436730885e-14,
+        "cdd_F_per_refW": 5.4136987787957044e-14,
+        "cdd_over_cgd": 2.3891668397901693,
+        "gm_over_2pi_cdd_Hz": 737237836.1568505
+      },
+      {
+        "L": 1e-06,
+        "VGS": 1.1,
+        "VDS": 0.6,
+        "cgd_F_per_refW": 1.5107180914072113e-15,
+        "cdd_F_per_refW": 2.8426580170959532e-15,
+        "cdd_over_cgd": 1.8816601411372917,
+        "gm_over_2pi_cdd_Hz": 43162958653.563995
+      }
+    ]
+  }
+}

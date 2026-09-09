@@ -98,6 +98,7 @@ def main() -> None:
         "probe": "phase_f2_integrated_finite_evaluator_real_lut",
         "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
         "source_identity": helpers.source_identity(),
+        "source_fingerprint_f2": helpers.source_fingerprint_f2(),
         "note": ("development probe only; public finite evaluation stays "
                  "closed; finite records carry the dev schema identity"),
         "designs": [],
@@ -135,6 +136,27 @@ def main() -> None:
               f"GBW={m.get('GBW') / 1e6:.1f} MHz, "
               f"PM={m.get('PM'):.1f} deg, sat_m5={m.get('sat_m5') * 1e3:.1f} mV, "
               f"rows_failed={sum(1 for c in rec['constraints'] if not c['passed'])})",
+              flush=True)
+
+    # Required record examples (Astra F2-R3/F2-R2): a range request that
+    # fails closed on strict JSON, and a malformed request rejected before
+    # any device work.
+    examples = [
+        {"name": "example_range_request_fail_closed",
+         "x7": PROBE_DESIGNS[0]["x7"],
+         "specs": dict(LOOSE_SPECS, Swing_min=0.3, ICMR_max=0.9)},
+        {"name": "example_malformed_request_invalid",
+         "x7": PROBE_DESIGNS[0]["x7"],
+         "specs": dict(LOOSE_SPECS, Power_max=-1e-6)},
+    ]
+    for ex in examples:
+        t0 = time.time()
+        rec = evaluate_design_finite(ota_finite, ex["x7"], ex["specs"])
+        rec["runtime_s"] = round(time.time() - t0, 2)
+        rec["example"] = ex["name"]
+        record["designs"].append(rec)
+        print(f"[{ex['name']}] verdict={rec['verdict']} "
+              f"({rec.get('invalid_reason', 'see constraint rows')})",
               flush=True)
 
     out_file = out_dir / "f2_integration_probe.json"

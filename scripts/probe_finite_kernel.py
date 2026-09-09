@@ -75,18 +75,25 @@ def verify_luts(lut_dir: Path) -> dict:
     return out
 
 
-def source_fingerprint() -> dict:
-    """Content hashes of every source file executed by this probe (kernel,
-    device/LUT implementation, configuration, loader, this script) - ties
-    the evidence to exact source contents regardless of Git state
-    (Astra R5b). Untracked review/output files are not code identity and
-    are deliberately excluded."""
+F1_SOURCE_MODULES = [
+    "analog_ai", "analog_ai.config", "analog_ai.devices.lut",
+    "analog_ai.devices.device_model", "analog_ai.circuit.dc_solver",
+    "analog_ai.circuit.mna", "analog_ai.circuit.ota5t",
+    "analog_ai.loader",
+]
+
+
+def source_fingerprint(modules=None, extra_scripts=()) -> dict:
+    """Content hashes of executed sources, tying evidence to exact source
+    contents regardless of Git state (Astra R5b). The DEFAULT set is the
+    accepted F1 contract (kernel, device/LUT implementation, configuration,
+    loader, this script). F2 callers must pass the explicit extension -
+    evaluator + constraints modules and the actual F2 entry point - see
+    :func:`source_fingerprint_f2` (Astra F2-R5). Untracked review/output
+    files are not code identity and are deliberately excluded."""
     import importlib
 
-    names = ["analog_ai", "analog_ai.config", "analog_ai.devices.lut",
-             "analog_ai.devices.device_model", "analog_ai.circuit.dc_solver",
-             "analog_ai.circuit.mna", "analog_ai.circuit.ota5t",
-             "analog_ai.loader"]
+    names = F1_SOURCE_MODULES if modules is None else list(modules)
     out = {}
     for name in names:
         path = Path(importlib.import_module(name).__file__).resolve()
@@ -94,7 +101,20 @@ def source_fingerprint() -> dict:
     probe_path = Path(__file__).resolve()
     out["scripts.probe_finite_kernel"] = {
         "file": probe_path.name, "sha256": sha256_of(probe_path)}
+    for extra in extra_scripts:
+        p = Path(extra).resolve()
+        out[f"scripts/{p.name}"] = {"file": p.name, "sha256": sha256_of(p)}
     return out
+
+
+def source_fingerprint_f2() -> dict:
+    """F2 fingerprint set: the F1 sources plus the evaluator and constraints
+    modules and the actual F2 probe entry point (Astra F2-R5)."""
+    return source_fingerprint(
+        modules=F1_SOURCE_MODULES + ["analog_ai.evaluation.evaluator",
+                                     "analog_ai.evaluation.constraints"],
+        extra_scripts=[Path(__file__).resolve().parent
+                       / "probe_finite_evaluator.py"])
 
 
 def source_identity() -> dict:

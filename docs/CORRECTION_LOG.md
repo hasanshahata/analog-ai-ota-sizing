@@ -486,16 +486,59 @@ order exactly. Public finite evaluation REMAINS CLOSED.
   exactly Sat_margin_min failing (sat_m5 −48.0 mV) — the diagnostic points
   are rejected as feasible designs, as required.
 
+## 2026-09-09 — Phase F2 correction package (Astra gate review R1–R5)
+
+Astra's F2 review of `acfb995` reproduced five findings; one bounded
+correction package addresses all of them. F1 stays accepted; public finite
+guards stay closed.
+
+- **F2-R1 (capacitance double counting):** under the declared
+  `Cdd = Cgd + Cdb` convention, the corrected assembly derives the junction
+  per device and stamps the gate-drain ELEMENT per its connectivity plus
+  only the junction at the drain — M1/M2 drain diagonals carry the total
+  (invariant, RHS uses the overlap element), M3 contributes junction only,
+  M4's output diagonal carries `Cgd4 + Cdb4 = Cdd4`, M5 keeps the total
+  (all terminals AC-ground). Inconsistent inputs (`Cdd < Cgd`) raise
+  instead of clipping. `tests/test_mna_audit.py` rebuilt on a PRIMITIVE
+  reference assembler (engine's total Cdd constructed from Cgs/Cgd/Cdb
+  primitives); Astra's three limiting cases (lone 1 pF overlap: 1 pF, not
+  2 pF; M3 no-op; M4 `[[1,-1],[-1,1]]` block), junction-only complements,
+  inconsistency rejection, closure, and pinned legacy differences all
+  verified. The prior tests that encoded the defect were replaced.
+- **F2-R2 (malformed requests):** `validate_finite_specs` type-, finite-,
+  and range-checks every supported finite request field before any device
+  work; strictly-positive quantities reject zero (their constraint scale
+  would be zero); unsupported fields reject. 17 malformed-field cases
+  assert record-level fail-closed behavior.
+- **F2-R3 (strict JSON):** the complete finite record is JSON-safe —
+  constraint rows (nulls for nonfinite, verdicts preserved), normalized/
+  sanitized request echoes, sanitized invalid-design values with reasons —
+  asserted on range-failure, NaN-design, infinite-request, and
+  no-crossing-AC records, not only the success shape.
+- **F2-R4 (supply context):** records serialize the effective
+  `ota.VDD`/`ota.Vicm`, a `supply_context_canonical` flag, and the
+  `ac_model` identifier; tested at vdd=1.3 (power consistent with the
+  actual supply).
+- **F2-R5 (fingerprints):** `source_fingerprint_f2()` extends the accepted
+  F1 set with the evaluator/constraints modules and the actual F2 probe
+  entry point (12 files); coverage tests with independent hash checks.
+- **Evidence:** new immutable archive
+  `evaluation_results/finite_m5/f2_integration_20260909_112307/` (LUT
+  hashes verified, strict JSON, required range-failure and
+  malformed-request examples; both diagnostic designs still verdict=False
+  with exactly Sat_margin_min failing). Earlier archive retained as
+  history. Gates: full non-real-LUT suite exit 0, real-LUT integration
+  3/3. The 50 mV floor, F1 kernel, legacy ideal oracle, and public finite
+  guards are unchanged; capacitance provenance remains open for F5.
+
 ## Still open (updated 2026-09-09)
 
-1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; the
-   bounded F2 package (independent MNA audit, capacitance-convention
-   evidence with recorded limitation, finite metrics/constraints, minimal
-   dev finite schema) is implemented and delivered for Astra F2 review.
-   Public finite evaluation remains closed until F2's integrated gate
-   passes; guard removal and later packages remain subject to their own
-   review gates. The ideal-path versioned R1 correction (effective
-   requested limits) is also still open.
+1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; the F2
+   correction package (F2-R1..R5) is implemented and delivered for Astra
+   re-review. Public finite evaluation remains closed until F2's
+   integrated gate passes; guard removal and later packages remain subject
+   to their own review gates. The ideal-path versioned R1 correction
+   (effective requested limits) is also still open.
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a

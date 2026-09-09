@@ -61,6 +61,43 @@ def test_source_identity_shape(probe):
         assert len(identity["git_diff_sha256"]) == 64
 
 
+def test_source_fingerprint_f2_covers_evaluator_and_constraints(probe):
+    """Astra F2-R5: the F2 archive must fingerprint the modules that
+    produce its verdicts/schema and its ACTUAL entry point."""
+    fp = probe.source_fingerprint_f2()
+    for key in ("analog_ai.evaluation.evaluator",
+                "analog_ai.evaluation.constraints",
+                "scripts/probe_finite_evaluator.py",
+                "analog_ai.circuit.dc_solver",
+                "analog_ai.circuit.mna",
+                "scripts.probe_finite_kernel"):
+        assert key in fp, key
+        assert len(fp[key]["sha256"]) == 64
+        int(fp[key]["sha256"], 16)
+    # independent content-hash spot checks against the delivered files
+    import analog_ai.evaluation.constraints as cons
+    import analog_ai.evaluation.evaluator as ev
+    assert fp["analog_ai.evaluation.evaluator"]["sha256"] == \
+        hashlib.sha256(Path(ev.__file__).read_bytes()).hexdigest()
+    assert fp["analog_ai.evaluation.constraints"]["sha256"] == \
+        hashlib.sha256(Path(cons.__file__).read_bytes()).hexdigest()
+    f2_probe = (Path(probe.__file__).resolve().parent
+                / "probe_finite_evaluator.py")
+    assert fp["scripts/probe_finite_evaluator.py"]["sha256"] == \
+        hashlib.sha256(f2_probe.read_bytes()).hexdigest()
+
+
+def test_source_fingerprint_default_keeps_f1_contract(probe):
+    """The default fingerprint set is unchanged (the accepted F1
+    contract): no F2 extensions leak into it."""
+    fp = probe.source_fingerprint()
+    assert "analog_ai.evaluation.evaluator" not in fp
+    assert "analog_ai.evaluation.constraints" not in fp
+    assert "scripts/probe_finite_evaluator.py" not in fp
+    assert "analog_ai.circuit.dc_solver" in fp
+    assert "scripts.probe_finite_kernel" in fp
+
+
 def test_sha256_of_matches_hashlib(probe, tmp_path):
     f = tmp_path / "x.bin"
     f.write_bytes(b"analog-ai-probe")

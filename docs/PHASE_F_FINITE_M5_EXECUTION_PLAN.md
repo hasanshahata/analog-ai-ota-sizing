@@ -4,13 +4,14 @@
 
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
-**Status:** **F1 ACCEPTED** by Astra on 2026-09-09 at commit `db6db4a`
-(all R1-R5 closed). The bounded F2 package is now implemented per the F2
-handoff - independent MNA audit + corrected finite AC model, capacitance
-convention evidence with a recorded limitation, integrated finite
-metrics/hard constraints/effective limits, and the minimal dev finite
-schema - with PUBLIC FINITE EVALUATION STILL CLOSED. Awaiting Astra F2
-review. See the F2 execution-log entry at the end of this file.
+**Status:** **F1 ACCEPTED** at `db6db4a`; **F2 CHANGES REQUIRED** after
+Astra's review of `acfb995` (F2-R1 through F2-R5). The bounded corrective
+package is now implemented and delivered: junction-decomposed capacitance
+stamping with primitive-reference tests, full request validation before
+device work, strict-JSON failure paths, effective supply context, and
+complete F2 source fingerprints with a new immutable archive. Public
+finite evaluation remains closed; F3 is not released. Awaiting Astra F2
+re-review. See the F2 correction entry at the end of this file.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -1024,6 +1025,9 @@ Opus has already executed the amended plan.
 | 2026-09-09 | F1 ACCEPTED at `db6db4a`; bounded F2 released to Opus under A8 | Astra | Final F1 acceptance entry |
 | 2026-09-09 | Corrected finite AC model added alongside the frozen legacy stamps (audit found the five R7 discrepancies); cdd convention recorded as UNRESOLVED with the cdd-only stamp under a documented assumption | Opus | F2 execution-log entry; `tests/test_mna_audit.py`; `f2_integration_20260909_054929` |
 | 2026-09-09 | F2 implemented (audit + capacitance evidence + metrics/constraints/schema); public finite evaluation still closed; awaiting Astra F2 review | Opus | F2 execution-log entry |
+| 2026-09-09 | Astra F2 gate review of `acfb995`: CHANGES REQUIRED (F2-R1..R5) | Astra | F2 gate-review entry; independent reproductions |
+| 2026-09-09 | F2 correction package delivered: junction-decomposed stamps, request validation, strict-JSON failure paths, supply context, F2 fingerprints + new archive; awaiting re-review | Opus | F2 correction entry; evidence `f2_integration_20260909_112307` |
+| 2026-09-09 | Astra F2 review at `acfb995`: CHANGES REQUIRED (F2-R1..R5); keep public guards and F3 closed; F1 remains accepted | Astra | Independent capacitor-only, malformed-request, strict-JSON, supply-identity, and source-coverage reproductions in the final gate-review entry |
 | 2026-09-09 | F1 technical review: CHANGES REQUIRED; F2 remains closed | Astra | Independently reproduced domain/extrapolation, ambiguous-root, and nonfinite-output failures; corrections below |
 | 2026-09-09 | Accept max_outer=60 as a bounded default; reject the common 1e-9 edge tolerance and inconsistent final evaluation | Astra | Synthetic nominal requires 10 iterations; archived wide real case needs 31; domain deviation contradicts A2 and permits out-of-grid geometry |
 | 2026-09-09 | FINAL F1 ACCEPTANCE: APPROVED at db6db4a; R1-R5 closed | Astra | Independently passed 201 non-real-LUT + 3 real-LUT tests; all 9 archived source fingerprints match delivered files; pre-lookup control rejection and archived KCL/trace checks pass |
@@ -1816,3 +1820,283 @@ required.
 **Not done (out of F2 scope, for Astra's attention):** guard removal (F2
 task 9 awaits this review), F3 optimizer/export/dataset compatibility, and
 the ideal-path versioned R1 correction.
+
+### 2026-09-09 - F2 correction package delivered (addresses F2-R1..R5)
+
+One bounded correction commit addressing Astra's F2 gate review; F1
+acceptance untouched; public finite guards stay closed.
+
+**F2-R1 (capacitance double counting).** Under the declared lumped
+convention `Cdd = Cgd + Cdb`, the corrected assembly now derives the
+junction `Cdb = Cdd - Cgd` per device and stamps the gate-drain ELEMENT
+per its true connectivity plus the JUNCTION at the drain - never the total
+plus the element. Consequences: M1/M2 drain diagonals carry `Cgd + Cdb =
+Cdd` (invariant, but the RHS uses the overlap element only); M3 contributes
+only its junction (its overlap is a same-node no-op); M4's output diagonal
+carries `Cgd4 + Cdb4 = Cdd4` with the two-terminal overlap element stamped
+in full; M5 keeps the total (its overlap and junction both terminate at AC
+ground). Astra's three limiting cases are now enforced by tests: a lone
+1 pF Cgd=Cdd with zero junction contributes exactly 1 pF (M1: mirror
+diagonal + RHS 0.5 pA; M3: nothing; M4: `[[1,-1],[-1,1]]` pF), with the
+complementary junction-only cases. Inconsistent inputs (`Cdd < Cgd`)
+raise ValueError instead of clipping a negative junction.
+`tests/test_mna_audit.py` was rebuilt on a PRIMITIVE reference assembler
+(Cgs/Cgd/Cdb, with the engine's total Cdd constructed FROM the
+primitives), so the decomposition is verified against primitive truth -
+the previous tests varied `cgd` while treating total `cdd` as an unrelated
+ground capacitor and encoded the defect; they are replaced. Nodal-current
+closure (< 1e-18), full asymmetric matrix/RHS equality, the pinned
+legacy-vs-corrected differences (updated for the junction fix), and the
+ideal limit are all re-verified.
+
+**F2-R2 (malformed request limits).** New `validate_finite_specs` runs
+BEFORE any device work: every supported finite request field is
+type-checked (booleans/strings/None rejected), finite, and range-checked
+(GBW/CL/Power/SR strictly positive - a nonpositive power limit is
+nonphysical and would invert its residual; PM_min in (0, 180]; Gain_min >=
+0; Sat_margin_min/Swing_min/ICMR_max >= 0); unsupported fields reject.
+Zero-meaningful thresholds keep positive normalization scales (a zero
+Sat_margin_min request is clamped to the frozen default, which the
+constraint module uses as its scale). All residual scales are therefore
+positive on every reachable path. Tests: 17 malformed-field cases
+asserting record-level fail-closed behavior (empty constraint rows - a
+passing power row against a negative limit is now unreachable), the
+unsupported-field case, normalization of a valid request, and the
+zero-saturation-threshold scale guarantee.
+
+**F2-R3 (strict JSON on failure paths).** The COMPLETE finite record is
+now JSON-safe: constraint rows serialize nonfinite achieved/residual as
+explicit nulls with the verdict and reason preserved (failures are never
+turned into passes; L_domain's tuple limit/achieved become lists), the
+request echo is normalized on success and sanitized on rejection
+(nonfinite numerics -> null; strings/booleans preserved as the reason),
+and the invalid-design fallback sanitizes NaN values while the
+invalid_reason carries the field name. Strict
+`json.dumps(record, allow_nan=False)` is now asserted on the range-failure
+record, the NaN-design invalid record, the infinite-request invalid
+record, and a no-crossing AC record (CL = 1 mF: gbw_valid False, GBW
+null, warning retained) - not only on the success-shaped schema.
+
+**F2-R4 (supply context).** The record serializes the EFFECTIVE
+`ota.VDD`/`ota.Vicm` (not config defaults) plus a
+`supply_context_canonical` flag, and carries the `ac_model` identifier.
+Test: a vdd=1.3 evaluation records vdd 1.3 / vicm 0.65 with power
+consistent with the actual supply (65 uW at Itail = 50 uA).
+
+**F2-R5 (fingerprint coverage).** The F1 helper keeps its accepted default
+contract; a new `source_fingerprint_f2()` extends it with the evaluator
+and constraints modules and the actual F2 probe entry point (12 files
+total). The F2 probe records the extended set, and the regenerated archive
+contains strict-JSON range-failure and malformed-request examples
+alongside the ordinary diagnostic records.
+
+**Gates and evidence.** Focused: 13 audit + 36 evaluator + 6 probe tests
+green; complete non-real-LUT suite exit 0; real-LUT integration 3/3 exit
+0. New immutable archive:
+`evaluation_results/finite_m5/f2_integration_20260909_112307/` (LUT
+hashes verified, 12-source fingerprint, strict JSON; nominal/boundary
+designs verdict=False with exactly Sat_margin_min failing at sat_m5
+-48.0 mV; both required record examples included). The earlier archive
+(`f2_integration_20260909_054929`) is retained as history. The 50 mV
+floor, the accepted F1 kernel, the legacy ideal oracle, and the public
+finite guards are unchanged; capacitance provenance remains open for F5.
+
+### 2026-09-09 - Astra F2 gate review at acfb995: changes required
+
+**Decision: F2 is not accepted. Keep the public finite guards in place.**
+Reviewed revision: `acfb995f95810b4d2f1174eed9ece914a23facfd`.
+F1 acceptance at `db6db4a` remains valid. Opus may implement the bounded
+corrections below and resubmit F2; F3, web exposure, and physical AC acceptance
+are not released. These are F2 findings, distinct from the closed F1 R1-R5.
+
+#### What is accepted in this delivery
+
+- The added drain-row body terms, driven-gate RHS signs, removal of spurious
+  input-capacitor node couplings, and M4's negative mutual capacitor terms
+  follow the stated terminal connectivity. M5 remains pure drain loading.
+  The source text of legacy `solve_ac` is unchanged from `db6db4a`.
+- Five-device saturation, M5 area, supply-current power, and the separately
+  labeled slew proxy and headroom estimates are appropriate. The nominal
+  synthetic record and both archived real records fail the 50 mV saturation
+  floor. Neither diagnostic point is a feasible design.
+- Tightened PM/saturation limits and clamped attempted relaxations work for
+  ordinary finite numeric requests. Seven named parameters and a distinct
+  development schema avoid the historical truncation/oracle-identity defects.
+- Recording the unresolved real capacitance convention is appropriate. The
+  12 magnitude samples are observations, not a characterization definition.
+  A4's physical-AC stop condition remains in force. Development under an
+  explicit, internally consistent assumption is permitted; deferral to an F5
+  experiment does not itself close that gate.
+
+#### F2-R1 - P1: the corrected matrix still double counts total drain capacitance
+
+**Locations:** `analog_ai/circuit/mna.py:133-142`,
+`tests/test_mna_audit.py:89-122`, and `tests/conftest.py:44`.
+
+The fixture defines `cdd = cgd + junction`, and the finite record describes
+`cdd` as complete drain self-capacitance with the other terminals grounded.
+Nevertheless, the corrected assembler and its reference both stamp the full
+`cdd` to ground and a separate `cgd` element for M1/M2/M4. M3 retains the
+overlap already embedded in `cdd3` even after the explicit `cgd3` term is
+removed. The reference's different programming structure does not make its
+capacitance interpretation independent. Its current-closure test repeats the
+same interpretation, so algebraic closure cannot detect this error.
+
+Independent limiting-case reproduction: set every device coefficient and CL
+to zero, then set only the named device's `cdd = cgd = 1e-12` F. This means
+one 1 pF gate-drain capacitor and zero junction capacitance under the declared
+lumped convention. At `f = 1/(2*pi)` Hz, `s = j`:
+
+| Device varied | Returned capacitive matrix contribution | Required contribution |
+|---|---|---|
+| M1 | Mirror diagonal 2 pF; RHS +0.5 pA | Mirror diagonal 1 pF; RHS +0.5 pA |
+| M3, gate tied to drain | Mirror diagonal 1 pF | Zero: both capacitor terminals are the same node |
+| M4 | Mirror/output block `[[1,-1],[-1,2]]` pF | `[[1,-1],[-1,1]]` pF |
+
+For this explicit lumped convention, derive a junction component
+`Cdb = Cdd - Cgd` and stamp it plus the actual gate-drain element. Equivalently,
+the corrected capacitive diagonals for mirror/output should be:
+
+```text
+Cmirror = Cdd1 + (Cdd3 - Cgd3) + Cgs3 + Cgs4 + Cgd4
+Cout    = Cdd2 + Cdd4 + CL
+```
+
+The tail diagonal, driven-gate RHS, and M4 mutual terms retain their intended
+forms. These equations are conditional on the declared lumped convention;
+they do not establish that real signed charge derivatives can be decomposed
+this way. Make normalization/convention handling explicit across M1-M5 and
+reject inconsistent inputs rather than clipping a negative derived component
+or silently interpreting the same key differently by device.
+
+**Required verification:** build independent reference devices from primitive
+`Cgs`, `Cgd`, and `Cdb`, then construct the engine's total `Cdd` input from
+those primitives. Cover all three limiting cases above, asymmetric full
+matrix/RHS equality, and independent current closure. Preserve the legacy
+path. Replace the current tests that vary `cgd` while treating total `cdd` as
+an unrelated ground capacitor; those tests currently encode the defect.
+
+#### F2-R2 - P1: malformed request limits can pass or escape the record boundary
+
+**Locations:** `analog_ai/evaluation/evaluator.py:155-181,235-243,301-302`
+and the reused `analog_ai/evaluation/constraints.py` arithmetic.
+
+Only CL and the two default floors receive finite-path validation. Independent
+calls using the synthetic nominal design reproduced:
+
+- `Power_max=-1e-6`: the power row **passes** at approximately 60 uW because
+  its scale is negative; residual is approximately -61. The overall nominal
+  verdict still fails saturation, which masks this impossible power acceptance.
+- `Power_max=0.0`: uncaught `ZeroDivisionError`.
+- `PM_min=None`: uncaught `TypeError`.
+- `Gain_min="20"`: uncaught `TypeError` in constraint subtraction.
+
+**Required correction:** validate/normalize all supported finite request
+fields before device work. Reject nonfinite and invalid types with a clear
+invalid record; enforce each field's documented range. All residual scales
+must be positive. Where a zero threshold is meaningful, use an independent
+positive scale; otherwise reject it explicitly. Handle expected malformed
+input errors at the record boundary without broadly hiding programming bugs.
+Keep this finite-scoped so historical ideal semantics remain unchanged.
+
+**Required verification:** negative/zero power and GBW/SR scale cases,
+null/string/boolean/nonfinite fields, pre-lookup rejection, and a valid
+request. Assert both the row behavior and record-level fail-closed behavior;
+an unrelated failed saturation row is not evidence of correct power checking.
+
+#### F2-R3 - P2: strict JSON fails on required failure paths
+
+**Locations:** `analog_ai/evaluation/evaluator.py:222,297,305-311`.
+
+Normal metrics use `_finite_num`, but constraint dictionaries, the raw request,
+and the invalid-design fallback do not. Independently, each of these returns
+a record that fails `json.dumps(record, allow_nan=False)`:
+
+1. Valid nominal design with `Swing_min=0.3, ICMR_max=0.9`: the unavailable
+   constraint rows contain NaN achieved values and infinite residuals.
+2. `gmid5=NaN`: the invalid-design fallback retains NaN in its seven-value list.
+3. `PM_min=Infinity`: the invalid record echoes Infinity in `request`.
+
+The existing tests exercise these paths but apply the strict-JSON assertion
+only to the ordinary nominal record. Thus the reported strict-JSON guarantee
+does not cover the records most needed for audit and batch evaluation.
+
+**Required correction:** make the complete finite record JSON-safe, including
+request echoes, invalid designs, nested diagnostics, and constraint rows.
+Represent unavailable/nonfinite numeric fields as null with explicit failure
+and reason information; do not turn unavailable constraints into passes or
+substitute zero metrics. Preserve the reason a request was invalid. Add strict
+serialization/parse checks to each unavailable/invalid-record case and to a
+no-crossing AC result, rather than testing only the success-shaped schema.
+
+#### F2-R4 - P2: records report default supply and common mode instead of the evaluated ones
+
+**Location:** `analog_ai/evaluation/evaluator.py:220-221`.
+
+The solver uses `ota.VDD` and `ota.Vicm`, but the record writes `config.VDD`
+and `config.VICM`. Independent evaluation with `OTA5T(..., vdd=1.3)` returns
+metrics and requested power of 65 uW at Itail=50 uA, while declaring `vdd=1.2`
+and `vicm=0.6`; the actual common mode is 0.65 V. This record cannot faithfully
+reproduce its own operating point or power definition.
+
+**Required correction:** serialize effective OTA supply/common mode (or reject
+noncanonical settings explicitly if the finite contract fixes them). Carry
+the actual `ac_model` identifier into the finite record as well; it currently
+exists only in the private performance dictionary. Test the nondefault-supply
+case and consistency between record context, power, and returned node biases.
+
+#### F2-R5 - P2: the F2 archive does not fingerprint its new evaluator or entry point
+
+**Locations:** `scripts/probe_finite_evaluator.py:100` and the fixed module
+list in `scripts/probe_finite_kernel.py:86-97`.
+
+All nine hashes present in the submitted archive independently match the
+delivered files. However, the F1 helper's unchanged fingerprint list omits
+`analog_ai.evaluation.evaluator`, `analog_ai.evaluation.constraints`, and
+`scripts/probe_finite_evaluator.py`. These are precisely the additional
+sources that produce the F2 verdicts, schema, and probe configuration.
+
+The archive records parent revision `db6db4a` plus tracked changes. A diff
+hash is supplementary identification, not recoverable source or proof that
+the omitted files match this delivery. In particular, a new untracked probe
+is not represented by `git diff HEAD`. The accepted F1 coverage cannot simply
+be inherited by a different executed entry point.
+
+**Required correction:** extend the fingerprint helper with an explicit F2
+source/entry-point set, retaining the F1 contract. Add coverage assertions for
+the new evaluator, constraint implementation, and actual probe script, with
+independent content-hash checks. After the corrections, produce a new immutable
+F2 archive whose hashes match the submitted source; retain the old archive as
+historical evidence. Include a strict-JSON range-failure and malformed-request
+example alongside the ordinary diagnostic records.
+
+#### Independent verification and next delivery
+
+- Complete non-real-LUT suite: **230 passed**, exit 0.
+- Real-LUT integration suite: **3 passed**, exit 0.
+- Submitted F2 archive parses as strict JSON, records both LUT hash matches,
+  and contains two diagnostic records with exactly one failed row each:
+  `Sat_margin_min`, with sat_m5 approximately -48.043 mV. Stored gain is
+  31.1797 dB; stored GBW is 57.1759/11.6634 MHz. These remain outputs of the
+  submitted provisional AC model, not physically validated AC measurements.
+- Nine included source hashes match; missing F2 coverage is identified above.
+- Legacy `solve_ac` source text is unchanged from the accepted F1 revision.
+- The capacitor, JSON, malformed-request, and nondefault-supply reproductions
+  above ran independently against the delivered code using the repo's
+  synthetic LUT builder. No implementation files were edited to reproduce them.
+
+Regression commands:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests --ignore=tests/test_integration_real_luts.py -q
+.\.venv\Scripts\python.exe -m pytest tests/test_integration_real_luts.py -q
+```
+
+Opus should deliver one bounded F2 correction package covering F2-R1..R5,
+the targeted regression cases, and new source-bound evidence. Keep the 50 mV
+floor, accepted F1 kernel, legacy ideal oracle, and public finite guards.
+Do not expand into F3 or claim the capacitance provenance gate passed.
+Astra will review that concrete revision before guard removal is considered.
+
+This review updated the plan and `astra_review.md` only. No production fixes,
+fresh real finite probe, Cadence campaign, commit, or push were performed.
