@@ -146,9 +146,14 @@ FINITE_SCHEMA_VERSION = "analog_ai-0.2.0-finite-solved-dev"
 
 
 def _finite_num(v):
-    """Strict-JSON-safe metric: nonfinite -> explicit null (the
-    unavailability is carried by constraint rows and warnings)."""
-    v = float(v)
+    """Strict-JSON-safe metric: nonfinite or unconvertible -> explicit
+    null (the unavailability is carried by constraint rows and warnings).
+    The conversion guard keeps failure serialization from re-raising on
+    oversized integers (Astra F2-R2 boundary)."""
+    try:
+        v = float(v)
+    except (TypeError, ValueError, OverflowError):
+        return None
     return v if math.isfinite(v) else None
 
 
@@ -214,7 +219,12 @@ def validate_finite_specs(specs: dict) -> dict:
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ValueError(
                 f"request field {key} must be a real number, got {value!r}")
-        v = float(value)
+        try:
+            v = float(value)
+        except OverflowError:
+            raise ValueError(
+                f"request field {key}={value!r} is out of representable "
+                "numeric range") from None
         if not math.isfinite(v):
             raise ValueError(
                 f"request field {key} must be finite, got {value!r}")
@@ -232,12 +242,14 @@ def validate_finite_specs(specs: dict) -> dict:
 
 
 def _json_safe_scalar(v):
-    """JSON-safe request echo: nonfinite numerics become null; strings and
-    booleans are preserved (they are valid JSON and carry the reason)."""
+    """JSON-safe request echo: nonfinite floats become null; arbitrary-
+    precision integers pass through (valid JSON); strings and booleans are
+    preserved (they are valid JSON and carry the reason)."""
     if isinstance(v, bool):
         return v
-    if isinstance(v, (int, float)):
-        v = float(v)
+    if isinstance(v, int):
+        return v
+    if isinstance(v, float):
         return v if math.isfinite(v) else None
     if isinstance(v, str):
         return v
@@ -276,6 +288,30 @@ def _finite_device_summary(d: dict) -> dict:
     return summary
 
 
+def _effective_supply(ota) -> tuple:
+    """Effective supply/common mode, validated at the finite record
+    boundary BEFORE device work (Astra F2-R3 boundary). Returns
+    (vdd, vicm, reason): reason is None for a usable context, otherwise a
+    deterministic message naming the offending setting. Conversion
+    failures occur inside this protected helper, never in the caller."""
+    try:
+        vdd = float(ota.VDD)
+    except (TypeError, ValueError, OverflowError):
+        return float("nan"), float("nan"), (
+            f"supply VDD={ota.VDD!r} is not a real number")
+    try:
+        vicm = float(ota.Vicm)
+    except (TypeError, ValueError, OverflowError):
+        return vdd, float("nan"), (
+            f"common mode VICM={ota.Vicm!r} is not a real number")
+    if not math.isfinite(vdd) or vdd <= 0.0:
+        return vdd, vicm, f"supply VDD={vdd!r} must be finite and positive"
+    if not math.isfinite(vicm) or not 0.0 < vicm < vdd:
+        return vdd, vicm, (
+            f"common mode VICM={vicm!r} must be finite and lie in (0, VDD)")
+    return vdd, vicm, None
+
+
 def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
     """Complete finite-M5 evaluation record (Phase F2 - development,
     non-canonical).
@@ -301,12 +337,13 @@ def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
         "topology": "5t_ota",
         "tail_device": "finite",
         "op_point_mode": "solved",
-        # Effective supply/common mode of the evaluated object (F2-R4): the
-        # record must reproduce its own operating point, not the defaults.
-        "vdd": float(ota.VDD),
-        "vicm": float(ota.Vicm),
-        "supply_context_canonical": (float(ota.VDD) == config.VDD
-                                     and float(ota.Vicm) == config.VICM),
+        # Effective supply/common mode of the evaluated object (F2-R4),
+        # validated and JSON-safe at the record boundary (F2-R3 boundary):
+        # nonfinite or malformed settings serialize as null with the
+        # offending value named in invalid_reason.
+        "vdd": None,
+        "vicm": None,
+        "supply_context_canonical": None,
         "request": None,
         "external_bias_generator": (
             "gate-bias generator excluded from power/area/noise/mismatch"),
@@ -316,6 +353,14 @@ def evaluate_design_finite(ota: OTA5T, design, specs: dict) -> dict:
             "(F5 device-level experiment pending)"),
     }
     try:
+        vdd_e, vicm_e, supply_reason = _effective_supply(ota)
+        record["vdd"] = _finite_num(vdd_e)
+        record["vicm"] = _finite_num(vicm_e)
+        record["supply_context_canonical"] = (
+            supply_reason is None and vdd_e == config.VDD
+            and vicm_e == config.VICM)
+        if supply_reason is not None:
+            raise ValueError(supply_reason)   # fail-closed, before device work
         specs_n = validate_finite_specs(specs)
         record["request"] = specs_n
         values = validate_finite_design(design)

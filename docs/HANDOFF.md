@@ -396,3 +396,19 @@ examples; both diagnostic designs still verdict=False with exactly
 Sat_margin_min failing). Earlier archive retained as history. The 50 mV
 floor, F1 kernel, legacy ideal oracle, and public finite guards are
 unchanged; capacitance provenance remains open for F5.
+
+**Update 2026-09-09 (F2 boundary follow-up delivered):** Astra accepted the
+substantive F2 corrections (R1/R4/R5 and the original R2/R3 reproductions)
+and left two P2 record-boundary items, both now fixed: (a) integer→float
+conversion overflow is guarded in `validate_finite_specs` and
+`validate_finite_design` — a valid-JSON but unrepresentable integer
+(`Gain_min=10**400`) yields an invalid record naming the field instead of
+an escaping OverflowError; failure echoes cannot re-raise; (b) the
+effective supply/common mode is validated at the record boundary before
+device work — nonfinite or out-of-range settings produce strict-JSON
+invalid records with null echoed values and the offending setting named
+(valid 1.2/0.6 and 1.3/0.65 behavior unchanged). Eight new boundary tests;
+gates: full non-real-LUT suite exit 0, 3/3 real-LUT integration;
+regenerated archive `f2_integration_20260909_114535` (12 verified
+fingerprints, all four failure-path examples). Awaiting Astra's final F2
+acceptance; public finite guards remain closed.

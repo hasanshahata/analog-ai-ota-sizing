@@ -4,14 +4,13 @@
 
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
-**Status:** **F1 ACCEPTED** at `db6db4a`; **F2 CHANGES REQUIRED** after
-Astra's review of `acfb995` (F2-R1 through F2-R5). The bounded corrective
-package is now implemented and delivered: junction-decomposed capacitance
-stamping with primitive-reference tests, full request validation before
-device work, strict-JSON failure paths, effective supply context, and
-complete F2 source fingerprints with a new immutable archive. Public
-finite evaluation remains closed; F3 is not released. Awaiting Astra F2
-re-review. See the F2 correction entry at the end of this file.
+**Status:** **F1 ACCEPTED** at `db6db4a`; **F2 final acceptance pending**
+after Astra's re-review of `a700ae7` (F2-R1/R4/R5 accepted; original R2/R3
+reproductions fixed). The two remaining P2 record-boundary cases -
+numeric conversion overflow and nonfinite supply metadata - are now fixed
+with targeted tests and a regenerated source-bound archive. Public finite
+guards remain closed and F3 is not released. See the boundary follow-up
+entry at the end of this file.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -1027,6 +1026,9 @@ Opus has already executed the amended plan.
 | 2026-09-09 | F2 implemented (audit + capacitance evidence + metrics/constraints/schema); public finite evaluation still closed; awaiting Astra F2 review | Opus | F2 execution-log entry |
 | 2026-09-09 | Astra F2 gate review of `acfb995`: CHANGES REQUIRED (F2-R1..R5) | Astra | F2 gate-review entry; independent reproductions |
 | 2026-09-09 | F2 correction package delivered: junction-decomposed stamps, request validation, strict-JSON failure paths, supply context, F2 fingerprints + new archive; awaiting re-review | Opus | F2 correction entry; evidence `f2_integration_20260909_112307` |
+| 2026-09-09 | Astra corrective re-review of `a700ae7`: F2-R1/R4/R5 accepted; two P2 record-boundary items open (conversion overflow, nonfinite supply echo) | Astra | Corrective re-review entry; independent reproductions |
+| 2026-09-09 | F2 record-boundary follow-up delivered: overflow-safe numeric conversion naming the field, supply-context validation before device work with JSON-safe echoes, regenerated source-bound archive; submitted for final F2 acceptance | Opus | Boundary follow-up entry; evidence `f2_integration_20260909_114535` |
+| 2026-09-09 | Astra re-review of `a700ae7`: F2-R1/R4/R5 accepted; original R2/R3 failures fixed, two P2 record-boundary cases remain; guards stay closed | Astra | Final re-review entry; 261 non-real-LUT and 3 real-LUT tests passed independently; all 12 source hashes match |
 | 2026-09-09 | Astra F2 review at `acfb995`: CHANGES REQUIRED (F2-R1..R5); keep public guards and F3 closed; F1 remains accepted | Astra | Independent capacitor-only, malformed-request, strict-JSON, supply-identity, and source-coverage reproductions in the final gate-review entry |
 | 2026-09-09 | F1 technical review: CHANGES REQUIRED; F2 remains closed | Astra | Independently reproduced domain/extrapolation, ambiguous-root, and nonfinite-output failures; corrections below |
 | 2026-09-09 | Accept max_outer=60 as a bounded default; reject the common 1e-9 edge tolerance and inconsistent final evaluation | Astra | Synthetic nominal requires 10 iterations; archived wide real case needs 31; domain deviation contradicts A2 and permits out-of-grid geometry |
@@ -2100,3 +2102,167 @@ Astra will review that concrete revision before guard removal is considered.
 
 This review updated the plan and `astra_review.md` only. No production fixes,
 fresh real finite probe, Cadence campaign, commit, or push were performed.
+
+### 2026-09-09 - Astra F2 corrective re-review at a700ae7
+
+**Decision: accept the substantive corrections; final F2 acceptance still
+requires two small record-boundary fixes.** Reviewed revision:
+`a700ae76dd1ced0ca569b2c517e7bc0d95a24456`. Keep the public finite guards
+closed. F1 remains accepted, and F3 is not released.
+
+#### Findings closed and evidence verified
+
+| Finding | Re-review result |
+|---|---|
+| F2-R1, capacitance double counting | **Accepted.** Independently reran all three capacitor-only reproductions: M1 gives exactly 1 pF and +0.5 pA RHS; M3 gives zero; M4 gives `[[1,-1],[-1,1]]` pF. The rebuilt reference uses primitive Cgs/Cgd/Cdb, and the full asymmetric assembly and terminal-current closure tests pass. Acceptance is conditional on the declared lumped convention, not proof of real LUT semantics. |
+| F2-R2, malformed requests | The original negative/zero power, null PM, text gain, and nonfinite field reproductions are **closed**. A sentinel evaluator confirmed rejection without reaching device work. Numeric conversion overflow remains below. The original P1 negative-scale fail-open defect is fixed. |
+| F2-R3, strict JSON | The original unavailable-range, NaN-design, and infinite-request reproductions are **closed**, including strict serialization. The no-crossing test passes. Invalid supply metadata remains below. |
+| F2-R4, effective context | **Accepted.** Independent evaluation at 1.3 V records 1.3 V supply and 0.65 V common mode, marks the context noncanonical, and preserves the actual supply-based power. The record now carries `ac_model`. |
+| F2-R5, source binding | **Accepted.** All 12 hashes in `source_fingerprint_f2` independently match the delivered files, including the evaluator, constraints, and actual F2 probe. F1's default fingerprint coverage remains intact. |
+
+Independent gates: **261 non-real-LUT tests passed**, exit 0, and **3
+real-LUT integration tests passed**, exit 0. The accepted F1 DC kernel is
+unchanged from `db6db4a` (file comparison after line-ending normalization).
+Legacy `solve_ac` and ideal `_evaluate_solved` source text are unchanged.
+
+The new archive
+`evaluation_results/finite_m5/f2_integration_20260909_112307/f2_integration_probe.json`
+parses as strict JSON and records both LUT hash matches. Both ordinary
+diagnostic records still fail exactly `Sat_margin_min`, with sat_m5 about
+-48.043 mV. Updated provisional GBWs are 57.4899 and 11.6752 MHz. The range
+example also fails Swing/ICMR with null unavailable fields; the malformed
+power example has no metrics or constraint rows and an explicit invalid reason.
+These are valid development records, not feasible designs or independent
+physical AC evidence. A4's real-capacitance stop condition remains open.
+
+#### Remaining F2-R2 boundary - P2: integer-to-float overflow escapes validation
+
+**Locations:** `analog_ai/evaluation/evaluator.py:217,239-240,390-401`.
+
+The supported-field type check admits Python integers, but `float(value)`
+can raise before the finiteness check. Independent reproduction, using the
+same nominal design and either the synthetic OTA or a no-device-work sentinel:
+
+```python
+evaluate_design_finite(ota, nominal_x7, {"Gain_min": 10**400})
+# OverflowError: int too large to convert to float
+```
+
+This is a valid JSON integer, although it is not representable by the numeric
+backend. It must yield an invalid record instead of escaping a batch
+evaluation. The failure-echo helper `_json_safe_scalar` performs the same
+conversion, so merely catching `OverflowError` around the main evaluation
+will move the failure into the error path.
+
+**Required small correction:** handle numeric conversion overflow explicitly
+and name the offending field. Make the invalid request/design echo safe for
+the same input: retain a JSON-safe raw integer if appropriate, or use null
+with the reason preserved. Do not alter the F1 kernel to do this. Apply the
+same record-boundary handling to oversized design integers so failure
+serialization cannot re-raise. Avoid a blanket exception catch that hides
+implementation errors.
+
+**Acceptance tests:** oversized positive/negative request integers and an
+oversized design entry return `verdict=False`, null metrics, an explicit
+reason, and records accepted by `json.dumps(..., allow_nan=False)`. A sentinel
+should prove malformed requests are rejected before device work. Keep ordinary
+finite numeric requests and the already-passing malformed cases unchanged.
+
+#### Remaining F2-R3 boundary - P2: nonfinite supply is echoed into invalid records
+
+**Location:** `analog_ai/evaluation/evaluator.py:306-309`, before its `try`.
+
+The effective-context fix correctly reports valid supplies, but copies their
+raw float values without validation or sanitization. Both of these constructed
+objects reach the finite record path today:
+
+```python
+ota = OTA5T(dm, vdd=float("nan"), tail_device="finite", op_point="imposed")
+# The same reproduction works with vdd=float("inf").
+r = evaluate_design_finite(ota, nominal_x7, ordinary_specs)
+# verdict=False after a LUT-domain rejection, but vdd/vicm remain NaN or inf.
+json.dumps(r, allow_nan=False)
+# ValueError: Out of range float values are not JSON compliant
+```
+
+Thus an invalid evaluation context still violates the complete-record JSON
+contract. The rejection also happens after device access and reports a LUT
+domain error rather than the actual invalid supply setting.
+
+**Required small correction:** validate effective supply/common mode at the
+finite record boundary before device access, and construct a JSON-safe
+invalid record for malformed context. Require a finite positive supply and
+finite common mode within the applicable circuit domain. Preserve the
+offending setting's identity in the reason and use null for nonfinite echoed
+values. Ensure conversion failures occur inside the protected boundary.
+Keep the valid 1.3/0.65 V behavior; do not silently replace bad settings with
+canonical defaults or change historical ideal behavior.
+
+**Acceptance tests:** NaN/Infinity supply, nonfinite common mode, and invalid
+supply types return strict-JSON invalid records without device work. Retain
+the valid canonical and noncanonical supply checks.
+
+#### Bounded next delivery to Opus
+
+Implement only these numeric-boundary corrections and targeted tests. The
+capacitance redesign, primitive audit, source coverage, and valid supply
+reporting are accepted and need no rework. Keep the 50 mV floor, F1 kernel,
+legacy oracle, and public guards unchanged. Submit the exact revision with
+applicable regression results and source-bound examples of the two new
+failure paths; preserve the existing archives. If rerunning the real F2
+probe, write a new immutable directory whose fingerprints match that revision.
+No new feasibility search or Cadence campaign is required for this follow-up.
+
+Commands independently completed during this re-review:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests --ignore=tests/test_integration_real_luts.py -q
+.\.venv\Scripts\python.exe -m pytest tests/test_integration_real_luts.py -q
+```
+
+Only this plan and `astra_review.md` were edited. No implementation changes,
+fresh finite real-LUT probe, Cadence run, commit, or push were performed.
+
+### 2026-09-09 - F2 record-boundary follow-up delivered (overflow + supply context)
+
+Exactly the two remaining P2 items from Astra's corrective re-review; no AC
+redesign, no kernel change, no guard change.
+
+**R2 boundary - integer-to-float overflow.** `validate_finite_specs` now
+performs the numeric conversion inside an explicit overflow guard: an
+integer that is unrepresentable as a float (e.g. the valid-JSON
+`Gain_min=10**400`) raises a deterministic ValueError naming the field
+("...is out of representable numeric range") instead of an escaping
+OverflowError. `validate_finite_design` applies the same guard per design
+parameter (name included). `_json_safe_scalar` passes arbitrary-precision
+integers through (valid JSON) and no longer converts them, so failure
+echoes cannot re-raise; `_finite_num` gained the same conversion guard so
+failure serialization is safe everywhere. No blanket exception catch was
+added - implementation errors stay visible.
+
+**R3 boundary - invalid supply context.** New `_effective_supply` validates
+the effective supply/common mode at the record boundary BEFORE any device
+work: conversion failures (non-numeric settings) and nonfinite or
+out-of-range values (VDD must be finite and positive; VICM finite in
+(0, VDD)) produce a deterministic reason naming the offending setting; the
+record echoes nonfinite values as null and serializes strict-JSON. The
+record path fails closed on the reason before specs/design validation or
+device access. Valid canonical (1.2/0.6) and noncanonical (1.3/0.65)
+behavior is unchanged and still tested.
+
+**Tests.** Eight new boundary tests: oversized positive/negative request
+integers and an oversized design entry (verdict=False, null metrics, named
+reasons, strict-JSON-safe records, design echo null with the field named),
+a sentinel-device object proving oversized requests reject BEFORE device
+work, NaN/infinity supply, nonfinite common mode, a malformed supply TYPE
+(duck-typed object), and an out-of-range common mode.
+
+**Gates and evidence.** Focused finite suite green (including the eight
+new cases); complete non-real-LUT suite exit 0; real-LUT integration 3/3
+exit 0. Regenerated immutable archive
+`evaluation_results/finite_m5/f2_integration_20260909_114535/`: 12 source
+fingerprints independently verified against the delivered files (including
+the evaluator, constraints, and the F2 probe), strict JSON, and all four
+failure-path examples - range-failure, malformed power, oversized request
+integer (reason carries the offending field), and nonfinite supply (vdd
+echoed as null, reason names VDD). Earlier archives retained as history.

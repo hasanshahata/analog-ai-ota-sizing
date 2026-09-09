@@ -306,6 +306,96 @@ def test_unsupported_request_field_rejected(finite_ota):
     assert "Mystery" in r["invalid_reason"]
 
 
+# ------------------------- F2-R2 boundary: integer-to-float overflow -------
+@pytest.mark.parametrize("bad", [10**400, -(10**400)])
+def test_oversized_request_integer_invalid_record(finite_ota, bad):
+    """A valid JSON integer that the numeric backend cannot represent must
+    yield an invalid record, never an escaping OverflowError."""
+    r = evaluate_design_finite(finite_ota, NOMINAL,
+                               dict(LOOSE_SPECS, Gain_min=bad))
+    assert r["verdict"] is False
+    assert "Gain_min" in r["invalid_reason"]
+    assert "representable" in r["invalid_reason"]
+    assert r["metrics"] is None and r["constraints"] == []
+    json.dumps(r, allow_nan=False)             # echo must be JSON-safe
+
+
+def test_oversized_design_entry_invalid_record(finite_ota):
+    bad = list(NOMINAL)
+    bad[1] = 10**400                           # gmid1 overflow
+    r = evaluate_design_finite(finite_ota, bad, dict(LOOSE_SPECS))
+    assert r["verdict"] is False
+    assert "gmid1" in r["invalid_reason"]
+    assert r["design"][1] is None              # failure echo cannot re-raise
+    json.dumps(r, allow_nan=False)
+
+
+def test_oversized_request_rejected_before_device_work():
+    """A sentinel device object proves malformed requests reject BEFORE
+    any device access."""
+    class _Sentinel:
+        def __getattr__(self, name):
+            raise AssertionError(f"device work reached: {name}")
+
+    ota = OTA5T(_Sentinel(), vdd=1.2, tail_device="finite",
+                op_point="imposed")
+    r = evaluate_design_finite(ota, NOMINAL,
+                               dict(LOOSE_SPECS, Gain_min=10**400))
+    assert r["verdict"] is False
+    assert "Gain_min" in r["invalid_reason"]
+
+
+# ----------------------------- F2-R3 boundary: invalid supply context ------
+@pytest.mark.parametrize("vdd", [float("nan"), float("inf")])
+def test_nonfinite_supply_invalid_record_strict_json(engine, vdd):
+    dm, _ = engine
+    ota = OTA5T(dm, vdd=vdd, tail_device="finite", op_point="imposed")
+    r = evaluate_design_finite(ota, NOMINAL, dict(LOOSE_SPECS))
+    assert r["verdict"] is False
+    assert r["vdd"] is None                    # nonfinite echo -> null
+    assert "VDD" in r["invalid_reason"]
+    json.dumps(r, allow_nan=False)
+
+
+def test_nonfinite_common_mode_invalid_record():
+    """OTA5T derives Vicm from vdd, so a VICM-specific failure is reached
+    through the record boundary with a duck-typed evaluator object."""
+    class _StubOTA:
+        VDD = 1.2
+        Vicm = float("nan")
+
+    r = evaluate_design_finite(_StubOTA(), NOMINAL, dict(LOOSE_SPECS))
+    assert r["verdict"] is False
+    assert r["vicm"] is None
+    assert "VICM" in r["invalid_reason"]
+    json.dumps(r, allow_nan=False)
+
+
+def test_malformed_supply_type_invalid_record_strict_json():
+    """A non-numeric supply reaching the record boundary (duck-typed
+    object) fails closed with the offending setting named."""
+
+    class _StubOTA:
+        VDD = object()                          # not a real number
+        Vicm = 0.6
+
+    r = evaluate_design_finite(_StubOTA(), NOMINAL, dict(LOOSE_SPECS))
+    assert r["verdict"] is False
+    assert r["vdd"] is None
+    assert "VDD" in r["invalid_reason"]
+    json.dumps(r, allow_nan=False)
+
+
+def test_out_of_range_common_mode_invalid_record():
+    class _StubOTA:
+        VDD = 1.2
+        Vicm = 2.0                               # outside (0, VDD)
+
+    r = evaluate_design_finite(_StubOTA(), NOMINAL, dict(LOOSE_SPECS))
+    assert r["verdict"] is False
+    assert "(0, VDD)" in r["invalid_reason"]
+
+
 def test_validate_finite_specs_normalizes_valid_request():
     out = validate_finite_specs({"Gain_min": 20, "GBW_min": 1e6,
                                  "CL_pF": 1.0, "Power_max": 400e-6,

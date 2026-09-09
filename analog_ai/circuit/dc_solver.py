@@ -333,7 +333,12 @@ def validate_finite_design(x) -> tuple:
             f"finite design vector requires 7 parameters, got {len(x)}")
     values = []
     for name, raw, (lo, hi) in zip(names, x, bounds):
-        v = float(raw)
+        try:
+            v = float(raw)
+        except OverflowError:
+            raise ValueError(
+                f"{name}={raw!r} is out of representable numeric range"
+            ) from None
         if not np.isfinite(v):
             raise ValueError(f"{name} must be finite, got {raw!r}")
         if not lo <= v <= hi:

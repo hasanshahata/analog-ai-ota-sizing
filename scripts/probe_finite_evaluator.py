@@ -138,20 +138,35 @@ def main() -> None:
               f"rows_failed={sum(1 for c in rec['constraints'] if not c['passed'])})",
               flush=True)
 
-    # Required record examples (Astra F2-R3/F2-R2): a range request that
-    # fails closed on strict JSON, and a malformed request rejected before
-    # any device work.
+    # Required record examples (Astra F2-R3/F2-R2 and the corrective
+    # re-review): a range request that fails closed on strict JSON, a
+    # malformed request rejected before any device work, an oversized
+    # request integer (conversion overflow), and a nonfinite supply
+    # context (invalid record with null echoed supply).
     examples = [
         {"name": "example_range_request_fail_closed",
          "x7": PROBE_DESIGNS[0]["x7"],
-         "specs": dict(LOOSE_SPECS, Swing_min=0.3, ICMR_max=0.9)},
+         "specs": dict(LOOSE_SPECS, Swing_min=0.3, ICMR_max=0.9),
+         "vdd": None},
         {"name": "example_malformed_request_invalid",
          "x7": PROBE_DESIGNS[0]["x7"],
-         "specs": dict(LOOSE_SPECS, Power_max=-1e-6)},
+         "specs": dict(LOOSE_SPECS, Power_max=-1e-6),
+         "vdd": None},
+        {"name": "example_oversized_request_integer_invalid",
+         "x7": PROBE_DESIGNS[0]["x7"],
+         "specs": dict(LOOSE_SPECS, Gain_min=10**400),
+         "vdd": None},
+        {"name": "example_nonfinite_supply_invalid",
+         "x7": PROBE_DESIGNS[0]["x7"],
+         "specs": dict(LOOSE_SPECS),
+         "vdd": float("nan")},
     ]
     for ex in examples:
         t0 = time.time()
-        rec = evaluate_design_finite(ota_finite, ex["x7"], ex["specs"])
+        ota = (ota_finite if ex["vdd"] is None
+               else OTA5T(dm, vdd=ex["vdd"], tail_device="finite",
+                          op_point="imposed"))
+        rec = evaluate_design_finite(ota, ex["x7"], ex["specs"])
         rec["runtime_s"] = round(time.time() - t0, 2)
         rec["example"] = ex["name"]
         record["designs"].append(rec)

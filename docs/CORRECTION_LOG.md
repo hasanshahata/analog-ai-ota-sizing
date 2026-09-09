@@ -531,11 +531,37 @@ guards stay closed.
   3/3. The 50 mV floor, F1 kernel, legacy ideal oracle, and public finite
   guards are unchanged; capacitance provenance remains open for F5.
 
+## 2026-09-09 — Phase F2 record-boundary follow-up (overflow + supply context)
+
+Astra's corrective re-review accepted F2-R1/R4/R5 and the original R2/R3
+fixes, leaving two P2 record-boundary cases. Delivered exactly those:
+
+- **Conversion overflow:** `validate_finite_specs` and
+  `validate_finite_design` now guard the int→float conversion — an
+  unrepresentable integer (e.g. the valid-JSON `Gain_min=10**400`) yields a
+  deterministic ValueError naming the field instead of an escaping
+  OverflowError. `_json_safe_scalar` passes arbitrary-precision integers
+  through (valid JSON) without conversion; `_finite_num` gained the same
+  guard so failure serialization cannot re-raise. No blanket catch added.
+- **Invalid supply context:** new `_effective_supply` validates the
+  effective VDD/VICM at the record boundary BEFORE device work —
+  conversion failures, nonfinite values, and out-of-range common mode
+  produce a reason naming the offending setting; the record echoes
+  nonfinite supply as null and serializes strict-JSON. Valid 1.2/0.6 and
+  1.3/0.65 behavior unchanged.
+- Tests: eight new boundary cases (oversized ± request integers, oversized
+  design entry, sentinel-proved pre-device rejection, NaN/inf supply,
+  nonfinite common mode, malformed supply type, out-of-range common mode).
+- Gates: full non-real-LUT suite exit 0; real-LUT integration 3/3.
+  Regenerated immutable archive
+  `f2_integration_20260909_114535` (12 verified fingerprints, strict JSON,
+  all four failure-path examples). Submitted for final F2 acceptance.
+
 ## Still open (updated 2026-09-09)
 
 1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; the F2
-   correction package (F2-R1..R5) is implemented and delivered for Astra
-   re-review. Public finite evaluation remains closed until F2's
+   record-boundary follow-up is delivered; awaiting Astra's final F2
+   acceptance. Public finite evaluation remains closed until F2's
    integrated gate passes; guard removal and later packages remain subject
    to their own review gates. The ideal-path versioned R1 correction
    (effective requested limits) is also still open.
