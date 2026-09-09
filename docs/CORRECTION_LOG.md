@@ -708,3 +708,13 @@ Cadence convention; ideal correlation sources remain unchanged. Gates passed:
 9 focused, 314 non-real-LUT, and 3 real-LUT tests. This accepts preparation for
 one manual smoke only. No external staging or Spectre measurement occurred, and
 the F5 campaign/web/learning gates remain closed.
+
+## 2026-09-10 - F5 guest Python compatibility correction
+
+The first staged manual job stopped before Spectre: the old Cadence VM Python
+could not parse the result writer's f-string. The guest helper was rewritten to
+the Python 2.7/3.5 common subset without changing the source-bound job, frozen
+tolerances, circuit, or result schema. Focused F5 tests pass 10/10, the full
+non-real-LUT suite passes 315/315, and real-LUT integration passes 3/3. Restaging
+and rerunning the same one-point
+manual smoke is authorized; the F5 gate remains open.

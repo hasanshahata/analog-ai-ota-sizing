@@ -405,3 +405,18 @@ immutability. This is not F5 acceptance: no Spectre result exists, the OCEAN OP
 names are not yet confirmed on MMSIM14, and the capacitance convention remains
 unresolved. Only the single manual job may run next; the locked campaign and all
 web/learning work remain closed pending review of its raw evidence.
+
+## F5 guest compatibility correction review - 2026-09-10
+
+The first manual invocation failed in preflight before Spectre because the
+Cadence VM Python could not parse the guest writer's f-string syntax. Sol's
+bounded correction replaces all modern-only guest syntax and APIs with the
+Python 2.7/3.5 common subset. Astra verified that source/PDK binding, finite
+marker validation, strict JSON, and atomic publication retain their behavior.
+
+Independent checks passed: 10/10 focused F5 tests, Python 3.5 grammar parsing,
+Python compilation, the complete 315-test non-real-LUT suite, and 3/3 real-LUT
+integration tests. The correction
+is accepted for restaging and rerunning the already authorized single manual
+smoke. This is still not F5 acceptance, and it does not release the locked
+campaign or later web and learning work.

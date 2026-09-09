@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -123,7 +124,7 @@ def test_result_writer_verifies_sources_pdk_and_marker_arity(tmp_path):
     job["pdk_identity"]["include_path"] = str(pdk)
     job_path.write_text(json.dumps(job))
     _, _, resolved, pdk_record = verify_inputs(case)
-    assert resolved == pdk.resolve()
+    assert Path(resolved) == pdk.resolve()
     assert pdk_record["sha256"] == hashlib.sha256(pdk.read_bytes()).hexdigest()
     main_count = 10 + len(DEVICE_NAMES) * len(DEVICE_FIELDS)
     ota_log = tmp_path / "ota.log"
@@ -224,3 +225,13 @@ def test_finite_runner_uses_isolated_raw_data_and_prehashes_pdk():
     assert verify < ota < caps
     assert "run_jobs.sh" not in text
     assert "expected_private" not in text and "request_private" not in text
+
+
+def test_guest_result_writer_is_python35_grammar_and_legacy_runtime_safe():
+    path = ROOT / "scripts/cadence_guest/write_finite_result.py"
+    source = path.read_text()
+    ast.parse(source, filename=str(path), feature_version=(3, 5))
+    forbidden = ("from __future__ import annotations", "pathlib", "Path(",
+                 "os.replace", "FileNotFoundError", "->", " | {")
+    assert not any(token in source for token in forbidden)
+    assert "f\"" not in source and "f'" not in source

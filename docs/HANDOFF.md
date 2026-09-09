@@ -536,3 +536,13 @@ and capacitance gates. Validation passed: 9 focused, 314 non-real-LUT, and 3
 real-LUT tests. No external staging or Spectre run occurred. F5 remains open;
 the locked campaign, finite web mode, datasets, and training remain closed until
 the manual evidence returns and passes Astra review.
+
+## 2026-09-10 - F5 manual-smoke preflight correction
+
+The first guest run stopped before Spectre because its old Python rejected the
+guest writer's modern syntax. The writer now stays within the Python 2.7/3.5
+common subset, with source/PDK verification and strict result handling intact.
+Astra passed 10 focused, 315 non-real-LUT, and 3 real-LUT tests. Restage and
+rerun only the
+same `finite_manual_reference_001` smoke; return its raw logs/result for review
+before creating any locked campaign jobs.

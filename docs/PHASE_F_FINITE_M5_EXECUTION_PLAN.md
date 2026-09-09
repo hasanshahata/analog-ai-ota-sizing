@@ -2818,3 +2818,20 @@ is one manual guest run only. Its purpose is to validate the MMSIM14 OCEAN OP
 names, capture PDK identity, resolve the capacitance convention, and compare the
 manual reference under the frozen tolerances. Do not create or run the locked
 validation campaign until Astra reviews that returned raw evidence.
+
+## 2026-09-10 - F5 manual-smoke preflight compatibility correction
+
+The first authorized guest invocation stopped before Spectre during the
+source/PDK preflight: the Cadence VM's `python3` rejected an f-string in the
+dedicated result writer. No circuit simulation or measurement ran. The guest
+helper now uses the Python 2.7/3.5 common syntax and runtime subset while
+preserving strict JSON, source and PDK hashing, marker validation, and atomic
+result publication. A focused test parses the complete helper with Python 3.5
+grammar and rejects the modern constructs that caused this failure.
+
+Astra reviewed the bounded correction and passed 10/10 focused tests, the
+complete 315-test non-real-LUT suite, and 3/3 real-LUT integration tests. The
+same single manual smoke remains the
+only authorized Cadence action. Restage the corrected helper and rerun the same
+guest command; do not start the locked campaign until the returned raw evidence
+is reviewed.
