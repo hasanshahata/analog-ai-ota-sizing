@@ -403,11 +403,38 @@ negative M5 saturation margins (-48.0/-58.6/-48.0 mV) — converged DC
 diagnostics, not feasible designs; F2's saturation verifier must reject
 them and F4 owes evidence of physically feasible finite designs.
 
+## 2026-09-09 — Phase F1 R5 follow-up: controls validation + source binding
+
+Astra's corrective re-review accepted R1–R4 and kept two narrow R5 items
+open. Delivered:
+
+- **R5a:** `_validate_numeric_settings` validates the effective tolerance
+  (positive, finite, real; booleans/nonnumeric rejected) and iteration
+  budgets (positive integers; fractions rejected, never truncated) before
+  any lookup or iteration. `tol=float('inf')` — Astra's reproduction that
+  previously returned a record storing infinity — now rejects; the final
+  KCL acceptance threshold is unchanged. 11 invalid-setting tests plus a
+  strict-JSON compliance test added.
+- **R5b:** the probe records a 9-file content-hash fingerprint of every
+  executed source (kernel, device/LUT implementation, config, loader,
+  probe script), flags TRACKED changes only (untracked review files no
+  longer taint code identity), and pins dirty working trees with a
+  `git diff HEAD` sha256. The comparison run preserves supplied
+  tol/max_newton and overrides only max_outer.
+  `tests/test_probe_finite_kernel.py` (4 tests, no LUT load) covers the
+  comparison rule, fingerprint validity, and identity shape.
+- Gates: focused 62/62, full non-real-LUT suite exit 0, real-LUT
+  integration 3/3. New immutable archive
+  `evaluation_results/finite_m5/f1_probe_20260909_045513/` (earlier
+  archives preserved); measured outcomes unchanged. Submitted for final F1
+  acceptance; F2 remains closed.
+
 ## Still open (updated 2026-09-09)
 
-1. **Finite-M5 solved mode (Phase F)** — F1 corrective package delivered;
-   awaiting Astra re-review. F2 (finite metrics, MNA plumbing, constraints,
-   minimal finite records) and later packages remain closed until then.
+1. **Finite-M5 solved mode (Phase F)** — F1 R5 follow-up delivered;
+   awaiting Astra final F1 acceptance. F2 (finite metrics, MNA plumbing,
+   constraints, minimal finite records) and later packages remain closed
+   until then.
 2. **Finite-M5 Cadence correlation** — the ideal-tail nominal correlation and
    v2 guard are complete; M5 and later PVT/signoff evidence are not.
 3. **Phase E follow-up** — 17 boundary requests await certification under a

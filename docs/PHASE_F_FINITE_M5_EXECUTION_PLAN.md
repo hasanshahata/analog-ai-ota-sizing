@@ -4,11 +4,12 @@
 
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
-**Status:** Astra reviewed F1 commit `6b42cf6` on 2026-09-09: **CHANGES
-REQUIRED**. The bounded F1 corrective package (F1-R1..R5) is now implemented
-and delivered; awaiting Astra re-review of the corrective diff. F2 remains
-closed. See the F1 gate-review entry and the corrective execution-log entry
-at the end of this document.
+**Status:** Astra re-reviewed corrective commit `ece10e5` on 2026-09-09:
+F1-R1 through F1-R4 accepted. The remaining R5 follow-up (numerical-setting
+validation R5a + source-content binding R5b) is now implemented and a new
+immutable probe archive generated; awaiting final F1 acceptance. F2 remains
+closed. See the corrective re-review and the R5 follow-up entry at the end
+of this file.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -1014,7 +1015,10 @@ Opus has already executed the amended plan.
 | 2026-09-09 | F1 delivered: finite DC kernel + 27 focused tests; gates 166/166 non-real-LUT and 3/3 real-LUT; real-LUT probe archived; submitted for Astra review | Opus | Execution log 2026-09-09; evidence under `evaluation_results/finite_m5/f1_probe_*/` |
 | 2026-09-09 | Astra F1 gate review: CHANGES REQUIRED (F1-R1..R5); F2 stays closed | Astra | Gate-review entry; reproductions in `astra_review.md` findings |
 | 2026-09-09 | F1 corrective package delivered addressing F1-R1..R5; awaiting Astra re-review | Opus | Corrective execution-log entry; evidence `f1_probe_20260909_031000` |
+| 2026-09-09 | Corrective re-review of ece10e5: R1-R4 accepted; R5 still requires setting validation and exact source identity; F2 remains closed | Astra | Reproduced successful tol=inf record that cannot serialize as strict JSON; archived source is old commit plus dirty flag without source hashes/patch |
 | 2026-09-09 | Probe saturation margins are diagnostics only: F2's saturation verifier must reject the probe cases; no floor adjustment | Astra direction, recorded by Opus | Astra F1 gate review, saturation interpretation |
+| 2026-09-09 | Astra corrective re-review: F1-R1..R4 accepted; R5a (controls validation) + R5b (source binding) open | Astra | Corrective re-review entry; 185 passed + 3 passed independently verified |
+| 2026-09-09 | R5 follow-up delivered: controls validated before solving, probe evidence bound to source fingerprints/diff hash, new immutable archive; submitted for final F1 acceptance | Opus | R5 follow-up entry; evidence `f1_probe_20260909_045513` |
 | 2026-09-09 | F1 technical review: CHANGES REQUIRED; F2 remains closed | Astra | Independently reproduced domain/extrapolation, ambiguous-root, and nonfinite-output failures; corrections below |
 | 2026-09-09 | Accept max_outer=60 as a bounded default; reject the common 1e-9 edge tolerance and inconsistent final evaluation | Astra | Synthetic nominal requires 10 iterations; archived wide real case needs 31; domain deviation contradicts A2 and permits out-of-grid geometry |
 
@@ -1483,3 +1487,147 @@ NOT feasible finite-OTA designs. F2's saturation verifier must reject these
 cases, F4 still owes evidence of physically feasible finite designs, and
 the saturation floor must not be adjusted to make probes pass. Flagged
 prominently in HANDOFF.
+
+### 2026-09-09 - Astra corrective re-review of ece10e5
+
+**Reviewed revision:** `ece10e5816e296a04d7096436d2df5d38501a919`.
+**Decision:** accept F1-R1 through F1-R4; keep F1-R5 open for the limited
+corrections below. **F2 remains closed.** No further numerical redesign is
+requested, and the previously accepted max_outer=60 setting remains accepted.
+
+**Verification performed:** reran the complete non-real-LUT suite (**185
+passed**, including the 46 focused cases) and real-LUT integration (**3
+passed**), both exit 0. Compared all pre-existing `dc_solver.py` function/class
+definitions with `f9798cd`; they remain unchanged. Inspected the corrective
+diff, focused tests, probe implementation, and strict-JSON archived evidence.
+The two existing dependency deprecation warnings remain non-failing.
+
+**Findings closed:**
+
+| Finding | Acceptance evidence |
+|---|---|
+| R1 domain/final-point consistency | The 1e-9 allowance is removed. Independent probes confirmed one/two-ULP snaps and three-ULP rejection at both voltage and length edges. The 179.5 nm rejection test passes. Returned device points feed acceptance KCL directly. |
+| R2 ambiguous roots | Multiple intervals and multiple exact hits/plateaus reject; unique roots work. Independently checked repeated separated node roots and a unique interior node root in addition to the delivered tests. |
+| R3 nonfinite OP evidence | All M1-M5 mandatory OP fields and present optional numeric fields are validated before acceptance. Poisoned gm/gds/VDSAT and final M5 data reject. Explicit rank-deficient/near-dependent Jacobian tests now exist. |
+| R4 mode dispatch | Invalid and empty overrides reject; None and valid overrides preserve intended behavior; finite+solved public calls stay closed. |
+
+The corrected real-LUT archive contains consecutive trace lengths **12, 31,
+12, and 20**, including the failed low-budget run. For each successful archived
+record, recomputing the three KCL equations from its returned device IDs gives
+exactly its stored residual dictionary. Effective finite settings and verified
+LUT hashes are now present. The three negative M5 saturation margins are
+correctly described as convergence diagnostics, not feasible designs.
+
+#### Remaining R5a - P2: validate numerical controls before solving
+
+**Location:** `analog_ai/circuit/dc_solver.py:488` at the reviewed revision.
+
+Effective values are now recorded, but `tol` is never validated. On the
+existing unique-root, constant-current synthetic construction, a call with
+`tol=float('inf')` **returns successfully with zero KCL residual**, stores
+infinity in both tolerance/settings metadata, and subsequently fails
+`json.dumps(record, allow_nan=False)` with:
+
+```text
+Out of range float values are not JSON compliant
+```
+
+This does not demonstrate a false physical KCL pass: the independent final
+KCL check still exists. It does demonstrate that invalid controls bypass the
+inner stopping rule and produce an unusable supposedly successful record.
+On the same construction, zero, negative, and NaN tolerances produce a
+misleading singular-Jacobian error instead of invalid-input rejection.
+Validation was explicitly requested in the original R5 disposition.
+
+**Required small fix:** validate the effective tolerance as a positive finite
+real scalar; reject booleans and nonnumeric values. Validate maximum iteration
+budgets as positive integer scalars without silently truncating fractions.
+Do this before lookup/iteration and return deterministic ValueError messages.
+Keep the final KCL acceptance threshold unchanged. Add focused invalid-setting
+tests, including the successful-infinity reproduction and strict JSON for a
+normal result.
+
+#### Remaining R5b - P2: bind evidence to the actual source contents
+
+**Location:** `scripts/probe_finite_kernel.py::source_identity` and
+`f1_probe_20260909_031000/f1_real_lut_probe.json`.
+
+The archive reports:
+
+```json
+{"git_commit": "6b42cf60d5daaa19eb347fe1551f3c3e082b4e4c",
+ "git_dirty": true, "python": "3.11.9"}
+```
+
+This honestly flags local changes, but identifies the pre-corrective parent
+plus an unspecified dirty state. No source digest or patch identifies the
+actual changed code that generated the traces. Merely committing that output
+later does not record those missing source contents.
+
+**Required small fix:** record a content-hash manifest for the executed kernel,
+LUT/device implementation, configuration, loader, and probe (or all active
+package/probe Python sources), alongside the Git revision. Alternatively,
+record a clean source revision with a check that relevant tracked source files
+match it. Keep unrelated untracked review/output files separate from code
+identity; there is no requirement to commit `astra_review.md` to run a probe.
+For dirty source, save the actual source hashes or a complete reproducible
+source snapshot/patch. Generate a new immutable probe directory after this fix;
+preserve the earlier archive as history.
+
+While correcting the probe, preserve supplied `tol` and `max_newton` in the
+comparison run and override **only** `max_outer`. The current comparison call
+passes only `{"max_outer": 20}`, silently dropping any other CLI controls.
+The existing default-settings archive is not affected, but a customized
+before/after run would change more than one variable. Add a lightweight probe
+test for effective comparison settings and source fingerprint coverage.
+
+**Next delivery:** one small R5 follow-up with invalid-control checks, source
+fingerprinting, controlled budget comparison, and a new trace archive. R1-R4
+are closed unless that diff introduces a regression; do not reopen their
+design or begin F2 in this follow-up. Rerun the applicable regression gates
+and submit the exact revision/evidence for final F1 acceptance.
+
+Only this plan was edited during the re-review. No implementation changes,
+new real finite probe, Cadence run, commit, push, or F2 work were performed.
+The pre-existing untracked `astra_review.md` remains unchanged.
+
+### 2026-09-09 - R5 follow-up delivered (controls validation + source binding)
+
+Small bounded package addressing exactly the two open R5 items; solver
+structure and the accepted max_outer=60 setting untouched; F2 not started.
+
+**R5a - numerical controls validated before solving.** New
+`_validate_numeric_settings` runs before ANY lookup or iteration: the
+effective tolerance must be a positive finite real number (booleans and
+nonnumeric values rejected) and the budgets positive integers - fractional
+values (7.5) are rejected, never truncated, and sub-1 budgets reject, all
+with deterministic ValueError messages. Astra's reproduction is closed:
+`tol=float('inf')` now rejects instead of returning a record that stored
+infinity and then failed strict JSON. The final KCL acceptance threshold is
+unchanged (still the declared 1e-9 A, independent of `tol`). Tests: 11
+invalid-setting cases (the inf reproduction, zero/negative/NaN/bool/string
+tolerances, fractional/boolean/sub-1 budgets) plus a strict-JSON compliance
+test on a normal result (`json.dumps(record, allow_nan=False)`).
+
+**R5b - evidence bound to actual source contents.** The probe now records
+a content-hash manifest of all nine executed sources (kernel, LUT/device
+implementation, config, loader, and the probe script itself) alongside the
+Git revision. The dirty flag reflects TRACKED changes only
+(`--untracked-files=no`), so untracked review/output files no longer taint
+code identity; when tracked changes exist, a `git diff HEAD` sha256 pins
+the exact working-tree code that generated the run. The comparison run
+preserves any supplied tol/max_newton and overrides ONLY max_outer
+(`comparison_budgets` helper). A lightweight probe test module
+(`tests/test_probe_finite_kernel.py`, 4 tests, no LUT loading) covers the
+comparison-budget rule, fingerprint coverage/validity with an independent
+hash spot-check, and source-identity shape.
+
+**Gates and evidence.** Focused 62/62 (58 finite incl. 11+1 new, 4 probe);
+complete non-real-LUT suite exit 0; real-LUT integration 3/3 exit 0. New
+immutable archive: `evaluation_results/finite_m5/f1_probe_20260909_045513/`
+- LUT hashes verified, 9-source fingerprint, tracked-changes diff hash,
+  strict JSON; measured outcomes unchanged (nominal 12 outer / 0.34 s,
+  wide 31 / 0.84 s, boundary 12 / 0.37 s, comparison run fails at
+  max_outer=20 with 20 archived trace rows). Earlier archives preserved as
+  history. Submitted revision for final F1 acceptance: the commit carrying
+  this entry (see decision record).

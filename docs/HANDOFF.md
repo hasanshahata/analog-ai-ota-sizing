@@ -291,3 +291,15 @@ converged DC diagnostics, not feasible finite-OTA designs. F2's saturation
 verifier must reject them, F4 still owes evidence of physically feasible
 finite designs, and the saturation floor must not be adjusted to make
 probes pass.
+
+**Update 2026-09-09 (latest): F1 R5 follow-up delivered.** Astra accepted
+F1-R1..R4 and kept two narrow R5 items open; both are now closed in code:
+(a) numerical controls are validated before any lookup or iteration
+(positive finite tolerance; positive integer budgets, fractions rejected —
+`tol=float('inf')` now rejects); (b) probe evidence is bound to exact
+source contents via a 9-file sha256 fingerprint, a tracked-changes-only
+dirty flag with a `git diff HEAD` hash, and a comparison run that isolates
+`max_outer`. New immutable archive
+`evaluation_results/finite_m5/f1_probe_20260909_045513/`; gates 62/62
+focused, full non-real-LUT suite exit 0, 3/3 real-LUT integration.
+Awaiting Astra's final F1 acceptance; F2 remains closed.

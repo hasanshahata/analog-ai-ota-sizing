@@ -437,6 +437,37 @@ def _forward_gmid_vgs(lut: LUT, L: float, gmid_target: float, vds: float,
                         xtol=1e-12, maxiter=100))
 
 
+def _validate_numeric_settings(tol, max_newton, max_outer):
+    """Validate the numerical controls BEFORE any lookup or iteration
+    (Astra R5a): the effective tolerance must be a positive finite real
+    scalar and the iteration budgets positive integer scalars - fractions
+    are never truncated, and booleans are rejected even though they
+    subclass ``int``. Deterministic ValueError messages.
+    """
+    def number(name: str, v) -> float:
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise ValueError(f"{name} must be a real number, got {v!r}")
+        v = float(v)
+        if not np.isfinite(v):
+            raise ValueError(f"{name} must be finite, got {v!r}")
+        return v
+
+    tol_n = number("tol", FINITE_TOLERANCES["kcl_newton_target_a"]
+                   if tol is None else tol)
+    if not tol_n > 0.0:
+        raise ValueError(f"tol must be positive, got {tol_n!r}")
+    budgets = {}
+    for name, v in (("max_newton", max_newton), ("max_outer", max_outer)):
+        n = number(name, v)
+        if not float(n).is_integer():
+            raise ValueError(f"{name} must be an integer, got {v!r}")
+        n = int(n)
+        if n < 1:
+            raise ValueError(f"{name} must be >= 1, got {v!r}")
+        budgets[name] = n
+    return tol_n, budgets["max_newton"], budgets["max_outer"]
+
+
 def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
                                  gmid3: float, L5: float, gmid5: float,
                                  Itail: float, vdd: float, vicm: float,
@@ -472,7 +503,9 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
     are recorded in docs/PHASE_F_FINITE_M5_EXECUTION_PLAN.md and
     evaluation_results/finite_m5/f1_probe_*/.
 
-    Fails closed: invalid inputs raise ValueError; no converged in-domain
+    Fails closed: invalid inputs and invalid numerical controls
+    (nonfinite/zero/negative ``tol``, fractional or sub-1 budgets) raise
+    ValueError before any lookup or iteration; no converged in-domain
     point raises DCConvergenceError; genuinely out-of-grid final coordinates
     raise DomainError. Trial-point clipping is permitted only inside the
     line search and is counted in the returned diagnostics. The final
@@ -485,9 +518,8 @@ def solve_operating_point_finite(dm, L1: float, gmid1: float, L3: float,
     """
     L1, gmid1, L3, gmid3, L5, gmid5, Itail = validate_finite_design(
         (L1, gmid1, L3, gmid3, L5, gmid5, Itail))
-    tol = FINITE_TOLERANCES["kcl_newton_target_a"] if tol is None else tol
-    if max_newton < 1 or max_outer < 1:
-        raise ValueError("max_newton and max_outer must be >= 1")
+    tol, max_newton, max_outer = _validate_numeric_settings(
+        tol, max_newton, max_outer)
 
     w_ref_n, w_ref_p = dm.nch.W, dm.pch.W
     clamps: list[str] = []      # LUT-axis clamps (ideal-mode diagnostic name)

@@ -645,6 +645,32 @@ def test_effective_settings_recorded(engine):
     assert c["tolerances"]["kcl_newton_target_a"] == 5e-13
 
 
+@pytest.mark.parametrize("bad", [
+    {"tol": float("inf")},      # Astra R5a reproduction: previously returned
+    {"tol": float("nan")},
+    {"tol": 0.0},
+    {"tol": -1e-12},
+    {"tol": True},              # booleans are not numbers here
+    {"tol": "1e-12"},           # nonnumeric
+    {"max_outer": 7.5},         # fraction: never silently truncated
+    {"max_outer": True},
+    {"max_outer": 0},
+    {"max_newton": 0},
+    {"max_newton": 60.5},
+])
+def test_invalid_numerical_settings_rejected_before_solving(engine, bad):
+    dm, _ = engine
+    with pytest.raises(ValueError):
+        solve_operating_point_finite(dm, *NOMINAL, vdd=VDD, vicm=VICM, **bad)
+
+
+def test_normal_record_is_strict_json_compliant(finite_nominal):
+    import json
+    dm, op = finite_nominal
+    text = json.dumps(op, allow_nan=False)   # must not raise
+    assert "NaN" not in text and "Infinity" not in text
+
+
 # ------------------------------------------------- public surface (closed) --
 def test_public_finite_solved_calls_stay_rejected(engine):
     dm, _ = engine

@@ -75,7 +75,33 @@ def verify_luts(lut_dir: Path) -> dict:
     return out
 
 
+def source_fingerprint() -> dict:
+    """Content hashes of every source file executed by this probe (kernel,
+    device/LUT implementation, configuration, loader, this script) - ties
+    the evidence to exact source contents regardless of Git state
+    (Astra R5b). Untracked review/output files are not code identity and
+    are deliberately excluded."""
+    import importlib
+
+    names = ["analog_ai", "analog_ai.config", "analog_ai.devices.lut",
+             "analog_ai.devices.device_model", "analog_ai.circuit.dc_solver",
+             "analog_ai.circuit.mna", "analog_ai.circuit.ota5t",
+             "analog_ai.loader"]
+    out = {}
+    for name in names:
+        path = Path(importlib.import_module(name).__file__).resolve()
+        out[name] = {"file": path.name, "sha256": sha256_of(path)}
+    probe_path = Path(__file__).resolve()
+    out["scripts.probe_finite_kernel"] = {
+        "file": probe_path.name, "sha256": sha256_of(probe_path)}
+    return out
+
+
 def source_identity() -> dict:
+    """Git revision plus TRACKED-change state; untracked review/output
+    files do not taint code identity. With tracked changes present, the
+    diff hash pins the exact working-tree code that generated the run
+    (Astra R5b)."""
     def git(*args: str) -> str | None:
         try:
             return subprocess.run(["git", *args], capture_output=True,
@@ -83,11 +109,28 @@ def source_identity() -> dict:
         except Exception:
             return None
 
-    return {
-        "git_commit": git("rev-parse", "HEAD"),
-        "git_dirty": bool(git("status", "--porcelain")),
+    commit = git("rev-parse", "HEAD")
+    tracked_changes = bool(git("status", "--porcelain",
+                               "--untracked-files=no"))
+    identity = {
+        "git_commit": commit,
+        "git_tracked_changes": tracked_changes,
         "python": sys.version.split()[0],
+        "source_fingerprint": source_fingerprint(),
     }
+    if tracked_changes:
+        diff = git("diff", "HEAD")
+        identity["git_diff_sha256"] = (
+            hashlib.sha256(diff.encode("utf-8")).hexdigest()
+            if diff is not None else None)
+    return identity
+
+
+def comparison_budgets(budgets: dict,
+                       budget: int = COMPARISON_BUDGET) -> dict:
+    """Effective budgets for the before/after comparison run: preserve every
+    supplied control and override ONLY max_outer (Astra R5b follow-up)."""
+    return {**budgets, "max_outer": budget}
 
 
 def run_design(dm, name: str, x7: list, budgets: dict, out_list: list) -> dict:
@@ -182,12 +225,12 @@ def main() -> None:
 
     if not args.skip_comparison:
         wide = next(d for d in PROBE_DESIGNS if d["name"] == WIDE_NAME)
+        low = comparison_budgets(budgets)
         print(f"[comparison] re-running {WIDE_NAME} at "
-              f"max_outer={COMPARISON_BUDGET} (no source edits)...",
-              flush=True)
-        run_design(dm, f"{WIDE_NAME}_max_outer_{COMPARISON_BUDGET}",
-                   wide["x7"], {"max_outer": COMPARISON_BUDGET},
-                   record["designs"])
+              f"max_outer={low['max_outer']} (preserving supplied tol/"
+              f"max_newton; no source edits)...", flush=True)
+        run_design(dm, f"{WIDE_NAME}_max_outer_{low['max_outer']}",
+                   wide["x7"], low, record["designs"])
 
     out_file = out_dir / "f1_real_lut_probe.json"
     out_file.write_text(
