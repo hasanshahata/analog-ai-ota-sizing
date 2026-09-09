@@ -525,3 +525,14 @@ constraint rows, and principal metrics. Gates passed: 4 focused F4 tests, 305
 non-real-LUT tests, and 3 real-LUT integration tests. F5 independent Cadence
 correlation is now released; finite web mode, dataset regeneration, and Phase H
 training remain closed.
+
+## 2026-09-09 - F5 manual-reference preparation at `f7222c0`
+
+The local finite-M5 Cadence manual-reference package is accepted for one smoke
+test. It has a separate full-geometry template and runner, frozen pre-measurement
+tolerances, complete M1-M5 OP extraction, an isolated M5 capacitance-convention
+experiment, source/PDK hash preflight, and separate correlation, measured-request,
+and capacitance gates. Validation passed: 9 focused, 314 non-real-LUT, and 3
+real-LUT tests. No external staging or Spectre run occurred. F5 remains open;
+the locked campaign, finite web mode, datasets, and training remain closed until
+the manual evidence returns and passes Astra review.

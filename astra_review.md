@@ -390,3 +390,18 @@ Independent gates passed: 4/4 focused F4 tests, 305/305 non-real-LUT tests, and
 3/3 real-LUT integration tests. F4 is accepted. F5 independent Cadence
 correlation and capacitance provenance may begin as the next bounded package;
 finite web deployment, dataset regeneration, and Phase H training remain closed.
+
+## F5 preparation review — manual smoke authorized locally at `f7222c0`
+
+I accept the local preparation package for one finite-M5 manual Cadence smoke.
+The ideal correlation implementation is unchanged. The finite path carries the
+full five-device geometry convention, solved tail bias, frozen tolerances,
+complete OP fields, explicit measured-request failures for unavailable range
+metrics, source and PDK binding, and a separate capacitance-convention result.
+
+Independent checks passed: 9 focused tests, 314 non-real-LUT tests, 3 real-LUT
+tests, Python compilation, shell syntax, generated-file hashes, and ideal-source
+immutability. This is not F5 acceptance: no Spectre result exists, the OCEAN OP
+names are not yet confirmed on MMSIM14, and the capacitance convention remains
+unresolved. Only the single manual job may run next; the locked campaign and all
+web/learning work remain closed pending review of its raw evidence.

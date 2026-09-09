@@ -2785,3 +2785,36 @@ Cadence-correlation contract. Begin with the device-level manual reference,
 operating-point extraction, capacitance provenance experiment, and tolerances
 frozen before measured validation. Do not expose finite mode through the web,
 regenerate datasets, or start Phase H training until F5 passes its own gate.
+
+## 2026-09-09 - Astra F5 manual-reference preparation review at `f7222c0`
+
+**The local F5 preparation package is accepted for one manual smoke test; the
+F5 correlation gate is not yet accepted.** The package creates a separate
+finite-M5 template and guest path, preserves the ideal correlation sources,
+and instantiates the F4 `test5_balanced` winner's M1/M2, M3/M4, and M5 geometry
+plus solved `Vbias_tail`.
+
+The tolerance contract in `configs/finite_m5_cadence_tolerances_v1.json` is
+frozen before measurement. The manual deck extracts Vtail, Vmirror, Vout,
+gain, GBW, PM, power, and ID/gm/gds/gmbs/VDSAT/VDS for M1-M5. A separate
+single-device M5 experiment measures grounded-drain and gate-transfer
+admittance and Spectre OP cdd/cgd so the LUT cdd convention can be decided
+without changing the accepted F2 assumption after seeing a campaign.
+
+Astra required and verified full Cadence-exported diffusion/resistance geometry
+expressions on all five OTA devices and M5CAP, a fail-closed resolved-PDK hash
+before simulation, re-verification before atomic result emission, binding of
+all public job inputs including `design.json`, explicit unavailable failures
+for requested SR/Swing/ICMR, and a capacitance decision that also requires
+Spectre OP/admittance consistency.
+
+Local gates passed: 9/9 focused tests, 314/314 non-real-LUT tests, 3/3 real-LUT
+integration tests, Python compilation, Git Bash syntax validation, all generated
+source bindings, and immutable ideal correlation hashes. The one-point OP/cap
+enrichment replays the archived F4 winner and performs no optimization.
+
+No external files were staged and no Spectre result exists yet. The next action
+is one manual guest run only. Its purpose is to validate the MMSIM14 OCEAN OP
+names, capture PDK identity, resolve the capacitance convention, and compare the
+manual reference under the frozen tolerances. Do not create or run the locked
+validation campaign until Astra reviews that returned raw evidence.

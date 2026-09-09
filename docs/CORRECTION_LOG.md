@@ -697,3 +697,14 @@ all hard constraints with minimum saturation margins between 124.459 and
 real-LUT integration passed 3/3. F4 is accepted and F5 is released under its
 existing independent Cadence-correlation gate; web and learning work remain
 closed.
+
+## 2026-09-09 - F5 manual-reference preparation accepted locally at `f7222c0`
+
+Added a separate finite-M5 Cadence template, source-bound builder/stager,
+dedicated fail-closed guest runner/result writer, frozen tolerance contract,
+complete M1-M5 OP schema, measured-request checks, and an isolated capacitance
+provenance experiment. Full device geometry expressions match the established
+Cadence convention; ideal correlation sources remain unchanged. Gates passed:
+9 focused, 314 non-real-LUT, and 3 real-LUT tests. This accepts preparation for
+one manual smoke only. No external staging or Spectre measurement occurred, and
+the F5 campaign/web/learning gates remain closed.
