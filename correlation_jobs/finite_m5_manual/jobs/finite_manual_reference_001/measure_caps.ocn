@@ -1,0 +1,13 @@
+/* Phase F5 capacitance provenance measurements for finite_manual_reference_001. */
+openResults("./psf_caps")
+selectResult('ac)
+drainCurrent = value(i("VD:p") 1e6)
+gateCurrent = value(i("VG:p") 1e6)
+cDrainY = abs(imag(drainCurrent)) / (2.0 * 3.141592653589793 * 1e6)
+cGdY = abs(imag(gateCurrent)) / (2.0 * 3.141592653589793 * 1e6)
+selectResult('capOpInfo)
+cddOp = abs(OP("/M5CAP" "cdd"))
+cgdOp = abs(OP("/M5CAP" "cgd"))
+printf("ANALOG_AI_FINITE_CAPS %.15g %.15g %.15g %.15g\n"
+       cddOp cgdOp cDrainY cGdY)
+exit()

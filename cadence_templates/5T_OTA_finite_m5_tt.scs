@@ -1,0 +1,69 @@
+// Dedicated finite-M5 5T OTA template. Never use for ideal-tail jobs.
+simulator lang=spectre
+global 0 vdd!
+parameters VDD Vincm cL L1 W1 L3 W3 L5 W5 VbiasTail
+include "/home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/tsmcN65/../models/spectre/toplevel.scs" section=tt_lib
+
+subckt ideal_balun d c p n
+    K0 (d 0 p c) transformer n1=2
+    K1 (d 0 c n) transformer n1=2
+ends ideal_balun
+
+VDDsrc (vdd! 0) vsource dc=VDD type=dc
+VICMsrc (vicm 0) vsource dc=Vincm type=dc
+VINsrc (vin 0) vsource mag=1 type=dc
+VTAILBIAS (vbias_tail 0) vsource dc=VbiasTail type=dc
+BALUN (vin vicm vin_p vin_n) ideal_balun
+CLOAD (vout 0) capacitor c=cL
+
+M3 (vmirror vmirror vdd! vdd!) pch l=L3 w=W3 m=1 nf=1 sd=200n \
+    ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W3 \
+    as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07))*W3 \
+    pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W3)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+W3) \
+    ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W3)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07)*2+(1+2)*W3) \
+    nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W3)+(1+1-int((1+1)/2)*2)*(1e-07/W3) \
+    nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W3)+(1+1-int((1+1)/2)*2)*(1e-21/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W3) \
+    sa=1/(1/(1.75e-07+0.5*L3))-0.5*L3 sb=1/(1/(1.75e-07+0.5*L3))-0.5*L3 sca=0 scb=0 scc=0
+M4 (vout vmirror vdd! vdd!) pch l=L3 w=W3 m=1 nf=1 sd=200n \
+    ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W3 \
+    as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07))*W3 \
+    pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W3)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+W3) \
+    ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W3)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07)*2+(1+2)*W3) \
+    nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W3)+(1+1-int((1+1)/2)*2)*(1e-07/W3) \
+    nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W3)+(1+1-int((1+1)/2)*2)*(1e-21/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W3) \
+    sa=1/(1/(1.75e-07+0.5*L3))-0.5*L3 sb=1/(1/(1.75e-07+0.5*L3))-0.5*L3 sca=0 scb=0 scc=0
+M1 (vmirror vin_p vtail 0) nch l=L1 w=W1 m=1 nf=1 sd=200n \
+    ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W1 \
+    as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07))*W1 \
+    pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W1)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+W1) \
+    ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W1)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07)*2+(1+2)*W1) \
+    nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W1)+(1+1-int((1+1)/2)*2)*(1e-07/W1) \
+    nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W1)+(1+1-int((1+1)/2)*2)*(1e-21/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W1) \
+    sa=1/(1/(1.75e-07+0.5*L1))-0.5*L1 sb=1/(1/(1.75e-07+0.5*L1))-0.5*L1 sca=0 scb=0 scc=0
+M2 (vout vin_n vtail 0) nch l=L1 w=W1 m=1 nf=1 sd=200n \
+    ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W1 \
+    as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07))*W1 \
+    pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W1)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+W1) \
+    ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W1)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07)*2+(1+2)*W1) \
+    nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W1)+(1+1-int((1+1)/2)*2)*(1e-07/W1) \
+    nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W1)+(1+1-int((1+1)/2)*2)*(1e-21/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W1) \
+    sa=1/(1/(1.75e-07+0.5*L1))-0.5*L1 sb=1/(1/(1.75e-07+0.5*L1))-0.5*L1 sca=0 scb=0 scc=0
+M5 (vtail vbias_tail 0 0) nch l=L5 w=W5 m=1 nf=1 sd=200n \
+    ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W5 \
+    as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07))*W5 \
+    pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W5)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+W5) \
+    ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W5)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07)*2+(1+2)*W5) \
+    nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W5)+(1+1-int((1+1)/2)*2)*(1e-07/W5) \
+    nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W5)+(1+1-int((1+1)/2)*2)*(1e-21/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W5) \
+    sa=1/(1/(1.75e-07+0.5*L5))-0.5*L5 sb=1/(1/(1.75e-07+0.5*L5))-0.5*L5 sca=0 scb=0 scc=0
+
+simulatorOptions options reltol=1e-3 vabstol=1e-6 iabstol=1e-12 temp=27 \
+    tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 maxnotes=5 maxwarns=5 \
+    digits=8 cols=120 pivrel=1e-3 checklimitdest=psf
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub

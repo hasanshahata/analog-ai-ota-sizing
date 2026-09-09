@@ -1,0 +1,48 @@
+{
+  "schema": "analog_ai-f5-finite-manual-reference-v1",
+  "case_id": "finite_manual_reference_001",
+  "status": "prepared",
+  "topology": "5t_ota_finite_m5",
+  "oracle_version": "analog_ai-0.2.0-finite-solved-dev",
+  "package_version": "0.1.0",
+  "corner": "tt_lib",
+  "source_case": "test5_balanced",
+  "source_binding": {
+    "input.scs": "2df9a07f470fe2247101ed288ccf79ee2b4cb330eec920c25ab949251acb1cf8",
+    "measure.ocn": "80da8bc5aecdd01cfa2784ea2447a4b154013f3fab48d296ff640975ce2e5277",
+    "capacitance_probe.scs": "a95cee45be996d5b6d4027cd8f63f08c7a31e93d2845342728ad60fc0c07fd4d",
+    "measure_caps.ocn": "e760c4cfd677b3bc73c3cdab950ddc121d79d7abc26da188923a9f48ae756b71",
+    "tolerances.json": "bce2a9ee2dc1dd4b4eb7e3dbdccdbe7fdc28d67060662d2472faec33b1b52b8f",
+    "design.json": "adc9000adea60c40f0326f6ed4d97ac10c8ae5b0afc289df9782cbb93bc6bc02",
+    "template_source_sha256": "a102ad2b501cce1d262f5125a8960384a9349c6fba482864a0f930c0d3bd602d",
+    "tolerance_source_sha256": "bce2a9ee2dc1dd4b4eb7e3dbdccdbe7fdc28d67060662d2472faec33b1b52b8f",
+    "f4_artifact_sha256": "050ff0dabbd13187c95e5a5fff4cbedbc57d9b2b68dee137b7537fcdc9ad5676",
+    "builder_sha256": "03780f27825f84513bd7fd34aa4fe2a202c3b5d70301cc7dc2126ea464a8d6eb"
+  },
+  "pdk_identity": {
+    "include_path": "/home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/tsmcN65/../models/spectre/toplevel.scs",
+    "section": "tt_lib",
+    "sha256": null,
+    "status": "measure_on_guest_before_run"
+  },
+  "lut_identity": {
+    "nch": {
+      "file": "TSMC_fast_65nm_nch.pkl",
+      "bytes": 2763639830,
+      "sha256": "20c15dd9215789d94a438ffd14229f8ab09459474bb965371077a5435ed87e01",
+      "verified": true
+    },
+    "pch": {
+      "file": "TSMC_fast_65nm_pch.pkl",
+      "bytes": 2763639830,
+      "sha256": "ea80ded3113fb3b701b5bbca9fc4f854c1b1742bb716e668dc95fe92ac169a6c",
+      "verified": true
+    }
+  },
+  "required_outputs": {
+    "ota": "ANALOG_AI_FINITE_METRICS",
+    "capacitance": "ANALOG_AI_FINITE_CAPS"
+  },
+  "external_bias_generator": "excluded_from_power_area_noise_mismatch",
+  "validation_campaign_member": false
+}

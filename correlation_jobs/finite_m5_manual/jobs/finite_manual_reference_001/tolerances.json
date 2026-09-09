@@ -1,0 +1,26 @@
+{
+  "schema": "analog_ai-finite-m5-cadence-tolerances-v1",
+  "status": "frozen_before_manual_reference",
+  "scope": "5t_ota_finite_m5_tt_lib_nominal_1p2V_27C",
+  "correlation": {
+    "node_voltage_V": {"kind": "absolute", "limit": 0.03},
+    "device_current": {"kind": "relative", "limit": 0.10, "absolute_floor_A": 1e-09},
+    "gm": {"kind": "relative", "limit": 0.15, "absolute_floor_S": 1e-09},
+    "gds": {"kind": "relative", "limit": 0.25, "absolute_floor_S": 1e-10},
+    "gmbs": {"kind": "relative", "limit": 0.25, "absolute_floor_S": 1e-10},
+    "vdsat_V": {"kind": "absolute", "limit": 0.03},
+    "dc_gain_dB": {"kind": "absolute", "limit": 1.0},
+    "gbw_Hz": {"kind": "relative", "limit": 0.10},
+    "phase_margin_deg": {"kind": "absolute", "limit": 5.0},
+    "power_W": {"kind": "relative", "limit": 0.05},
+    "saturation_margin_V": {"kind": "absolute", "limit": 0.03}
+  },
+  "capacitance_provenance": {
+    "relative_limit": 0.25,
+    "absolute_floor_F": 1e-18,
+    "decision_separation_fraction": 0.05,
+    "rule": "compare grounded-terminal drain admittance with LUT cdd and with LUT cdd+cgd; require one candidate within tolerance and at least the separation fraction closer than the other",
+    "gate": "informational_until_device_probe_completes"
+  },
+  "release_rule": "missing or nonfinite required measurements fail closed; correlation passes and measured-request passes are reported separately"
+}

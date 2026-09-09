@@ -1,0 +1,20 @@
+// Phase F5 device-level M5 capacitance provenance probe.
+simulator lang=spectre
+global 0
+parameters L5=1.10081716009e-06 W5=9.32292326324e-05 VGS5=0.457649158167 VDS5=0.19930092187 Fprobe=1e6
+include "/home/cadence/Desktop/PDK_CRN65LP_v1.7a_Official_IC61_20120914_all/PDK_CRN65LP_v1.7a_Official_IC61_20120914/tsmcN65/../models/spectre/toplevel.scs" section=tt_lib
+VG (g 0) vsource dc=VGS5 type=dc
+VD (d 0) vsource dc=VDS5 mag=1 type=dc
+M5CAP (d g 0 0) nch l=L5 w=W5 m=1 nf=1 sd=200n \
+    ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*W5 \
+    as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07))*W5 \
+    pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W5)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+W5) \
+    ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2)*2+(1+1)*W5)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07)*2+(1+2)*W5) \
+    nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W5)+(1+1-int((1+1)/2)*2)*(1e-07/W5) \
+    nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/W5)+(1+1-int((1+1)/2)*2)*(1e-21/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/W5) \
+    sa=1/(1/(1.75e-07+0.5*L5))-0.5*L5 sb=1/(1/(1.75e-07+0.5*L5))-0.5*L5 sca=0 scb=0 scc=0
+simulatorOptions options reltol=1e-5 vabstol=1e-8 iabstol=1e-15 temp=27 tnom=27
+saveOptions options save=allpub
+dcCap dc annotate=status
+acCap ac start=Fprobe stop=Fprobe lin=1 annotate=status
+capOpInfo info what=oppoint where=rawfile
