@@ -5,13 +5,13 @@
 **Revised for Opus 5 handoff:** 2026-09-09 (Astra review)
 
 **Status:** **F1 ACCEPTED** at `db6db4a`; **F2 development integration
-ACCEPTED** by Astra at `e0accfe` on 2026-09-09 (all F2-R1..R5 closed). The
-bounded F3 compatibility package is now implemented: public finite/solved
-dispatch activated TOGETHER with mode-aware record routing, seven-parameter
-optimizer bounds, finite netlist export with the solved gate bias, and
-explicit rejections at the ideal-only consumers. Real capacitance
-provenance and physical AC acceptance remain open for F5. Awaiting Astra
-F3 review. See the F3 execution-log entry at the end of this file.
+ACCEPTED** at `e0accfe`. **F3 CHANGES REQUIRED** after Astra's review of
+`2684166`: public finite/solved dispatch and schema routing are accepted,
+but export context, round-trip verification, search constraints, finite
+optimizer normalization, and compatibility guards need correction
+(F3-R1..R5). F4 is not released. The finite library path remains provisional;
+real capacitance provenance and physical AC acceptance remain open for F5.
+See the final F3 gate-review entry for the bounded Opus handoff.
 
 **Technical direction:** Astra is the brain (architecture, physical assumptions,
 acceptance criteria, and gate review); Opus is the muscles (implementation,
@@ -2453,3 +2453,254 @@ Complete non-real-LUT suite: 285 collected, exit 0. Real-LUT integration:
 **Not done (separate unreleased work):** F4 feasibility baseline, F5
 finite correlation (and the capacitance provenance experiment), web
 deployment of finite mode, and seven-output learning (Phase H).
+
+### 2026-09-09 - Astra F3 gate review at 2684166: changes required
+
+**Decision: F3 is not accepted; deliver the bounded corrections below before
+F4.** Reviewed revision: `268416635bdbc7e10e8d03d1dc1c2dfca087567a`.
+F1 and F2 acceptance stand. The correctly routed provisional finite library
+entry points may remain enabled; this review does not request a rollback of
+the accepted dispatch work or release finite web deployment.
+
+#### Accepted portions and independent verification
+
+- Finite/solved construction, supported-loader dispatch, and the generic
+  record route now reach the finite implementation and its seven-field dev
+  schema. Ideal defaults and invalid mode checks remain intact. Historical
+  record arity checks prevent seven-value truncation at that entry point.
+- The mode-aware bounds correctly include all seven parameters. M5's solved
+  gate bias replaces the zero-volt export, and imposed-finite export without
+  that solved bias rejects. These are useful partial corrections, subject to
+  the context and verification findings below.
+- Dataset row construction and ideal sizing have explicit rejection checks
+  for the tested finite cases. These do not cover every ideal-only consumer.
+- **285 non-real-LUT tests passed**, exit 0; **3 real-LUT integration tests
+  passed**, exit 0. Independent synthetic reproductions below expose gaps
+  outside the assertions in those passing tests.
+- Parsed executable bodies of `_evaluate_solved_finite`, ideal
+  `_evaluate_solved`, `_evaluate_imposed`, legacy `solve_ac`, and
+  `assemble_ac_corrected` are unchanged from `e0accfe`. The finite evaluator
+  docstring changed to describe public activation; the accepted calculations
+  did not change.
+
+#### F3-R1 - P1: export loses the evaluated supply/common-mode context
+
+**Locations:** `analog_ai/utils/netlist.py:25-37,81-85`.
+
+Independent reproduction using the synthetic nominal finite design:
+
+```python
+ota = OTA5T(dm, vdd=1.3, tail_device="finite", op_point="solved")
+perf = ota.evaluate(nominal_x7, CL=2.5e-12)
+text = export_netlist(perf, cl=2.5e-12)
+```
+
+The evaluated context is VDD=1.3 V and VICM=0.65 V. The exported header and
+actual sources instead say VDD=1.2 V and VICM=0.6 V. The exporter uses its
+default arguments, while the performance dictionary does not carry the supply
+or common mode needed to reconstruct the context. The header reports the
+export arguments, not necessarily the evaluated values. A caller can likewise
+pass a different CL without any consistency check.
+
+**Required correction:** give finite export an authoritative evaluated
+context, preferably the complete finite record or an explicit context-bearing
+export input. Derive VDD/VICM/CL from it. Reject inconsistent explicit overrides,
+or represent them as a new, unevaluated circuit with no inherited verdict.
+Keep historical ideal behavior scoped separately. Test noncanonical supply,
+nondefault common mode/load, and conflicting overrides through the supported
+record-to-export path, not only manually matched default arguments.
+
+#### F3-R2 - P1: the round-trip test does not verify the exported circuit
+
+**Location:** `tests/test_f3_compatibility.py:148-168`; also the unconditional
+`proxy-verified design` header in `analog_ai/utils/netlist.py:36`.
+
+The test parses W5/L5/Vbias_tail, checks their print error, and then calls
+`evaluate_design_finite(ota, list(NOMINAL), ...)`. None of the parsed values
+is used in that evaluation. It does not read back M1-M4 geometry, supply,
+common mode, load, or connectivity. Re-running the original gm/ID sizing
+targets is not an evaluation of fixed exported devices and bias.
+
+Independent mutation check: wrapping the exporter in memory to change only
+`Vdd (vdd! 0) vsource dc=1.2` to `dc=0.1` still lets
+`test_netlist_round_trip_rederives_verdict` pass. No production file was
+changed for this reproduction. The delivered evidence therefore does not
+support the execution log's claim of a re-derived exported-circuit verdict.
+The generic export header also calls the known negative-saturation diagnostic
+a `proxy-verified design`, despite its failing feasibility verdict.
+
+**Required correction:** parse and verify the complete emitted circuit,
+including all device geometry/connections and sources/load. If claiming a
+post-export verdict, evaluate the parsed fixed geometry and fixed gate bias;
+do not re-size them from the original seven targets. Alternatively, explicitly
+withhold the exported-circuit verdict and test that it remains unverified:
+serialization agreement and a pre-export verdict are separate facts. This
+alternative does not waive the complete geometry/context round-trip checks
+or claim physical AC validation. Use print precision that meets the declared
+round-trip contract and make rounding/verification status machine-readable.
+
+Add mutation tests for supply, M1/M3 geometry, M5 gate bias, and CL that fail
+the semantic round-trip check or invalidate the exported verdict. Preserve
+the original request, finite schema/model identity, physical assumptions,
+and pre-export pass/fail status in the export evidence. Correct the delivery
+log's unsupported verdict claim rather than retaining it as current evidence.
+No Spectre campaign is required to demonstrate serialization integrity.
+
+#### F3-R3 - P2: search objectives do not enforce the finite request contract
+
+**Locations:** `analog_ai/optimization/de_baseline.py:28-43` and
+`analog_ai/optimization/local_refine.py:31-45,65-66`.
+
+Both objectives call historical `evaluate_constraints(perf, specs)` without
+the finite effective limits or finite request validation. Changing only the
+number of optimizer bounds does not integrate the accepted finite constraint
+contract. Independent evaluations at the same synthetic nominal point:
+
+| Objective | Ordinary request | PM_min=179 degrees and Sat_margin_min=0.3 V |
+|---|---:|---:|
+| DE | 2.1912072155324798 | 2.1912072155324798 |
+| Local | 2.1932484227582925 | 2.1932484227582925 |
+
+The final finite record correctly reports the tightened limits and rejects
+them, but the search objective does not change at all. This finding does not
+claim a false final PASS; it means the search optimizes a different request
+from the verifier. Both objectives also raise `ZeroDivisionError` for
+`Power_max=0.0`, after device work, despite the finite record boundary already
+having the required request validation.
+
+**Required correction:** normalize/validate the finite request before search
+and use its effective limits consistently in DE, local objectives, and final
+verification. Keep scalar shaping separate from acceptance, but derive its
+residuals from the same finite contract. Invalid requests must reject before
+lookup/search; missing requested metrics must remain failed and must not
+create NaN/Infinity optimizer bookkeeping or an unhandled no-best-design path.
+Scope the change to finite mode so historical ideal behavior remains frozen.
+
+Tests must prove tightened PM/saturation requests change the relevant search
+residuals, malformed/zero-scale requests reject before device work, and an
+unavailable Swing/ICMR request ends with an explicit failed/unresolved outcome.
+The final record must retain the full request and effective limits.
+
+#### F3-R4 - P2: finite local search still runs in physical coordinates
+
+**Location:** `analog_ai/optimization/local_refine.py:73-82`.
+
+The code computes `u0`, but converts its trust-region bounds back to physical
+units and passes physical `x0` to Nelder-Mead with `xatol=1e-6`. An independent
+interception of the minimizer call confirmed the input vector:
+
+```text
+[6e-7, 15, 6e-7, 12, 6e-7, 10, 5e-5]
+xatol = 1e-6
+```
+
+That one tolerance means 1 micrometer in length coordinates, 1 microampere
+in current, and 1e-6 1/V in gm/ID. Adding two bounds does not satisfy A6/F3's
+seven-dimensional optimizer/normalization requirement. Deferring learned
+five-output normalization to Phase H is correct, but does not defer finite
+optimizer coordinate normalization.
+
+**Required correction:** run finite local optimization in normalized design
+coordinates with dimensionless trust regions and stopping tolerances. Convert
+to physical units at evaluation and back to physical output at the record
+boundary. Keep the existing ideal search path unchanged. Test all seven
+normalization/denormalization coordinates and endpoints, including Itail at
+index 6, actual normalized minimizer inputs, and physical returned designs.
+Do not implement finite surrogate training or change historical model scaling.
+
+#### F3-R5 - P2: ideal-only consumers still accept or truncate finite inputs
+
+**Locations:** `analog_ai/envs/sizing_env.py:46-69` and
+`analog_ai/surrogate/data.py:134-136`.
+
+Independent reproductions:
+
+- `OTA5tSizingEnv(finite_solved_ota)` constructs successfully with a five-value
+  action space. Reset and a zero action produce an ordinary invalid episode
+  (`invalid=True`, cost 2000) because the finite evaluator requires seven
+  values. The incompatible engine is not rejected. With explicitly supplied
+  seven-row bounds, this environment can also construct a seven-dimensional
+  action space; it is not unconditionally five-dimensional by construction.
+- `design_matrix([finite_record["design"]])` silently returns shape `(1,5)`,
+  selecting L1/gmid1/L3/gmid3/Itail and discarding L5/gmid5. The dataset writer
+  guard does not protect this direct learned-data consumer.
+
+**Required correction:** reject finite-tail engines at the current ideal-only
+RL boundary and reject finite schemas/design fields before five-target
+conversion. Apply the same explicit compatibility policy at supported
+five-output model/inference entry points; do not rely on downstream arity
+errors being converted into ordinary invalid candidates. Preserve supported
+historical ideal records and test finite objects, finite seven-field rows,
+and checkpoint/engine mode mismatches without launching training. Existing
+dataset/sizing guards may remain; they need no redesign.
+
+#### Bounded corrective handoff
+
+Opus should deliver one F3 correction package covering F3-R1..R5 and the
+targeted tests above. Keep accepted public finite dispatch/schema routing,
+F1/F2 numerical behavior, the 50 mV floor, and historical ideal outputs.
+The finite model stays explicitly provisional; do not begin F4 feasibility,
+F5 correlation, finite web deployment, dataset regeneration, or retraining.
+
+Include source-bound example evidence of request -> finite record -> export
+-> parsed circuit, with effective context, all geometry/bias, metadata and
+verification status. Include a known failed diagnostic and an intentionally
+corrupted export that the round-trip check rejects. Update the delivery
+claims to match the checks actually performed. Submit the exact correction
+revision and applicable regression gates for Astra re-review.
+
+Regression commands independently completed during this review:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests --ignore=tests/test_integration_real_luts.py -q
+.\.venv\Scripts\python.exe -m pytest tests/test_integration_real_luts.py -q
+```
+
+Only review/status documents changed. No production fixes, fresh finite
+real-LUT probe, optimizer campaign, Cadence run, commit, or push were performed.
+The ordinary regression suite includes the delivered bounded DE smoke test;
+the independent objective/coordinate probes above were synthetic checks.
+
+## 2026-09-09 - Astra final F3 acceptance at `79c615a`
+
+**F3 is accepted. F1/F2 remain accepted, and F4 feasibility work is now
+released as the next bounded package. F5 and later work remain closed.**
+
+Sol 5.6 completed the correction package after Opus reached its execution
+limit. Independent Astra review confirmed:
+
+- **F3-R1 closed:** finite export takes VDD, VICM, and CL from the authoritative
+  finite record, rejects conflicting overrides, and preserves non-round numeric
+  contexts through serialization.
+- **F3-R2 closed:** the checker parses and compares all M1-M5 geometry and
+  connectivity, tail bias, supplies, differential excitation, load, subcircuit
+  instance, schema/oracle/request/capacitance metadata, and duplicate devices.
+  It certifies serialization only; `exported_circuit_verdict` remains null until
+  external circuit simulation. The exact 0.1 V corruption reproduction rejects.
+- **F3-R3 closed:** finite DE and local objectives validate requests before
+  device work and use the same effective PM/saturation limits as the finite
+  verifier. Missing requested metrics receive finite penalties and remain failed.
+- **F3-R4 closed:** finite local refinement runs in seven normalized coordinates,
+  including endpoint clipping and Itail at index 6, and returns physical values.
+  The ideal local path remains unchanged.
+- **F3-R5 closed:** finite engines/records are rejected at the current ideal-only
+  RL, learned-data, inference, and checkpoint boundaries; seven-field records can
+  no longer be silently reduced to five columns.
+
+Source-bound evidence is archived in
+`evaluation_results/finite_m5/f3_correction_export_evidence.json`: all 11 SHA-256
+fingerprints independently match `79c615a`; the 1.3/0.65 V, 2.5 pF diagnostic
+serializes and verifies; its negative M5 saturation margin and false pre-export
+verdict are retained; a VDD mutation to 0.1 V is rejected. This is synthetic
+serialization evidence, not physical AC correlation.
+
+Independent gates: 301/301 non-real-LUT tests, 3/3 real-LUT integration tests,
+strict evidence regeneration equality, and clean `git diff --check` apart from
+the repository's expected LF-to-CRLF notices. The accepted F1 finite solver,
+F2 corrected AC assembly, and legacy ideal executable bodies are unchanged.
+
+F4 must now find and archive genuinely feasible finite-tail designs under the
+frozen 50 mV saturation floor. Do not reinterpret the existing negative-margin
+diagnostics as feasible designs. Capacitance provenance and physical AC
+correlation remain F5 gates; finite web deployment and Phase H learning remain
+unreleased.

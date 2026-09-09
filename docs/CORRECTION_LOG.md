@@ -613,13 +613,34 @@ guard deletion:
   unreleased work): F4, F5 + capacitance provenance, web finite mode,
   Phase H learning.
 
+## 2026-09-09 - Astra F3 review at 2684166: changes required
+
+Reviewed `268416635bdbc7e10e8d03d1dc1c2dfca087567a`. Independently passed
+285 non-real-LUT tests and 3 real-LUT integration tests. F1/F2 remain accepted;
+finite public dispatch/schema routing is accepted. F3 is not accepted yet:
+
+- F3-R1: a 1.3/0.65 V evaluated design exports default 1.2/0.6 V sources.
+- F3-R2: the round-trip test re-evaluates original targets rather than the
+  parsed circuit, and passes with exported VDD corrupted to 0.1 V. The earlier
+  claim of a re-derived exported verdict is unsupported.
+- F3-R3: DE/local objectives ignore tightened finite PM/saturation limits
+  and raise for zero power limits instead of rejecting before search.
+- F3-R4: finite local search still uses physical coordinates and a mixed-unit
+  stopping tolerance; normalized optimizer coordinates remain required.
+- F3-R5: RL accepts finite engines, and learned-data `design_matrix` silently
+  discards L5/gmid5. Explicit consumer rejection remains incomplete.
+
+Exact reproductions, acceptance tests, and the bounded corrective handoff
+are in the final Phase F plan review entry. Only documentation changed;
+F4 feasibility and later campaigns are not released.
+
 ## Still open (updated 2026-09-09)
 
 1. **Finite-M5 solved mode (Phase F)** — F1 accepted at `db6db4a`; F2
    development integration accepted at `e0accfe`. The bounded F3
-   compatibility package (public dispatch + mode-aware records + netlist
-   round trip + consumer rejections) is implemented and delivered for
-   Astra F3 review. F3 acceptance and later packages (F4 feasibility, F5
+   compatibility package requires corrections F3-R1..R5 after Astra's
+   review of `2684166`; public dispatch/schema routing is accepted.
+   F3 acceptance and later packages (F4 feasibility, F5
    finite correlation and capacitance provenance, web finite mode, Phase H
    learning) still require their review gates. The ideal-path versioned
    R1 correction (effective requested limits) remains open.
@@ -631,3 +652,13 @@ guard deletion:
    head collapse and therefore low expected gain.
 5. **Phase H** — regenerate the seven-parameter dataset and retrain only after
    the finite-M5 oracle and correlation gates pass.
+
+## 2026-09-09 - F3 corrections accepted at `79c615a`
+
+Sol 5.6 closed F3-R1..R5: authoritative finite export context; parsed complete
+circuit serialization with an explicitly withheld external-circuit verdict;
+finite request/effective-limit search objectives; normalized seven-coordinate
+local refinement; and explicit finite rejection at five-output RL/surrogate
+boundaries. Astra independently passed 301 non-real-LUT tests and 3 real-LUT
+tests, reproduced the evidence byte-for-byte, and verified all 11 source hashes.
+F4 feasibility is released; F5 and later phases remain gated.

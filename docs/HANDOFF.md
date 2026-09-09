@@ -466,3 +466,29 @@ Gates: new `tests/test_f3_compatibility.py` (15 tests); 285-collected
 non-real-LUT suite exit 0; 3/3 real-LUT integration. Open for F5: real
 capacitance provenance and physical AC validation; negative-margin
 diagnostics are still not feasible designs.
+
+**Update 2026-09-09 (Astra F3 review at `2684166`): CHANGES REQUIRED.**
+Independent gates passed: 285 non-real-LUT tests and 3 real-LUT integration
+tests. Public finite dispatch and schema routing are accepted; F1/F2 remain
+accepted. Five F3 corrections remain: actual supply/common-mode/load context
+in export; genuine complete circuit round-trip checking and honest exported
+verification status; finite request validation/effective limits in search;
+normalized finite local-optimizer coordinates; and explicit RL/learned-data
+compatibility rejection. The current round-trip verdict test still passes
+when the exported VDD is changed to 0.1 V, and cannot support the earlier
+re-derived-verdict claim.
+
+Opus owns the bounded correction package in the
+[final F3 gate-review entry](PHASE_F_FINITE_M5_EXECUTION_PLAN.md#2026-09-09---astra-f3-gate-review-at-2684166-changes-required).
+F4 and later campaigns are not released. Retain the provisional finite library
+path, accepted numerical implementations, 50 mV floor, and historical ideal
+behavior. No production fixes or campaign were performed by Astra.
+
+**Update 2026-09-09 (Astra final F3 acceptance at `79c615a`): ACCEPTED.**
+Sol 5.6 closed F3-R1..R5 after Opus reached its limit. Authoritative-context
+export, complete semantic serialization checking, finite search constraints,
+seven-coordinate local normalization, and ideal-only consumer rejection are
+all in place. Independent gates passed: 301 non-real-LUT and 3 real-LUT tests;
+all 11 F3 evidence hashes match. The exported-circuit verdict is correctly
+withheld pending external simulation. F4 feasibility is the next released
+package; F5, finite web deployment, and Phase H remain closed.
